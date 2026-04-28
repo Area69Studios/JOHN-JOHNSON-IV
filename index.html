@@ -1396,6 +1396,141 @@
       pointer-events: none;
     }
 
+
+    /* ===== CHARACTER POPUP ===== */
+    .char-profile { cursor: pointer; }
+
+    #char-popup {
+      position: fixed; inset: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s;
+    }
+    #char-popup.open { opacity: 1; visibility: visible; }
+
+    .popup-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(5,5,5,0.82);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+    }
+
+    .popup-box {
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.1) inset;
+      max-width: 860px; width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      transform: scale(0.92) translateY(24px);
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    #char-popup.open .popup-box {
+      transform: scale(1) translateY(0);
+    }
+
+    /* top shine */
+    .popup-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), rgba(255,255,255,0.15), transparent);
+      pointer-events: none; z-index: 2;
+    }
+
+    .popup-img-col {
+      position: relative;
+      min-height: 480px;
+      overflow: hidden;
+    }
+    .popup-img-col img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top;
+      display: block;
+    }
+    .popup-img-col::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, transparent 70%, rgba(5,5,5,0.6) 100%),
+                  linear-gradient(to top, rgba(5,5,5,0.4) 0%, transparent 40%);
+    }
+
+    .popup-content {
+      padding: 48px 44px 44px;
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 16px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold-dim) transparent;
+    }
+
+    .popup-role {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .popup-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 3.4rem);
+      line-height: 0.9;
+      color: var(--white);
+      letter-spacing: 0.04em;
+    }
+
+    .popup-fullname {
+      font-family: 'Crimson Pro', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    .popup-divider {
+      width: 48px; height: 1px;
+      background: var(--gold);
+      margin: 4px 0;
+    }
+
+    .popup-desc {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text);
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .popup-close {
+      position: absolute; top: 18px; right: 20px;
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      color: var(--text-dim);
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      z-index: 10;
+    }
+    .popup-close:hover {
+      background: rgba(201,168,76,0.15);
+      border-color: rgba(201,168,76,0.4);
+      color: var(--gold);
+    }
+
+    @media (max-width: 700px) {
+      .popup-box { grid-template-columns: 1fr; }
+      .popup-img-col { min-height: 260px; max-height: 260px; }
+      .popup-content { padding: 28px 24px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1680,6 +1815,25 @@
     </div>
   </footer>
 
+
+  <!-- CHARACTER POPUP -->
+  <div id="char-popup">
+    <div class="popup-backdrop" id="popupBackdrop"></div>
+    <div class="popup-box" id="popupBox">
+      <div class="popup-img-col">
+        <img src="" alt="" id="popupImg">
+      </div>
+      <div class="popup-content">
+        <button class="popup-close" id="popupClose">✕</button>
+        <div class="popup-role" id="popupRole"></div>
+        <div class="popup-name" id="popupName"></div>
+        <div class="popup-fullname" id="popupFullname"></div>
+        <div class="popup-divider"></div>
+        <div class="popup-desc" id="popupDesc"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     /* ===== LOADER ===== */
     (function() {
@@ -1830,6 +1984,58 @@
     }
 
     requestAnimationFrame(parallaxLoop);
+
+    /* ===== CHARACTER POPUP ===== */
+    (function() {
+      const popup      = document.getElementById('char-popup');
+      const popupImg   = document.getElementById('popupImg');
+      const popupRole  = document.getElementById('popupRole');
+      const popupName  = document.getElementById('popupName');
+      const popupFull  = document.getElementById('popupFullname');
+      const popupDesc  = document.getElementById('popupDesc');
+      const popupClose = document.getElementById('popupClose');
+      const backdrop   = document.getElementById('popupBackdrop');
+
+      function openPopup(card) {
+        const img      = card.querySelector('.char-profile-visuals img');
+        const role     = card.querySelector('.char-profile-role');
+        const name     = card.querySelector('.char-profile-name');
+        const fullname = card.querySelector('.char-profile-fullname');
+        const descs    = card.querySelectorAll('.char-profile-desc p');
+
+        popupImg.src       = img ? img.src : '';
+        popupImg.alt       = name ? name.textContent : '';
+        popupRole.textContent    = role     ? role.textContent     : '';
+        popupName.textContent    = name     ? name.textContent     : '';
+        popupFull.textContent    = fullname ? fullname.textContent : '';
+
+        popupDesc.innerHTML = '';
+        descs.forEach(function(p) {
+          const el = document.createElement('p');
+          el.textContent = p.textContent;
+          popupDesc.appendChild(el);
+        });
+
+        popup.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closePopup() {
+        popup.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      document.querySelectorAll('.char-profile').forEach(function(card) {
+        card.addEventListener('click', function() { openPopup(card); });
+      });
+
+      popupClose.addEventListener('click', closePopup);
+      backdrop.addEventListener('click', closePopup);
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closePopup();
+      });
+    })();
+
   </script>
 </body>
 </html>
