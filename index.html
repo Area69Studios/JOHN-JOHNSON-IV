@@ -1254,6 +1254,8 @@
       background: url('images/bg-personajes.jpg') center top / cover no-repeat;
       -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+      transform: translate3d(0, var(--par, 0px), 0) scale(1.2);
+      will-change: transform;
     }
     #personajes::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -1644,8 +1646,8 @@
       background: url('images/bg-capitulos.jpg') center 40% / cover no-repeat;
       -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
-      transform-origin: center 38%;
-      animation: capBgBreathe 16s ease-in-out infinite;
+      transform: translate3d(0, var(--par, 0px), 0) scale(1.2);
+      will-change: transform;
     }
     #capitulos::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -2826,8 +2828,8 @@
       filter: brightness(0.82) saturate(0.9);
       -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
-      transform-origin: center center;
-      animation: equipoBgPan 24s ease-in-out infinite alternate;
+      transform: translate3d(0, var(--par, 0px), 0) scale(1.2);
+      will-change: transform;
     }
     #equipo::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -3747,6 +3749,23 @@
       -webkit-backdrop-filter: var(--glass-blur);
       z-index: -1;
       pointer-events: none;
+    }
+    nav::after {
+      content: '';
+      position: absolute; inset: 0;
+      z-index: -1; pointer-events: none;
+      background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.07) 49%, rgba(200,150,255,0.05) 51%, transparent 58%);
+      background-size: 250% 100%;
+      background-repeat: no-repeat;
+      background-position: 160% 0;
+      animation: navSheen 9s ease-in-out infinite;
+    }
+    @keyframes navSheen {
+      0% { background-position: 160% 0; }
+      55%, 100% { background-position: -60% 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      nav::after { animation: none; }
     }
     nav.scrolled {
       background: rgba(5, 5, 5, 0.55);
@@ -10465,6 +10484,31 @@
       });
       el.addEventListener('mouseleave', function () { el.style.transform = ''; });
     });
+  })();
+  </script>
+  <script>
+  /* ===== PARALLAX DE FONDOS (scroll) ===== */
+  (function() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var ids = ['personajes', 'capitulos', 'equipo'];
+    var secs = ids.map(function(i){ return document.getElementById(i); }).filter(Boolean);
+    if (!secs.length) return;
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var vh = window.innerHeight;
+      for (var i = 0; i < secs.length; i++) {
+        var s = secs[i], r = s.getBoundingClientRect();
+        if (r.bottom < -300 || r.top > vh + 300) continue;
+        var prog = (vh - r.top) / (vh + r.height);
+        var off = (prog - 0.5) * 52;
+        s.style.setProperty('--par', off.toFixed(1) + 'px');
+      }
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
   })();
   </script>
 </body>
