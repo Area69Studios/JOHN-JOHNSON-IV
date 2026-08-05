@@ -8613,11 +8613,20 @@
       });
     }
 
+    // No permitir capitulos en produccion como vistos (limpia estado antiguo)
+    (function() {
+      var before = watched.length;
+      watched = watched.filter(function(cap) {
+        return !document.querySelector('.cap-btn.cap-btn-soon[data-cap="' + cap + '"]');
+      });
+      if (watched.length !== before) { save(); }
+    })();
+
     // Restaurar al cargar
     applyWatched();
 
     // Click en tarjeta → toggle visto
-    document.querySelectorAll('.cap-btn[data-cap]').forEach(function(btn) {
+    document.querySelectorAll('.cap-btn[data-cap]:not(.cap-btn-soon)').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
         var cap = btn.getAttribute('data-cap');
         btn.classList.contains('watched') ? unmarkWatched(cap) : markWatched(cap);
