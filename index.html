@@ -7857,7 +7857,7 @@
           // Capa 2 — mid "IV" (contra-dirección, crea profundidad)
           if (sinMid)  sinMid.style.transform  = 'translateY(' + (p * -0.07) + 'px)';
           // Capa 3 — texto (ligeramente más lento que el scroll)
-          if (sinText) sinText.style.transform = 'translateY(' + (p * 0.06) + 'px)';
+          if (sinText) sinText.style.transform = 'translateY(' + Math.max(-34, Math.min(34, p * 0.06)) + 'px)';
           // Capa 4 — visual derecho si existe
           if (sinVis)  sinVis.style.transform  = 'translateY(' + (p * -0.09) + 'px)';
         }
