@@ -3266,8 +3266,36 @@
       0%, 100% { filter: drop-shadow(0 0 16px rgba(255,60,172,0.4)) drop-shadow(0 0 34px rgba(162,75,255,0.25)); }
       50%      { filter: drop-shadow(0 0 26px rgba(255,60,172,0.65)) drop-shadow(0 0 54px rgba(162,75,255,0.45)); }
     }
+    .ldr-logo-wrap { position: relative; display: inline-block; line-height: 0; }
+    .ldr-logo-shine {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(115deg,
+        transparent 38%,
+        rgba(62,139,255,0.55) 46%,
+        rgba(255,255,255,0.90) 50%,
+        rgba(255,60,172,0.60) 54%,
+        transparent 62%);
+      background-size: 250% 100%;
+      background-repeat: no-repeat;
+      background-position: 160% 0;
+      mix-blend-mode: screen;
+      -webkit-mask-image: url('images/logo-256.png');
+      mask-image: url('images/logo-256.png');
+      -webkit-mask-size: contain; mask-size: contain;
+      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+      -webkit-mask-position: center; mask-position: center;
+      animation: ldrShine 2.4s ease-in-out 0.6s infinite;
+    }
+    @keyframes ldrShine {
+      0%   { background-position: 160% 0; opacity: 0; }
+      10%  { opacity: 1; }
+      55%  { opacity: 1; }
+      70%  { background-position: -60% 0; opacity: 0; }
+      100% { background-position: -60% 0; opacity: 0; }
+    }
     @media (prefers-reduced-motion: reduce) {
       .ldr-logo { animation: ldrLogoIn 0.4s ease both; }
+      .ldr-logo-shine { animation: none; opacity: 0; }
     }
     /* El logo ya incluye "IV": ocultamos el numeral grande redundante */
     .ldr-num, .ldr-brand { display: none !important; }
@@ -5387,7 +5415,10 @@
     <div class="ldr-panel ldr-panel-top"></div>
     <div class="ldr-panel ldr-panel-bot"></div>
     <div class="ldr-body" id="ldrBody">
-      <img class="ldr-logo" src="images/logo-256.png" alt="John Johnson IV" width="256" height="256" />
+      <span class="ldr-logo-wrap">
+        <img class="ldr-logo" src="images/logo-256.png" alt="John Johnson IV" width="256" height="256" />
+        <span class="ldr-logo-shine" aria-hidden="true"></span>
+      </span>
       <span class="ldr-num" id="ldrNum">IV</span>
       <div class="ldr-brand" id="ldrBrand">
         <span class="ldr-brand-letter">J</span><span class="ldr-brand-letter">O</span><span class="ldr-brand-letter">H</span><span class="ldr-brand-letter">N</span>
