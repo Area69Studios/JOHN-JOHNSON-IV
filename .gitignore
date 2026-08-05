@@ -1,0 +1,7 @@
+# Config interna de Claude Code
+.claude/
+
+# Archivos de trabajo que no forman parte de la web publicada
+index.backup.html
+imagen.jpeg
+logo.png
