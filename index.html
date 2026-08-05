@@ -156,7 +156,7 @@
     .nav-logo {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 0;
       text-decoration: none;
       vertical-align: middle;
       flex-shrink: 0;
@@ -177,6 +177,21 @@
       line-height: 1;
       white-space: nowrap;
       text-shadow: 0 0 12px rgba(185,90,228,0.5), 0 0 26px rgba(62,139,255,0.3);
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-left: 0;
+      transform: translateX(-6px);
+      transition: max-width 0.55s cubic-bezier(0.4,0,0.2,1),
+                  margin-left 0.55s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.35s ease, transform 0.45s ease;
+    }
+    .nav-logo:hover .nav-logo-word,
+    .nav-logo:focus-visible .nav-logo-word {
+      max-width: 260px;
+      opacity: 1;
+      margin-left: 10px;
+      transform: translateX(0);
     }
     .logo-name { color: var(--white); }
     .logo-num { color: #FF6FC6; }
