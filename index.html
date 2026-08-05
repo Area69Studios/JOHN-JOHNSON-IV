@@ -3249,6 +3249,29 @@
     }
     #loader.hidden .ldr-body { opacity: 0; transform: translateY(-6px); }
 
+    /* Logo como pantalla de carga */
+    .ldr-logo {
+      display: block;
+      width: clamp(150px, 32vw, 250px);
+      height: auto;
+      filter: drop-shadow(0 0 18px rgba(255,60,172,0.5)) drop-shadow(0 0 40px rgba(162,75,255,0.3));
+      animation: ldrLogoIn 0.8s cubic-bezier(0.2,0.8,0.2,1) both,
+                 ldrLogoPulse 2.6s ease-in-out 0.8s infinite;
+    }
+    @keyframes ldrLogoIn {
+      from { opacity: 0; transform: scale(0.82) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes ldrLogoPulse {
+      0%, 100% { filter: drop-shadow(0 0 16px rgba(255,60,172,0.4)) drop-shadow(0 0 34px rgba(162,75,255,0.25)); }
+      50%      { filter: drop-shadow(0 0 26px rgba(255,60,172,0.65)) drop-shadow(0 0 54px rgba(162,75,255,0.45)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ldr-logo { animation: ldrLogoIn 0.4s ease both; }
+    }
+    /* El logo ya incluye "IV": ocultamos el numeral grande redundante */
+    .ldr-num { display: none; }
+
     /* Roman numeral grande */
     .ldr-num {
       display: block;
@@ -5364,6 +5387,7 @@
     <div class="ldr-panel ldr-panel-top"></div>
     <div class="ldr-panel ldr-panel-bot"></div>
     <div class="ldr-body" id="ldrBody">
+      <img class="ldr-logo" src="images/logo-256.png" alt="John Johnson IV" width="256" height="256" />
       <span class="ldr-num" id="ldrNum">IV</span>
       <div class="ldr-brand" id="ldrBrand">
         <span class="ldr-brand-letter">J</span><span class="ldr-brand-letter">O</span><span class="ldr-brand-letter">H</span><span class="ldr-brand-letter">N</span>
