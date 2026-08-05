@@ -1245,7 +1245,23 @@
     #personajes {
       background: var(--black);
       padding-bottom: 0;
+      position: relative;
     }
+    #personajes::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: clamp(300px, 42vw, 480px);
+      z-index: 0; pointer-events: none;
+      background: url('images/bg-sunset.jpg') center top / cover no-repeat;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+    }
+    #personajes::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: clamp(300px, 42vw, 480px);
+      z-index: 0; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(10,5,18,0.55) 0%, rgba(10,5,18,0.12) 30%, transparent 58%);
+    }
+    #personajes > * { position: relative; z-index: 1; }
 
     .personajes-header {
       max-width: 1200px;
