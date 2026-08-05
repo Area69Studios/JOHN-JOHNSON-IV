@@ -1643,7 +1643,7 @@
       content: ''; position: absolute; top: 0; left: 0; right: 0;
       height: clamp(380px, 52vw, 660px);
       z-index: 0; pointer-events: none;
-      background: url('images/bg-capitulos.jpg') center 40% / cover no-repeat;
+      background: url('images/bg-capitulos.jpg') center 52% / cover no-repeat;
       -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
       transform: translate3d(0, var(--par, 0px), 0) scale(1.2);
@@ -2843,6 +2843,15 @@
     }
     @media (prefers-reduced-motion: reduce) { #equipo::before { animation: none; transform: scale(1.02); } }
     #equipo > * { position: relative; z-index: 1; }
+
+    #personajes::before { animation: bgIdle 14s ease-in-out infinite; }
+    #capitulos::before  { animation: bgIdle 13s ease-in-out infinite; }
+    #equipo::before     { animation: bgIdleDim 16s ease-in-out infinite; }
+    @keyframes bgIdle    { 0%, 100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.08) saturate(1.14); } }
+    @keyframes bgIdleDim { 0%, 100% { filter: brightness(0.82) saturate(0.9); } 50% { filter: brightness(0.9) saturate(1.02); } }
+    @media (prefers-reduced-motion: reduce) {
+      #personajes::before, #capitulos::before, #equipo::before { animation: none; }
+    }
     #equipo > *:not(canvas):not(.topo-pulse) { position: relative; z-index: 1; }
 
     /* Canvas topográfico reutilizable */
