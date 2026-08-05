@@ -1447,6 +1447,17 @@
       text-transform: uppercase;
       margin-bottom: 32px;
     }
+    .char-profile-origin {
+      display: inline-flex; align-items: center; gap: 9px;
+      margin: -22px 0 26px;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.18em; font-size: 0.85rem;
+      color: rgba(228,222,240,0.72);
+    }
+    .char-flag {
+      width: 32px; height: auto; display: block; border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.14);
+    }
 
     .char-profile-divider {
       width: 48px; height: 1px;
@@ -3749,6 +3760,30 @@
 
     /* ===== LIQUID GLASS — iOS 26 ===== */
 
+    /* Liquid glass + destello en pop-ups/modales */
+    .popup-box, .share-modal, .glosario-detail, #cap-popup {
+      -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+      backdrop-filter: blur(30px) saturate(200%) !important;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.16) !important;
+      background-size: 250% 100%, auto !important;
+      background-repeat: no-repeat !important;
+      background-position: 150% 0, 0 0 !important;
+      animation: lgSheen 7.5s ease-in-out infinite !important;
+    }
+    .share-modal, .glosario-detail, #cap-popup {
+      background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.09) 49%, rgba(210,160,255,0.07) 52%, transparent 60%), rgba(20,13,24,0.55) !important;
+    }
+    .popup-box {
+      background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.10) 49%, rgba(210,160,255,0.07) 52%, transparent 60%), rgba(255,255,255,0.05) !important;
+    }
+    @keyframes lgSheen {
+      0% { background-position: 150% 0, 0 0; }
+      55%, 100% { background-position: -60% 0, 0 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .popup-box, .share-modal, .glosario-detail, #cap-popup { animation: none !important; }
+    }
+
     #hueveil {
       position: fixed; inset: 0; z-index: 2;
       pointer-events: none;
@@ -5878,6 +5913,7 @@
         <div class="char-profile-role">Protagonista</div>
         <h3 class="char-profile-name">John Johnson</h3>
         <div class="char-profile-fullname">John Johnson Suzuki II</div>
+        <div class="char-profile-origin"><img class="char-flag" src="https://flagcdn.com/40x30/fj.png" srcset="https://flagcdn.com/80x60/fj.png 2x" width="40" height="30" alt="Fiyi" loading="lazy"><span>Fiyi</span></div>
         <div class="char-profile-divider"></div>
         <div class="char-profile-desc">
           <p>Nacido en Sevilla con nacionalidad fiyiana, Johnson abandonó una prometedora carrera en el rally para convertirse en sheriff independiente en San Dennis. Allí forjó un vínculo con el reportero Tomás Carreta, lo que lo arrastró hacia un mundo de conflictos con bandas criminales y misiones como mercenario.</p>
@@ -5910,6 +5946,7 @@
         <div class="char-profile-role"><!-- EDITA: Rol del personaje, ej. Antagonista / Aliado --></div>
         <h3 class="char-profile-name">Tomás Carreta</h3>
         <div class="char-profile-fullname">Tomás Carreta Silzür</div>
+        <div class="char-profile-origin"><img class="char-flag" src="https://flagcdn.com/40x30/es.png" srcset="https://flagcdn.com/80x60/es.png 2x" width="40" height="30" alt="España" loading="lazy"><span>España</span></div>
         <div class="char-profile-divider"></div>
         <div class="char-profile-desc">
           <p>Ex militar español reconvertido en reportero, Tomás conoce a Johnson durante una entrevista en su etapa de sheriff. Dirige dos documentales sobre él y, con el tiempo, pasa de observador a colaborador activo, comprometiendo su objetividad al implicarse directamente en sus acciones.</p>
@@ -5942,6 +5979,7 @@
         <div class="char-profile-role"><!-- EDITA: Rol del personaje --></div>
         <h3 class="char-profile-name">Emilio Shuang Ye</h3>
         <div class="char-profile-fullname">Emilio Shuang Ye Rotonda</div>
+        <div class="char-profile-origin"><img class="char-flag" src="https://flagcdn.com/40x30/es.png" srcset="https://flagcdn.com/80x60/es.png 2x" width="40" height="30" alt="España" loading="lazy"><span>España</span></div>
         <div class="char-profile-divider"></div>
         <div class="char-profile-desc">
           <p>Ex militar especializado en explosivos durante su mili en Ceuta, Emilio aparece brevemente en la tercera entrega, cuando Johnson lo "adopta" simbólicamente y lo vincula a su entorno. Leal y más emocional que estratégico, encuentra en Johnson una figura de referencia.</p>
@@ -5975,6 +6013,7 @@
         <div class="char-profile-role"><!-- EDITA: Rol del personaje --></div>
         <h3 class="char-profile-name">Shima Asuka</h3>
         <div class="char-profile-fullname">Shima Asuka</div>
+        <div class="char-profile-origin"><img class="char-flag" src="https://flagcdn.com/40x30/jp.png" srcset="https://flagcdn.com/80x60/jp.png 2x" width="40" height="30" alt="Japón" loading="lazy"><span>Japón</span></div>
         <div class="char-profile-divider"></div>
         <div class="char-profile-desc">
           <p>Guerrera kalimeña criada en el aislamiento de La Escondia, desempeña dentro de su pueblo un papel similar al de una rōnin: una combatiente independiente que actúa guiada por su propio código de honor, conservando el respeto de los habitantes de Kalima. De carácter reservado, sereno y disciplinado, destaca por su agilidad, precisión y capacidad de infiltración. Sus armas características son una katana y una UZI israelí, combinando la tradición guerrera de Kalima con armamento moderno.</p>
