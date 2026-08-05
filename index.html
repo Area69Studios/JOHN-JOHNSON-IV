@@ -2818,6 +2818,29 @@
       position: relative;
       overflow: hidden;
     }
+    #equipo::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: clamp(300px, 40vw, 460px);
+      z-index: 0; pointer-events: none;
+      background: url('images/bg-equipo.jpg') center 44% / cover no-repeat;
+      filter: brightness(0.82) saturate(0.9);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+      transform-origin: center center;
+      animation: equipoBgPan 24s ease-in-out infinite alternate;
+    }
+    #equipo::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: clamp(300px, 40vw, 460px);
+      z-index: 0; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(28,12,36,0.82) 0%, rgba(30,13,40,0.62) 38%, rgba(36,16,44,0.5) 55%, transparent 100%);
+    }
+    @keyframes equipoBgPan {
+      from { transform: scale(1.06) translateX(-1.6%); }
+      to   { transform: scale(1.06) translateX(1.6%); }
+    }
+    @media (prefers-reduced-motion: reduce) { #equipo::before { animation: none; transform: scale(1.02); } }
+    #equipo > * { position: relative; z-index: 1; }
     #equipo > *:not(canvas):not(.topo-pulse) { position: relative; z-index: 1; }
 
     /* Canvas topográfico reutilizable */
