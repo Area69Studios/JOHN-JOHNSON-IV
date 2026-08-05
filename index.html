@@ -3342,6 +3342,17 @@
       animation: ldrStarTwinkle 5s ease-in-out infinite alternate;
     }
     #loader.hidden .ldr-stars { opacity: 0; }
+    .ldr-flash {
+      position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle at 50% 42%, rgba(255,255,255,0.95) 0%, rgba(255,60,172,0.5) 26%, rgba(162,75,255,0.22) 50%, transparent 70%);
+    }
+    .ldr-flash.go { animation: ldrFlash 0.75s ease-out forwards; }
+    @keyframes ldrFlash {
+      0%   { opacity: 0; transform: scale(0.9); }
+      22%  { opacity: 0.95; }
+      100% { opacity: 0; transform: scale(1.35); }
+    }
+    @media (prefers-reduced-motion: reduce) { .ldr-flash.go { animation: none; } }
     @keyframes ldrStarTwinkle { from { filter: brightness(0.6); } to { filter: brightness(1.12); } }
     @media (prefers-reduced-motion: reduce) { .ldr-stars { animation: none; } }
 
@@ -5580,6 +5591,7 @@
     <div class="ldr-panel ldr-panel-top"></div>
     <div class="ldr-panel ldr-panel-bot"></div>
     <div class="ldr-stars" aria-hidden="true"></div>
+    <div class="ldr-flash" aria-hidden="true"></div>
     <div class="ldr-body" id="ldrBody">
       <span class="ldr-logo-wrap">
         <img class="ldr-logo" src="images/logo-256.png" alt="John Johnson IV" width="256" height="256" />
@@ -7780,11 +7792,12 @@
       function onDone() {
         pct.textContent  = '100%';
         fill.style.width = '100%';
+        var _lf = document.querySelector('.ldr-flash'); if (_lf) _lf.classList.add('go');
         // Telón se abre
         setTimeout(function() {
           loader.classList.add('hidden');
           setTimeout(function() { loader.style.display = 'none'; }, 1100);
-        }, 280);
+        }, 440);
       }
     })();
 
