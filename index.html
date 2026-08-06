@@ -6826,6 +6826,31 @@
         </div>
       </div>
 
+      <div class="ranking-card" data-char="meregildo" id="rk-card-meregildo">
+        <div class="ranking-photo-wrap">
+          <img class="ranking-photo" id="rk-photo-meregildo" src="" alt="Meregildo Smith">
+          <div class="ranking-pos" id="rk-medal-meregildo">5</div>
+        </div>
+        <div class="ranking-content">
+          <div class="ranking-top-row">
+            <div class="ranking-info">
+              <span class="ranking-char-name">Meregildo Smith</span>
+              <span class="ranking-char-fullname">Meregildo Smith</span>
+            </div>
+            <button class="ranking-vote-btn" id="rk-btn-meregildo"><span>Votar</span></button>
+          </div>
+          <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-meregildo"></div></div>
+          <div class="ranking-bottom-row">
+            <span class="ranking-pct" id="rk-pct-meregildo">0%</span>
+            <span class="ranking-votes-count" id="rk-votes-meregildo">0 votos</span>
+            <button class="ranking-share-btn" id="rk-share-meregildo">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+              <span>Compartir</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="ranking-footer">
         <span id="rk-total">0 votos totales</span><br>
         <span style="display:inline-flex;align-items:center;margin-top:8px;">
@@ -6839,7 +6864,7 @@
 
     <script>
     (function() {
-      var CHARS      = ['johnson', 'tomas', 'emilio', 'shima'];
+      var CHARS      = ['johnson', 'tomas', 'emilio', 'shima', 'meregildo'];
       var KEY_VOTES  = 'jj4_votes_v1';
       var KEY_MYVOTE = 'jj4_myvote_v1';
 
@@ -7111,7 +7136,7 @@
       }
 
       /* ──────────────── Compartir ──────────────── */
-      var charNames = { johnson: 'John Johnson', tomas: 'Tomás Carreta', emilio: 'Emilio Shuang Ye' };
+      var charNames = { johnson: 'John Johnson', tomas: 'Tomás Carreta', emilio: 'Emilio Shuang Ye', shima: 'Shima Asuka', meregildo: 'Meregildo Smith' };
       CHARS.forEach(function(char) {
         var btn = document.getElementById('rk-share-' + char);
         if (!btn) return;
