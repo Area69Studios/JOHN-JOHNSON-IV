@@ -52,6 +52,9 @@
       position: fixed; inset: 0; z-index: 10000;
       display: flex; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none;
+      background: rgba(6,4,10,0.92);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      cursor: zoom-out;
       transition: opacity 0.3s ease;
     }
     #lightbox.open { opacity: 1; pointer-events: auto; }
@@ -6502,6 +6505,18 @@
       .ranking-card[data-char="emilio"] .ranking-vote-btn.rk-voted { border-color: #c05838; background: linear-gradient(135deg, rgba(192,88,56,0.25),  rgba(192,88,56,0.09));  color: #e07858; animation-name: rk-voted-glow-emilio; }
       .ranking-card[data-char="shima"]  .ranking-vote-btn.rk-voted { border-color: #a877d8; background: linear-gradient(135deg, rgba(168,119,216,0.25), rgba(168,119,216,0.09)); color: #d8b0f8; animation-name: rk-voted-glow-shima; }
 
+      .ranking-card[data-char="meregildo"]  .ranking-vote-btn { border-color: rgba(90,208,208,0.45); color: #5ad0d0; animation-name: rk-btn-breathe-meregildo; }
+      .ranking-card[data-char="meregildo"]  .ranking-vote-btn::before { background: linear-gradient(135deg, rgba(90,208,208,0.24), rgba(90,208,208,0.06)); }
+      .ranking-card[data-char="meregildo"]  .ranking-vote-btn::after { background: linear-gradient(90deg, transparent, rgba(150,240,240,0.75), transparent); }
+      .ranking-card[data-char="meregildo"]  .ranking-vote-btn:hover:not(:disabled) { border-color: #5ad0d0; box-shadow: 0 0 22px rgba(90,208,208,0.4), 0 5px 20px rgba(0,0,0,0.4); color: #a8f0f0; }
+      .ranking-card[data-char="meregildo"]  .ranking-vote-btn:active:not(:disabled) { box-shadow: 0 0 30px rgba(90,208,208,0.55); }
+      .ranking-card[data-char="meregildo"]  .ranking-vote-btn.rk-voted { border-color: #5ad0d0; background: linear-gradient(135deg, rgba(90,208,208,0.25), rgba(90,208,208,0.09)); color: #a8f0f0; animation-name: rk-voted-glow-meregildo; }
+      .ranking-card[data-char="meregildo"]  .rk-shine { background: linear-gradient(90deg, transparent, rgba(150,240,240,0.32), transparent); }
+      .ranking-card[data-char="meregildo"].rk-top { box-shadow: inset 3px 0 0 #5ad0d0; }
+      .ranking-card[data-char="meregildo"].rk-top:hover { box-shadow: inset 3px 0 0 #5ad0d0, 0 20px 50px rgba(0,0,0,0.65), 0 0 0 1px rgba(90,208,208,0.3); }
+      .ranking-card[data-char="meregildo"] .rk-flash { background: rgba(90,208,208,0.18); }
+      @keyframes rk-btn-breathe-meregildo { 0%,100%{box-shadow:0 0 0 0 rgba(90,208,208,0)} 50%{box-shadow:0 0 12px 3px rgba(90,208,208,0.2)} }
+      @keyframes rk-voted-glow-meregildo { 0%,100%{box-shadow:0 0 10px rgba(90,208,208,0.22),inset 0 0 8px rgba(90,208,208,0.07)} 50%{box-shadow:0 0 24px rgba(90,208,208,0.55),inset 0 0 16px rgba(90,208,208,0.15)} }
       @keyframes rk-voted-glow        { 0%,100%{box-shadow:0 0 10px rgba(185,90,228,0.22),inset 0 0 8px rgba(185,90,228,0.07)} 50%{box-shadow:0 0 24px rgba(185,90,228,0.55),inset 0 0 16px rgba(185,90,228,0.15)} }
       @keyframes rk-voted-glow-tomas  { 0%,100%{box-shadow:0 0 10px rgba(137,168,90,0.22),inset 0 0 8px rgba(137,168,90,0.07)} 50%{box-shadow:0 0 24px rgba(137,168,90,0.55),inset 0 0 16px rgba(137,168,90,0.15)} }
       @keyframes rk-voted-glow-emilio { 0%,100%{box-shadow:0 0 10px rgba(192,88,56,0.22),inset 0 0 8px rgba(192,88,56,0.07)}  50%{box-shadow:0 0 24px rgba(192,88,56,0.55),inset 0 0 16px rgba(192,88,56,0.15)} }
@@ -7929,7 +7944,7 @@
     });
 
     lightboxClose.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    lightbox.addEventListener('click', function() { closeLightbox(); });
 
     function closeLightbox() {
       lightbox.classList.remove('open');
