@@ -6148,6 +6148,7 @@
             <button class="quiz-option" data-char="tomas">Observo primero y analizo. La información vale más que la velocidad.</button>
             <button class="quiz-option" data-char="emilio">Me lanzo sin dudar. El instinto rara vez me ha fallado.</button>
             <button class="quiz-option" data-char="shima">Me muevo en silencio y ataco solo en el momento exacto.</button>
+            <button class="quiz-option" data-char="meregildo">Me quedo completamente inmóvil y observo. La quietud desconcierta más que cualquier reacción.</button>
           </div>
         </div>
 
@@ -6159,6 +6160,7 @@
             <button class="quiz-option" data-char="tomas">La observación. Veo lo que los demás no ven.</button>
             <button class="quiz-option" data-char="emilio">La lealtad. Daría todo por quien quiero, sin condiciones.</button>
             <button class="quiz-option" data-char="shima">La disciplina. Mi cuerpo y mi mente responden como una sola arma.</button>
+            <button class="quiz-option" data-char="meregildo">La serenidad. Nada me altera; recibo a cualquiera con la misma calma.</button>
           </div>
         </div>
 
@@ -6170,6 +6172,7 @@
             <button class="quiz-option" data-char="tomas">Organizo la búsqueda y documento cada paso. Alguien tiene que contarlo.</button>
             <button class="quiz-option" data-char="emilio">Salgo a buscarlo sin pensarlo dos veces. No me importa el riesgo.</button>
             <button class="quiz-option" data-char="shima">Rastreo sin ser vista. Lo encuentro antes de que nadie note que lo busco.</button>
+            <button class="quiz-option" data-char="meregildo">Aguardo en mi sitio, sin moverme. Quien me necesita siempre acaba llegando.</button>
           </div>
         </div>
 
@@ -6181,6 +6184,7 @@
             <button class="quiz-option" data-char="tomas">Las respeto, pero la verdad siempre va primero.</button>
             <button class="quiz-option" data-char="emilio">Hago lo que hay que hacer. Las normas son para quien tiene tiempo.</button>
             <button class="quiz-option" data-char="shima">Sigo mi propio código de honor. Es más estricto que cualquier ley.</button>
+            <button class="quiz-option" data-char="meregildo">Vivo aislado del mundo. Sus normas hace tiempo que dejaron de alcanzarme.</button>
           </div>
         </div>
 
@@ -6192,6 +6196,7 @@
             <button class="quiz-option" data-char="tomas">El que lo ve todo desde fuera y siempre da el mejor consejo.</button>
             <button class="quiz-option" data-char="emilio">El que aparece cuando lo necesitan, pase lo que pase.</button>
             <button class="quiz-option" data-char="shima">La que habla poco, lo observa todo y actúa con precisión cuando hace falta.</button>
+            <button class="quiz-option" data-char="meregildo">El enigma silencioso al que, sin saber muy bien por qué, todos acaban tomando cariño.</button>
           </div>
         </div>
 
@@ -6203,6 +6208,7 @@
             <button class="quiz-option" data-char="tomas">La información. Saber más que el rival siempre da ventaja.</button>
             <button class="quiz-option" data-char="emilio">La fuerza y la precisión. No hay problema que no tenga solución física.</button>
             <button class="quiz-option" data-char="shima">La agilidad y el filo. Aparezco donde no me esperan y desaparezco.</button>
+            <button class="quiz-option" data-char="meregildo">Lo desconocido. Nadie sabe qué soy, y esa incertidumbre lo cambia todo.</button>
           </div>
         </div>
 
@@ -9049,7 +9055,7 @@
   <!-- QUIZ SCRIPT -->
   <script>
   (function() {
-    var scores = { johnson: 0, tomas: 0, emilio: 0, shima: 0 };
+    var scores = { johnson: 0, tomas: 0, emilio: 0, shima: 0, meregildo: 0 };
     var current = 0;
     var total = 6;
     var slideTimer = null;
@@ -9170,7 +9176,7 @@
           nameEl.textContent,
           nameEl.textContent
         );
-        if (profile.dataset.char === 'shima') {
+        if (profile.dataset.char === 'meregildo') {
           var nb = document.createElement('div');
           nb.className = 'qc-new-badge';
           nb.textContent = 'Nuevo';
@@ -9255,6 +9261,12 @@
         fullname: 'Shima Asuka',
         desc: 'Te mueves por tu propio código de honor, no por el de los demás. Reservada, serena y disciplinada, golpeas con precisión y desapareces sin dejar rastro. Tu fuerza está en el silencio y el control; tu reto, en abrirte a un mundo que aún no conoces.',
         tags: ['Disciplina', 'Sigilo', 'Honor', 'Precisión']
+      },
+      meregildo: {
+        name: 'Meregildo Smith',
+        fullname: 'Meregildo Smith',
+        desc: 'Eres un enigma tranquilo. Habitas al margen del mundo, inmóvil y sereno, y aun así inspiras una confianza que nadie sabe explicar. No necesitas moverte para dejar huella: tu calma y tu hospitalidad valen más que mil gestos, y tu pasado es un misterio que a todos intriga.',
+        tags: ['Misterio', 'Serenidad', 'Hospitalidad', 'Lealtad']
       }
     };
 
@@ -9363,7 +9375,8 @@
         { key: 'johnson', label: 'John Johnson' },
         { key: 'tomas',   label: 'Tomás Carreta' },
         { key: 'emilio',  label: 'Emilio S. Ye'  },
-        { key: 'shima',   label: 'Shima Asuka'   }
+        { key: 'shima',   label: 'Shima Asuka'   },
+        { key: 'meregildo', label: 'Meregildo'  }
       ];
       charOrder.forEach(function(ch) {
         var pct = Math.round((scores[ch.key] / total) * 100);
@@ -9413,7 +9426,7 @@
     }
 
     function reset() {
-      scores = { johnson: 0, tomas: 0, emilio: 0, shima: 0 };
+      scores = { johnson: 0, tomas: 0, emilio: 0, shima: 0, meregildo: 0 };
       current = 0;
       document.querySelectorAll('.quiz-option').forEach(function(b) {
         b.classList.remove('selected');
@@ -9540,7 +9553,8 @@
         { key: 'johnson', label: 'John Johnson' },
         { key: 'tomas',   label: 'Tomás Carreta' },
         { key: 'emilio',  label: 'Emilio S. Ye'  },
-        { key: 'shima',   label: 'Shima Asuka'   }
+        { key: 'shima',   label: 'Shima Asuka'   },
+        { key: 'meregildo', label: 'Meregildo'  }
       ];
 
       var sourceProfile = document.querySelector('.char-profile[data-char="' + winner + '"]');
