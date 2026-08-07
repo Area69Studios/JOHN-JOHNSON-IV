@@ -3103,6 +3103,57 @@
     }
     .verdict-text strong { color: #FF7A8C; }
 
+    /* ---- Zona sin filtro (roast basto) ---- */
+    .tiraera-nofilter {
+      max-width: 760px; margin: 64px auto 0;
+      border: 1px dashed rgba(255,60,60,0.35);
+      border-radius: 16px; padding: 32px 28px;
+      background: rgba(255,46,76,0.04);
+    }
+    .nofilter-head {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      font-family: 'Cinzel', serif; font-weight: 700;
+      font-size: 1.3rem; color: #fff; margin-bottom: 6px; text-align: center;
+    }
+    .nofilter-warn {
+      text-align: center; font-size: 0.75rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: #FF5470; margin-bottom: 24px;
+    }
+    .nofilter-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+    .nofilter-list li {
+      position: relative; padding: 12px 16px 12px 42px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px; color: #F4E9EC; line-height: 1.5;
+    }
+    .nofilter-list li::before {
+      content: '🔥'; position: absolute; left: 14px; top: 11px; font-size: 1rem;
+    }
+    .nofilter-list strong { color: #FF7A8C; }
+
+    /* ---- Generador de insultos ---- */
+    .insult-gen { max-width: 760px; margin: 28px auto 0; text-align: center; }
+    .insult-box {
+      min-height: 76px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px 24px;
+      border: 1px solid rgba(255,60,60,0.35); border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      font-family: 'Cinzel', serif; font-weight: 700;
+      font-size: clamp(1.1rem, 2.6vw, 1.5rem); color: #fff;
+      line-height: 1.35; transition: opacity 0.15s ease;
+    }
+    .insult-btn {
+      margin-top: 18px; cursor: pointer;
+      font-family: 'Crimson Pro', serif; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; font-size: 0.85rem;
+      color: #fff; background: linear-gradient(100deg, #FF2E4C, #FF5470);
+      border: none; border-radius: 999px; padding: 14px 34px;
+      box-shadow: 0 10px 26px rgba(255,46,76,0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .insult-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(255,46,76,0.6); }
+    .insult-btn:active { transform: translateY(0) scale(0.97); }
+
     @media (max-width: 860px) {
       .tiraera-body { grid-template-columns: 1fr; gap: 32px; }
       .tiraera-card { max-width: 360px; margin: 0 auto; }
@@ -7885,12 +7936,64 @@
         </p>
       </div>
 
+      <div class="tiraera-nofilter reveal">
+        <div class="nofilter-head">🔞 Zona sin filtro</div>
+        <div class="nofilter-warn">Aviso: aquí ya no medimos las palabras</div>
+        <ul class="nofilter-list">
+          <li>Diste tu palabra y valía lo mismo que <strong>un pedo en una tormenta</strong>.</li>
+          <li>Te fuiste cagando leches, <strong>rajao de manual</strong>, sin decir ni mu.</li>
+          <li>Le tienes más miedo a una cámara que <strong>a devolver un préstamo</strong>.</li>
+          <li>Más flojo que un flan al sol y <strong>con menos palabra que un político</strong>.</li>
+          <li>Saliste del grupo más rápido que <strong>tu dignidad de la habitación</strong>.</li>
+          <li>Cobarde nivel dios: hasta <strong>el emoji de la seta tiene más huevos que tú</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="insult-gen reveal">
+        <div class="nofilter-warn" style="margin-bottom:14px;">Generador oficial de zascas · pulsa y reza</div>
+        <div class="insult-box" id="insultBox">Dale al botón, cobarde 👇</div>
+        <button class="insult-btn" id="insultBtn" type="button">Tírame un zasca 🔥</button>
+      </div>
+
       <p class="tiraera-footnote reveal">
         * Todavía estás a tiempo de arreglarlo, Panda. El plazo corre. Tú decides.
       </p>
 
     </div>
   </section>
+
+  <script>
+    (function(){
+      var box = document.getElementById('insultBox');
+      var btn = document.getElementById('insultBtn');
+      if (!box || !btn) return;
+      var insultos = [
+        'Tienes menos palabra que un pez y menos huevos que una tortilla francesa.',
+        'Te acojonaste como un pollo sin cabeza y saliste por patas.',
+        'Rajao, cobarde y encima con estilo de fugitivo barato.',
+        'Prometiste mucho y cumpliste lo mismo que un horóscopo.',
+        'Más falso que un billete de tres euros pintado a mano.',
+        'Te fuiste tan rápido que ni el WiFi te alcanzó a despedir.',
+        'Cagao de miedo ante una cámara: menudo galán de la huida.',
+        'Diste tu palabra y se te cayó por el retrete con la cadena incluida.',
+        'Gallina nivel granja: cacareas mucho pero a la hora de grabar, nada.',
+        'Tienes la valentía de un flan y la lealtad de un gato callejero con hambre.',
+        'Desapareciste tan fino que hasta los fantasmas te tienen envidia.',
+        'Menos aparecer y más dar la cara, campeón del escaqueo.'
+      ];
+      var last = -1;
+      btn.addEventListener('click', function(){
+        var i;
+        do { i = Math.floor(Math.random() * insultos.length); } while (i === last && insultos.length > 1);
+        last = i;
+        box.style.opacity = '0';
+        setTimeout(function(){
+          box.textContent = insultos[i];
+          box.style.opacity = '1';
+        }, 150);
+      });
+    })();
+  </script>
 
 
 
