@@ -7294,6 +7294,12 @@
 
   </section>
 
+  <!-- Lightbox de tarjetas y galeria (a nivel body y antes de los scripts, para que position:fixed cubra la pantalla) -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <img src="" alt="" id="lightbox-img">
+  </div>
+
   <!-- EQUIPO -->
   <!-- LUGARES — oculto, imágenes usadas por el glosario -->
   <section id="lugares" style="display:none">
@@ -8482,12 +8488,6 @@
   })();
   </script>
 
-
-  <!-- Lightbox de tarjetas y galeria (a nivel body para que position:fixed cubra la pantalla) -->
-  <div class="lightbox" id="lightbox">
-    <button class="lightbox-close" id="lightbox-close">✕</button>
-    <img src="" alt="" id="lightbox-img">
-  </div>
 
   <!-- LIGHTBOX -->
   <div id="lightbox-lugares">
