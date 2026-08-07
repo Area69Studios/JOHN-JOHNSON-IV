@@ -8973,6 +8973,10 @@
         b.addEventListener('click', function() { play(sndTrailer); });
       });
 
+      /* ── Tiraera: generador de zascas ── */
+      var insultBtn = document.getElementById('insultBtn');
+      if (insultBtn) insultBtn.addEventListener('click', function() { play(sndBtnPrimary); });
+
 /* ── Character popup open/close — only text panel ── */
       document.querySelectorAll('.char-profile-text').forEach(function(panel) {
         panel.addEventListener('click', function() { play(sndPopupOpen); });
@@ -9032,7 +9036,10 @@
         '.btn-primary', '.btn-secondary',
         '.trailer-btn', '.cap-btn',
         '.nav-links a', '.nav-logo',
-        '.lb-btn'
+        '.lb-btn',
+        // ── Tiraera ──
+        '.tiraera-card', '.bar', '.stat-tile', '.tl-item',
+        '.evidence-shot', '.nofilter-list li', '.insult-btn'
       ].join(',');
       var _hoverLast = 0;
       document.querySelectorAll(hoverTargets).forEach(function(el) {
