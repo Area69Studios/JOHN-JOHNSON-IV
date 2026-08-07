@@ -2964,6 +2964,116 @@
       .tiraera-card { max-width: 360px; margin: 0 auto; }
     }
 
+    /* ---- Sirena roja pulsante de fondo ---- */
+    #tiraera { animation: sirenBg 2.4s ease-in-out infinite; }
+    @keyframes sirenBg {
+      0%, 100% { box-shadow: inset 0 0 120px rgba(255,20,40,0.15); background: #140507; }
+      50%      { box-shadow: inset 0 0 220px rgba(255,20,40,0.45); background: #22070a; }
+    }
+    #tiraera::after {
+      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(ellipse 90% 70% at 50% 40%, transparent 55%, rgba(120,0,10,0.55) 100%);
+      animation: sirenVignette 2.4s ease-in-out infinite;
+    }
+    @keyframes sirenVignette {
+      0%, 100% { opacity: 0.35; }
+      50%      { opacity: 0.9; }
+    }
+
+    /* ---- Cinta de peligro (hazard tape) ---- */
+    .hazard-tape {
+      position: relative; z-index: 1;
+      height: 26px; width: 100%;
+      background: repeating-linear-gradient(45deg,
+        #ffd400 0, #ffd400 22px,
+        #1a0b0b 22px, #1a0b0b 44px);
+      box-shadow: 0 0 22px rgba(255,40,40,0.5);
+      opacity: 0.92;
+    }
+    .hazard-tape.top { margin-bottom: 46px; }
+    .hazard-tape.bottom { margin-top: 46px; }
+
+    /* ---- Banner ALERTA parpadeante ---- */
+    .alert-banner {
+      display: inline-flex; align-items: center; gap: 14px;
+      margin: 0 auto 22px;
+      padding: 10px 26px;
+      background: rgba(255,20,40,0.14);
+      border: 1px solid #FF2E4C;
+      border-radius: 6px;
+      color: #FF5470;
+      font-family: 'Cinzel', serif; font-weight: 700;
+      letter-spacing: 0.34em; text-transform: uppercase;
+      font-size: 0.9rem;
+      box-shadow: 0 0 24px rgba(255,46,76,0.5), inset 0 0 18px rgba(255,46,76,0.18);
+      animation: alertBlink 1s steps(1) infinite;
+    }
+    .alert-banner .siren { font-size: 1.1rem; animation: sirenSpin 1.4s linear infinite; }
+    @keyframes alertBlink {
+      0%, 49%  { opacity: 1; }
+      50%,100% { opacity: 0.35; }
+    }
+    @keyframes sirenSpin {
+      0%,100% { filter: drop-shadow(0 0 6px #FF2E4C); transform: scale(1); }
+      50%     { filter: drop-shadow(0 0 14px #FF2E4C); transform: scale(1.25); }
+    }
+
+    /* ---- Sirena sobre la ficha del acusado ---- */
+    .tiraera-card { animation: cardSiren 2.4s ease-in-out infinite; }
+    @keyframes cardSiren {
+      0%,100% { box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,60,60,0.20) inset, 0 0 20px rgba(255,20,40,0.35); }
+      50%     { box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 0 2px rgba(255,46,76,0.85) inset, 0 0 60px rgba(255,20,40,0.85); }
+    }
+    /* Línea de escáner recorriendo la foto */
+    .tiraera-card .scanline {
+      position: absolute; left: 0; right: 0; top: 0; z-index: 3;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #FF2E4C, #ff8a8a, #FF2E4C, transparent);
+      box-shadow: 0 0 14px 3px rgba(255,46,76,0.8);
+      animation: scanMove 3s linear infinite;
+    }
+    @keyframes scanMove {
+      0%   { transform: translateY(0); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { transform: translateY(440px); opacity: 0; }
+    }
+    .tiraera-stamp { animation: stampPulse 1.2s ease-in-out infinite; }
+    @keyframes stampPulse {
+      0%,100% { transform: rotate(6deg) scale(1); box-shadow: 0 8px 22px rgba(255,46,76,0.45); }
+      50%     { transform: rotate(6deg) scale(1.08); box-shadow: 0 8px 34px rgba(255,46,76,0.9); }
+    }
+
+    /* ---- Glitch en el nombre del objetivo ---- */
+    .tc-name { position: relative; animation: nameFlicker 3.2s steps(1) infinite; }
+    @keyframes nameFlicker {
+      0%, 92%, 96%, 100% { opacity: 1; }
+      94% { opacity: 0.4; }
+    }
+    .tc-name::before, .tc-name::after {
+      content: 'Panda'; position: absolute; left: 0; top: 0;
+      width: 100%; overflow: hidden; pointer-events: none;
+    }
+    .tc-name::before { color: #00e5ff; animation: glitchName 2.6s infinite linear alternate; }
+    .tc-name::after  { color: #FF2E4C; animation: glitchName 2s infinite linear alternate-reverse; }
+    @keyframes glitchName {
+      0%   { clip-path: inset(0 0 82% 0); transform: translateX(0); }
+      20%  { clip-path: inset(30% 0 40% 0); transform: translateX(-2px); }
+      40%  { clip-path: inset(60% 0 12% 0); transform: translateX(2px); }
+      60%  { clip-path: inset(10% 0 66% 0); transform: translateX(-1px); }
+      80%  { clip-path: inset(48% 0 30% 0); transform: translateX(1px); }
+      100% { clip-path: inset(74% 0 4% 0);  transform: translateX(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #tiraera, #tiraera::after, .alert-banner, .alert-banner .siren,
+      .tiraera-card, .tiraera-card .scanline, .tiraera-stamp,
+      .tc-name, .tc-name::before, .tc-name::after {
+        animation: none !important;
+      }
+      .tc-name::before, .tc-name::after { display: none; }
+    }
+
     /* ===== EQUIPO ===== */
     #equipo {
       background: var(--mid);
@@ -7621,9 +7731,11 @@
 
   <!-- TIRAERA / BEEF -->
   <section id="tiraera">
+    <div class="hazard-tape top" aria-hidden="true"></div>
     <div class="tiraera-inner">
 
       <div class="tiraera-header">
+        <div class="alert-banner reveal"><span class="siren">🚨</span> Alerta de nivel máximo <span class="siren">🚨</span></div>
         <p class="section-label reveal">Aviso a quien corresponda</p>
         <h2 class="tiraera-title reveal reveal-delay-1">La Tiraera</h2>
         <p class="tiraera-sub reveal reveal-delay-2">
@@ -7636,6 +7748,7 @@
       <div class="tiraera-body">
 
         <div class="tiraera-card reveal">
+          <span class="scanline" aria-hidden="true"></span>
           <span class="tiraera-stamp">EN EL PUNTO DE MIRA</span>
           <img src="images/panda.jpg" alt="Panda, objetivo de la tiraera" loading="lazy" />
           <div class="tiraera-card-caption">
@@ -7671,6 +7784,7 @@
       </p>
 
     </div>
+    <div class="hazard-tape bottom" aria-hidden="true"></div>
   </section>
 
 
