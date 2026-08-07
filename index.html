@@ -58,6 +58,8 @@
       transition: opacity 0.3s ease;
     }
     #lightbox.open { opacity: 1; pointer-events: auto; }
+    /* Lightbox de lugares (huerfano): ocultarlo para que sus flechas fixed no floten por toda la web */
+    #lightbox-lugares { display: none !important; }
     .lb-overlay {
       position: absolute; inset: 0;
       background: rgba(0,0,0,0.95);
