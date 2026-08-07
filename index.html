@@ -3154,6 +3154,77 @@
     .insult-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(255,46,76,0.6); }
     .insult-btn:active { transform: translateY(0) scale(0.97); }
 
+    /* ---- Interacciones hover de la Tiraera ---- */
+    .bar { transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease; }
+    .bar:hover {
+      transform: translateX(10px);
+      border-left-color: #FF5470;
+      background: rgba(255,46,76,0.10);
+      box-shadow: -4px 0 22px rgba(255,46,76,0.35);
+    }
+    .bar strong { transition: text-shadow 0.25s ease; }
+    .bar:hover strong { text-shadow: 0 0 12px rgba(255,122,140,0.7); }
+
+    .stat-tile {
+      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, background 0.28s ease;
+    }
+    .stat-tile:hover {
+      transform: translateY(-8px);
+      border-color: #FF2E4C;
+      background: rgba(255,46,76,0.08);
+      box-shadow: 0 16px 40px rgba(255,46,76,0.35);
+    }
+    .stat-num { transition: transform 0.28s ease, text-shadow 0.28s ease; }
+    .stat-tile:hover .stat-num { transform: scale(1.14); text-shadow: 0 0 24px rgba(255,46,76,0.8); }
+
+    .tl-item { transition: transform 0.25s ease; }
+    .tl-item::before { transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease; }
+    .tl-text { transition: color 0.25s ease; }
+    .tl-item:hover { transform: translateX(6px); }
+    .tl-item:hover::before { transform: scale(1.4); box-shadow: 0 0 0 6px rgba(255,46,76,0.25); }
+    .tl-item.tl-end:hover::before { box-shadow: 0 0 0 6px rgba(255,212,0,0.28); }
+    .tl-item:hover .tl-text { color: #fff; }
+
+    .evidence-shot { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+    .evidence-shot:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: #FF2E4C;
+      box-shadow: 0 26px 60px rgba(0,0,0,0.55), 0 0 30px rgba(255,46,76,0.4);
+    }
+
+    .nofilter-list li {
+      transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+    }
+    .nofilter-list li::before { transition: transform 0.22s ease; }
+    .nofilter-list li:hover {
+      transform: translateX(8px);
+      background: rgba(255,46,76,0.10);
+      box-shadow: 0 8px 22px rgba(255,46,76,0.22);
+    }
+    .nofilter-list li:hover::before { transform: scale(1.35) rotate(-8deg); }
+
+    .verdict-stamp { transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s ease; cursor: default; }
+    .tiraera-verdict:hover .verdict-stamp {
+      transform: rotate(0deg) scale(1.06);
+      box-shadow: 0 0 40px rgba(255,46,76,0.6), inset 0 0 30px rgba(255,46,76,0.2);
+    }
+
+    .tiraera-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .tiraera-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 70px rgba(0,0,0,0.6), 0 0 40px rgba(255,46,76,0.45);
+    }
+    .tiraera-card img { transition: filter 0.3s ease, transform 0.4s ease; }
+    .tiraera-card:hover img { filter: grayscale(0) contrast(1.12) brightness(1); transform: scale(1.04); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bar, .stat-tile, .stat-num, .tl-item, .tl-item::before, .evidence-shot,
+      .nofilter-list li, .nofilter-list li::before, .verdict-stamp,
+      .tiraera-card, .tiraera-card img {
+        transition: none !important;
+      }
+    }
+
     @media (max-width: 860px) {
       .tiraera-body { grid-template-columns: 1fr; gap: 32px; }
       .tiraera-card { max-width: 360px; margin: 0 auto; }
