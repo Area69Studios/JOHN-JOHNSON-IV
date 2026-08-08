@@ -9288,6 +9288,23 @@
       }
     };
 
+    // El popup del Capítulo IV incluye también todas las fotos de la galería
+    (function() {
+      var gal = [];
+      document.querySelectorAll('.gallery-item img').forEach(function(img) {
+        if (img.getAttribute('src')) gal.push(img.getAttribute('src'));
+      });
+      if (gal.length && capData['4']) {
+        var combined = (capData['4'].slides || []).concat(gal);
+        var seen = {};
+        capData['4'].slides = combined.filter(function(s) {
+          if (seen[s]) return false;
+          seen[s] = true;
+          return true;
+        });
+      }
+    })();
+
     var popup     = document.getElementById('cap-popup');
     var slidesWrap = popup.querySelector('.cap-popup-slides');
     var dotsWrap   = popup.querySelector('.cap-popup-dots');
