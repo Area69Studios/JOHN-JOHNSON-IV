@@ -10732,6 +10732,19 @@
           { val: '1.6 L',  lbl: 'Motor' },
           { val: '#66',    lbl: 'Dorsal' }
         ]
+      },
+      {
+        name: 'Colt Python .357',
+        cat: 'objeto',
+        desc: 'El Colt Python .357 Magnum es un revólver de doble acción de seis cartuchos, conocido por su construcción robusta y su buena precisión. En la versión con cañón de 6 pulgadas, mide aproximadamente 29 cm de longitud y pesa alrededor de 1,2 kg, dependiendo de la versión. Utiliza munición .357 Magnum, aunque también puede emplear .38 Special. Su alcance práctico con precisión razonable está aproximadamente en el entorno de 25–50 metros, aunque para la saga podemos establecer unos 40 m como distancia máxima realista de empleo efectivo. Tiene un retroceso apreciable, especialmente con .357 Magnum, y una cadencia práctica inferior a la de una pistola semiautomática debido a sus seis cartuchos y a la recarga más lenta.',
+        tag: '🐍 El revólver de Johnson',
+        entrega: 'Entrega IV',
+        imgSelectors: ['images/rev1.jpg', 'images/rev2.jpg', 'images/rev3.jpg'],
+        specs: [
+          { val: '.357 Mag', lbl: 'Calibre' },
+          { val: '6 tiros',  lbl: 'Capacidad' },
+          { val: '~40 m',    lbl: 'Alcance' }
+        ]
       }
     ];
 
@@ -10744,7 +10757,7 @@
     // Recoge srcs de imágenes del DOM
     function getImgSrcs(selectors) {
       return (selectors || []).map(function(sel) {
-        if (sel.startsWith('data:') || sel.startsWith('http')) return sel;
+        if (sel.startsWith('data:') || sel.startsWith('http') || sel.startsWith('images/')) return sel;
         var el = document.querySelector(sel);
         return el ? el.src : null;
       }).filter(Boolean);
