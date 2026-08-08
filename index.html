@@ -9900,9 +9900,12 @@
       if (slideTimer) { clearInterval(slideTimer); slideTimer = null; }
       slideIndex = 0;
       if (sourceProfile) {
-        var allImgs = sourceProfile.querySelectorAll('img');
+        // Solo los retratos del personaje; excluye la bandera (.char-flag) y otras imgs de la ficha
+        var allImgs = sourceProfile.querySelectorAll('.char-profile-visuals img');
         var srcs = [];
-        allImgs.forEach(function(img) { if (img.src) srcs.push(img.src); });
+        allImgs.forEach(function(img) {
+          if (img.src && !img.classList.contains('char-flag')) srcs.push(img.src);
+        });
         if (srcs.length) {
           srcs.forEach(function(src, i) {
             var slide = document.createElement('div');
@@ -10144,7 +10147,7 @@
       ];
 
       var sourceProfile = document.querySelector('.char-profile[data-char="' + winner + '"]');
-      var charImg = sourceProfile ? sourceProfile.querySelector('img') : null;
+      var charImg = sourceProfile ? sourceProfile.querySelector('.char-profile-visuals img') : null;
 
       function drawCanvas() {
         // Fondo base
