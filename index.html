@@ -3423,6 +3423,41 @@
       line-height: 1.6;
     }
 
+    /* ===== EQUIPO · REPARTO (tarjetas con Instagram) ===== */
+    .equipo-members {
+      max-width: 900px;
+      margin: 56px auto 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .equipo-members-label {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold);
+    }
+    a.team-member {
+      text-decoration: none;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    a.team-member:hover { transform: translateY(-6px); }
+    .team-name { transition: color 0.3s ease; }
+    a.team-member:hover .team-name { color: var(--gold); }
+    .team-photo-placeholder svg { width: 42%; height: 42%; }
+    .team-ig {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px;
+      font-size: 0.82rem; color: var(--gold);
+      letter-spacing: 0.03em;
+    }
+    .team-ig svg { width: 15px; height: 15px; flex: none; }
+    @media (max-width: 720px) {
+      .equipo-members { grid-template-columns: 1fr; max-width: 320px; }
+    }
+
     /* ===== CONTACTO ===== */
     #contacto {
       background: var(--black);
@@ -8153,6 +8188,41 @@
         <div class="team-name">ÁREA 69 STUDIOS</div>
         <div class="team-bio">Estudio independiente responsable de la producción de la saga John Johnson.</div>
       </div>
+
+    </div>
+
+    <p class="equipo-members-label reveal" style="margin-top:56px;">El reparto · Área 69</p>
+    <div class="equipo-members">
+
+      <a class="team-member reveal" href="https://www.instagram.com/fvck.medina" target="_blank" rel="noopener">
+        <div class="team-photo">
+          <img src="images/team-johnson.jpg" alt="fvck.medina" loading="lazy" style="display:none" onload="this.style.display='block'">
+          <span class="team-photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+        </div>
+        <div class="team-role">En el papel de John Johnson</div>
+        <div class="team-name">@fvck.medina</div>
+        <span class="team-ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</span>
+      </a>
+
+      <a class="team-member reveal reveal-delay-1" href="https://www.instagram.com/pablopozz" target="_blank" rel="noopener">
+        <div class="team-photo">
+          <img src="images/team-tomas.jpg" alt="pablopozz" loading="lazy" style="display:none" onload="this.style.display='block'">
+          <span class="team-photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+        </div>
+        <div class="team-role">En el papel de Tomás Carreta</div>
+        <div class="team-name">@pablopozz</div>
+        <span class="team-ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</span>
+      </a>
+
+      <a class="team-member reveal reveal-delay-2" href="https://www.instagram.com/coky_0_6" target="_blank" rel="noopener">
+        <div class="team-photo">
+          <img src="images/team-emilio.jpg" alt="coky_0_6" loading="lazy" style="display:none" onload="this.style.display='block'">
+          <span class="team-photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+        </div>
+        <div class="team-role">En el papel de Emilio Shuang Ye</div>
+        <div class="team-name">@coky_0_6</div>
+        <span class="team-ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</span>
+      </a>
 
     </div>
   </section>
