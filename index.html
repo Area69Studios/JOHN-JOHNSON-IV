@@ -58,8 +58,15 @@
       transition: opacity 0.3s ease;
     }
     #lightbox.open { opacity: 1; pointer-events: auto; }
-    /* Lightbox de lugares (huerfano): ocultarlo para que sus flechas fixed no floten por toda la web */
-    #lightbox-lugares { display: none !important; }
+    /* Lightbox de la galería: oculto por defecto, visible al abrir */
+    #lightbox-lugares {
+      position: fixed; inset: 0; z-index: 200;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    #lightbox-lugares.open { opacity: 1; pointer-events: auto; }
+    /* Sin rótulo de texto en el lightbox (coherente con la galería sin textos) */
+    #lightbox-lugares .lb-caption { display: none; }
     .lb-overlay {
       position: absolute; inset: 0;
       background: rgba(0,0,0,0.95);
@@ -74,7 +81,8 @@
       transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
       display: flex; align-items: center; justify-content: center;
     }
-    #lightbox.open .lb-img-wrap { transform: scale(1); }
+    #lightbox.open .lb-img-wrap,
+    #lightbox-lugares.open .lb-img-wrap { transform: scale(1); }
     #lb-img {
       max-width: 90vw; max-height: 85vh;
       object-fit: contain;
@@ -8506,17 +8514,8 @@
     const lightboxImg  = document.getElementById('lightbox-img');
     const lightboxClose = document.getElementById('lightbox-close');
 
-    document.querySelectorAll('[data-lightbox]').forEach(item => {
-      item.addEventListener('click', () => {
-        const img = item.querySelector('img');
-        if (img) {
-          lightboxImg.src = img.src;
-          lightboxImg.alt = img.alt;
-          lightbox.classList.add('open');
-          document.body.style.overflow = 'hidden';
-        }
-      });
-    });
+    /* Apertura de la galería gestionada por el lightbox completo (#lightbox-lugares),
+       que incluye flechas de navegación y contador. Binding simple desactivado. */
 
     lightboxClose.addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', function() { closeLightbox(); });
@@ -9004,7 +9003,7 @@
       }
 
       /* ── Lugar carousel arrows ── */
-      document.querySelectorAll('.lugar-arrow, .lightbox-arrow').forEach(function(btn) {
+      document.querySelectorAll('.lugar-arrow, .lightbox-arrow, #lightbox-lugares .lb-btn').forEach(function(btn) {
         btn.addEventListener('click', function() { play(sndSlide); });
       });
 
@@ -9080,7 +9079,7 @@
   <!-- LIGHTBOX JS -->
   <script>
   (function() {
-    var lb       = document.getElementById('lightbox');
+    var lb       = document.getElementById('lightbox-lugares');
     var lbImg    = document.getElementById('lb-img');
     var lbCap    = document.getElementById('lb-caption');
     var lbCount  = document.getElementById('lb-counter');
