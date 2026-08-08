@@ -9363,20 +9363,56 @@
       }
     };
 
-    // El popup del Capítulo IV incluye también todas las fotos de la galería
+    // El popup del Capítulo IV incluye también todas las fotos de la galería,
+    // garantizando que no se repita ninguna imagen (dedup exacto + perceptual).
     (function() {
+      if (!capData['4']) return;
       var gal = [];
       document.querySelectorAll('.gallery-item img').forEach(function(img) {
-        if (img.getAttribute('src')) gal.push(img.getAttribute('src'));
+        var s = img.getAttribute('src');
+        if (s) gal.push(s);
       });
-      if (gal.length && capData['4']) {
-        var combined = (capData['4'].slides || []).concat(gal);
-        var seen = {};
-        capData['4'].slides = combined.filter(function(s) {
-          if (seen[s]) return false;
-          seen[s] = true;
-          return true;
-        });
+      var combined = (capData['4'].slides || []).concat(gal);
+
+      // 1) Dedup exacto por cadena (misma URL/base64)
+      var seen = {}, uniq = [];
+      combined.forEach(function(s) { if (!seen[s]) { seen[s] = 1; uniq.push(s); } });
+      capData['4'].slides = uniq;   // se aplica ya; el paso 2 lo refina
+
+      // 2) Dedup perceptual (misma foto en distinta codificación o tamaño)
+      function aHash(img) {
+        var c = document.createElement('canvas'); c.width = 8; c.height = 8;
+        var x = c.getContext('2d');
+        try { x.drawImage(img, 0, 0, 8, 8); var d = x.getImageData(0, 0, 8, 8).data; }
+        catch (e) { return null; }   // imagen que "mancha" el canvas: no se puede comparar
+        var g = [], sum = 0;
+        for (var i = 0; i < 64; i++) { var v = (d[i*4] + d[i*4+1] + d[i*4+2]) / 3; g.push(v); sum += v; }
+        var a = sum / 64;
+        return g.map(function(v) { return v > a ? 1 : 0; });
+      }
+      function ham(a, b) { var n = 0; for (var i = 0; i < 64; i++) if (a[i] !== b[i]) n++; return n; }
+
+      var hashes = new Array(uniq.length), pending = uniq.length;
+      if (!pending) return;
+      uniq.forEach(function(src, idx) {
+        var im = new Image();
+        im.onload  = function() { hashes[idx] = aHash(im); step(); };
+        im.onerror = function() { hashes[idx] = null;      step(); };
+        im.src = src;
+      });
+      function step() {
+        if (--pending > 0) return;
+        var kept = [], keptHash = [];
+        for (var i = 0; i < uniq.length; i++) {
+          var h = hashes[i];
+          if (!h) { kept.push(uniq[i]); continue; }   // sin hash fiable: se conserva
+          var dup = false;
+          for (var k = 0; k < keptHash.length; k++) {
+            if (keptHash[k] && ham(h, keptHash[k]) <= 5) { dup = true; break; }
+          }
+          if (!dup) { kept.push(uniq[i]); keptHash.push(h); }
+        }
+        capData['4'].slides = kept;
       }
     })();
 
