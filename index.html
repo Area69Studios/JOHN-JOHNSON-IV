@@ -9627,6 +9627,17 @@
           existing.remove();
         }
       });
+
+      // Botón del tráiler: cambia "Ver ahora" por "Seguir viendo" si se dejó a medias
+      document.querySelectorAll('.trailer-btn[href]').forEach(function(btn) {
+        var vid = vidFromHref(btn.getAttribute('href'));
+        var p = vid && progress[vid];
+        var labelEl = btn.querySelector('.trailer-label');
+        if (!labelEl) return;
+        if (typeof btn.dataset.origLabel === 'undefined') btn.dataset.origLabel = labelEl.textContent;
+        var show = p && p.t > 10 && (!p.d || p.t < p.d - 15);
+        labelEl.textContent = show ? 'Seguir viendo' : btn.dataset.origLabel;
+      });
     }
 
     // ── Reproductor de YouTube (IFrame API) ──
