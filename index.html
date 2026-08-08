@@ -2201,18 +2201,9 @@
     .gallery-item:hover .gallery-placeholder { background: linear-gradient(135deg, #2a1424, var(--mid)); }
     .gallery-placeholder-icon { font-size: 2rem; opacity: 0.2; }
 
-    .gallery-caption {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 20px 20px 16px;
-      background: linear-gradient(to top, rgba(5,5,5,0.8), transparent);
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .gallery-item:hover .gallery-caption { opacity: 1; }
+    /* Rótulos ocultos: no se muestran sobre las fotos de la galería
+       (se conservan en el DOM para el texto del lightbox) */
+    .gallery-caption { display: none; }
 
     /* Lightbox */
     .lightbox {
