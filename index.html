@@ -10138,11 +10138,6 @@
       });
       var c = characters[winner];
 
-      var W = 1080, H = 1920;
-      var canvas = document.createElement('canvas');
-      canvas.width = W; canvas.height = H;
-      var ctx = canvas.getContext('2d');
-
       var charOrder = [
         { key: 'johnson', label: 'John Johnson' },
         { key: 'tomas',   label: 'Tomás Carreta' },
@@ -10150,6 +10145,21 @@
         { key: 'shima',   label: 'Shima Asuka'   },
         { key: 'meregildo', label: 'Meregildo'  }
       ];
+      var scoreSum = charOrder.reduce(function(s, ch) { return s + scores[ch.key]; }, 0) || 1;
+
+      // Foto de altura fija y lienzo que se ajusta al contenido, para que las
+      // barras de afinidad y el pie nunca se corten por abajo.
+      var W = 1080;
+      var PHOTO_H = 1152;
+      var ROW_H = 92;
+      var _nmParts = c.name.split(' ');
+      var _nmTwoLines = (_nmParts.length >= 2 && c.name.length > 11);
+      var _nameBlock = _nmTwoLines ? (144 + 44) : 44;
+      var H = PHOTO_H + 72 + 124 + _nameBlock + 58 + 70
+              + (charOrder.length * ROW_H) + 30 + 50 + 52 + 100;
+      var canvas = document.createElement('canvas');
+      canvas.width = W; canvas.height = H;
+      var ctx = canvas.getContext('2d');
 
       var sourceProfile = document.querySelector('.char-profile[data-char="' + winner + '"]');
       var charImg = sourceProfile ? sourceProfile.querySelector('.char-profile-visuals img') : null;
@@ -10160,7 +10170,7 @@
         ctx.fillRect(0, 0, W, H);
 
         // Foto del personaje
-        var photoH = Math.round(H * 0.60);
+        var photoH = PHOTO_H;
         if (charImg && charImg.complete && charImg.naturalWidth) {
           var iw = charImg.naturalWidth, ih = charImg.naturalHeight;
           var scale = Math.max(W / iw, photoH / ih);
@@ -10246,7 +10256,7 @@
         // Barras de afinidad
         var barX = 130, barW = W - 260, barH = 5;
         charOrder.forEach(function(ch) {
-          var pct = Math.round((scores[ch.key] / total) * 100);
+          var pct = Math.round((scores[ch.key] / scoreSum) * 100);
           var isW = ch.key === winner;
 
           ctx.fillStyle = isW ? 'rgba(255,138,216,0.9)' : 'rgba(122,116,104,0.6)';
