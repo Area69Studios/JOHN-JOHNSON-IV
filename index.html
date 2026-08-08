@@ -9722,6 +9722,14 @@
     // Guarda antes de cerrar/recargar la pestaña
     window.addEventListener('beforeunload', saveCurrent);
 
+    // ── Tráiler: también embebido en el reproductor ──
+    document.querySelectorAll('.trailer-btn[href]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        var vid = vidFromHref(btn.getAttribute('href'));
+        if (vid) { e.preventDefault(); jjOpenVideo(vid, null, 'Tráiler'); }
+      });
+    });
+
     refreshLabels();
   })();
   </script>
