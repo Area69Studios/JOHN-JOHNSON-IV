@@ -3425,14 +3425,14 @@
 
     /* ===== EQUIPO · REPARTO (tarjetas con Instagram) ===== */
     .equipo-members {
-      max-width: 900px;
+      max-width: 960px;
       margin: 56px auto 0;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 32px;
     }
     .equipo-members-label {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
       text-align: center;
       font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase;
@@ -3454,8 +3454,11 @@
       letter-spacing: 0.03em;
     }
     .team-ig svg { width: 15px; height: 15px; flex: none; }
-    @media (max-width: 720px) {
-      .equipo-members { grid-template-columns: 1fr; max-width: 320px; }
+    @media (max-width: 860px) {
+      .equipo-members { grid-template-columns: repeat(2, 1fr); max-width: 460px; }
+    }
+    @media (max-width: 440px) {
+      .equipo-members { grid-template-columns: 1fr; max-width: 260px; }
     }
 
     /* ===== CONTACTO ===== */
@@ -8196,7 +8199,7 @@
 
       <a class="team-member reveal" href="https://www.instagram.com/fvck.medina" target="_blank" rel="noopener">
         <div class="team-photo">
-          <img src="images/team-johnson.jpg" alt="fvck.medina" loading="lazy" style="display:none" onload="this.style.display='block'">
+          <img src="images/johnson.jpg" alt="fvck.medina" onerror="this.remove()">
           <span class="team-photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
         </div>
         <div class="team-role">En el papel de John Johnson</div>
@@ -8206,7 +8209,7 @@
 
       <a class="team-member reveal reveal-delay-1" href="https://www.instagram.com/pablopozz" target="_blank" rel="noopener">
         <div class="team-photo">
-          <img src="images/team-tomas.jpg" alt="pablopozz" loading="lazy" style="display:none" onload="this.style.display='block'">
+          <img src="images/tomas.jpg" alt="pablopozz" onerror="this.remove()">
           <span class="team-photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
         </div>
         <div class="team-role">En el papel de Tomás Carreta</div>
@@ -8216,11 +8219,21 @@
 
       <a class="team-member reveal reveal-delay-2" href="https://www.instagram.com/coky_0_6" target="_blank" rel="noopener">
         <div class="team-photo">
-          <img src="images/team-emilio.jpg" alt="coky_0_6" loading="lazy" style="display:none" onload="this.style.display='block'">
+          <img src="images/emilio.jpg" alt="coky_0_6" onerror="this.remove()">
           <span class="team-photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
         </div>
         <div class="team-role">En el papel de Emilio Shuang Ye</div>
         <div class="team-name">@coky_0_6</div>
+        <span class="team-ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</span>
+      </a>
+
+      <a class="team-member reveal reveal-delay-3" href="https://www.instagram.com/mitsu_g07" target="_blank" rel="noopener">
+        <div class="team-photo">
+          <img src="images/shima.jpg" alt="mitsu_g07" onerror="this.remove()">
+          <span class="team-photo-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+        </div>
+        <div class="team-role">En el papel de Shima Asuka</div>
+        <div class="team-name">@mitsu_g07</div>
         <span class="team-ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</span>
       </a>
 
