@@ -3461,6 +3461,61 @@
       .equipo-members { grid-template-columns: 1fr; max-width: 260px; }
     }
 
+    /* ===== PREVIEW DE PERFIL IG (hover en tarjetas de reparto) ===== */
+    #ig-preview {
+      position: fixed; z-index: 260;
+      width: 250px;
+      padding: 22px 20px 20px;
+      border-radius: 18px;
+      background: linear-gradient(160deg, #2a1524, #1a0b14);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(214,41,118,0.15);
+      text-align: center;
+      opacity: 0; pointer-events: none;
+      transform: translateY(8px) scale(0.96);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      will-change: transform, opacity;
+    }
+    #ig-preview.show { opacity: 1; transform: translateY(0) scale(1); }
+    .igp-avatar-ring {
+      width: 92px; height: 92px; margin: 0 auto 14px;
+      border-radius: 50%;
+      background: conic-gradient(from 210deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5, #feda75);
+      padding: 3px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .igp-avatar-ring > div {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: #1a0b14; padding: 3px;
+    }
+    .igp-avatar-ring img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;
+    }
+    .igp-handle {
+      font-family: 'Cinzel', serif; font-weight: 700;
+      font-size: 1.05rem; color: #fff; margin-bottom: 3px;
+    }
+    .igp-role {
+      font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 14px;
+    }
+    .igp-cta {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: 999px;
+      background: linear-gradient(95deg, #fa7e1e, #d62976, #962fbf);
+      color: #fff; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .igp-cta svg { width: 14px; height: 14px; }
+    #ig-preview .igp-arrow {
+      position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%) rotate(45deg);
+      width: 14px; height: 14px;
+      background: #1a0b14;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    @media (max-width: 620px) { #ig-preview { display: none; } }
+
     /* ===== CONTACTO ===== */
     #contacto {
       background: var(--black);
@@ -8239,6 +8294,73 @@
 
     </div>
   </section>
+
+  <!-- PREVIEW DE PERFIL INSTAGRAM (hover reparto) -->
+  <div id="ig-preview" aria-hidden="true">
+    <div class="igp-avatar-ring"><div><img id="igpImg" src="" alt=""></div></div>
+    <div class="igp-handle" id="igpHandle"></div>
+    <div class="igp-role" id="igpRole"></div>
+    <span class="igp-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Ver perfil</span>
+    <span class="igp-arrow"></span>
+  </div>
+
+  <script>
+  /* ===== PREVIEW DE PERFIL IG AL PASAR EL RATON ===== */
+  (function() {
+    var pop = document.getElementById('ig-preview');
+    if (!pop) return;
+    var img = document.getElementById('igpImg');
+    var handle = document.getElementById('igpHandle');
+    var role = document.getElementById('igpRole');
+    var cards = document.querySelectorAll('.equipo-members a.team-member');
+    var hideTimer = null;
+
+    function show(card) {
+      clearTimeout(hideTimer);
+      var cImg = card.querySelector('.team-photo img');
+      var cName = card.querySelector('.team-name');
+      var cRole = card.querySelector('.team-role');
+      img.src = cImg ? cImg.getAttribute('src') : '';
+      img.alt = cName ? cName.textContent : '';
+      handle.textContent = cName ? cName.textContent : '';
+      role.textContent = cRole ? cRole.textContent : '';
+
+      // Mostrar (fuera de pantalla) para medir, luego posicionar sobre la tarjeta
+      pop.style.visibility = 'hidden';
+      pop.classList.add('show');
+      var r = card.getBoundingClientRect();
+      var pw = pop.offsetWidth, ph = pop.offsetHeight;
+      var left = r.left + r.width / 2 - pw / 2;
+      left = Math.max(10, Math.min(left, window.innerWidth - pw - 10));
+      var top = r.top - ph - 14;
+      var arrow = pop.querySelector('.igp-arrow');
+      if (top < 10) {                 // sin sitio arriba: colócalo debajo
+        top = r.bottom + 14;
+        arrow.style.top = '-7px'; arrow.style.bottom = 'auto';
+        arrow.style.borderColor = 'transparent transparent rgba(255,255,255,0.08) rgba(255,255,255,0.08)';
+        arrow.style.transform = 'translateX(-50%) rotate(225deg)';
+      } else {
+        arrow.style.bottom = '-7px'; arrow.style.top = 'auto';
+        arrow.style.transform = 'translateX(-50%) rotate(45deg)';
+      }
+      pop.style.left = left + 'px';
+      pop.style.top = top + 'px';
+      // La flecha apunta al centro de la tarjeta
+      var ax = (r.left + r.width / 2) - left;
+      arrow.style.left = Math.max(14, Math.min(ax, pw - 14)) + 'px';
+      pop.style.visibility = 'visible';
+    }
+    function hide() {
+      hideTimer = setTimeout(function() { pop.classList.remove('show'); }, 60);
+    }
+
+    cards.forEach(function(card) {
+      card.addEventListener('mouseenter', function() { show(card); });
+      card.addEventListener('mouseleave', hide);
+    });
+    window.addEventListener('scroll', function() { pop.classList.remove('show'); }, { passive: true });
+  })();
+  </script>
 
 
 
