@@ -8443,13 +8443,10 @@
   <script>
   /* ===== CHAT COMUNITARIO (Firebase Realtime Database) ===== */
   (function() {
-    // ⬇️ PEGA AQUÍ la config de tu proyecto Firebase (Consola → Configuración → SDK web)
+    // Reutiliza el mismo proyecto Firebase del ranking (jjiv-35527).
+    // Para RTDB sin login solo hace falta la databaseURL.
     var firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_PROYECTO.firebaseapp.com",
-      databaseURL: "https://TU_PROYECTO-default-rtdb.firebaseio.com",
-      projectId: "TU_PROYECTO",
-      appId: "TU_APP_ID"
+      databaseURL: "https://jjiv-35527-default-rtdb.firebaseio.com"
     };
 
     var statusEl   = document.getElementById('chatStatus');
@@ -8479,7 +8476,7 @@
     }
 
     // Si no hay config real, deja la sala en modo "en construcción"
-    if (!firebaseConfig.databaseURL || firebaseConfig.apiKey === 'TU_API_KEY') {
+    if (!firebaseConfig.databaseURL || firebaseConfig.databaseURL.indexOf('TU_PROYECTO') !== -1) {
       showStatus('🛠️', 'Chat en construcción', 'La sala se activará muy pronto. ¡Vuelve en breve!');
       onlineEl.textContent = 'offline';
       return;
@@ -8513,7 +8510,7 @@
       return;
     }
 
-    var msgRef = db.ref('messages');
+    var msgRef = db.ref('jj4_chat_v1');
     var connReady = false;
 
     // Estado de conexión
@@ -8553,7 +8550,12 @@
       while (messagesEl.childNodes.length > 200) messagesEl.removeChild(messagesEl.firstChild);
       if (stick || own) messagesEl.scrollTop = messagesEl.scrollHeight;
     }
-    msgRef.limitToLast(100).on('child_added', function(snap) { addMessage(snap.val()); });
+    msgRef.limitToLast(100).on('child_added', function(snap) { addMessage(snap.val()); }, function(err) {
+      // Aún sin permisos en las reglas de la RTDB
+      showStatus('🛠️', 'Activando la sala', 'Falta habilitar los permisos del chat (regla jj4_chat_v1). Se activará al publicarlas.');
+      onlineEl.textContent = 'offline';
+      input.disabled = true; sendBtn.disabled = true;
+    });
 
     // ── Enviar ──
     var lastSent = 0;
