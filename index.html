@@ -3552,7 +3552,12 @@
       padding: 9px 13px; color: var(--white); font-size: 0.95rem; line-height: 1.5;
       word-break: break-word; white-space: pre-wrap;
     }
-    .cm-time { font-size: 0.6rem; color: var(--text-dim); margin-top: 3px; padding: 0 4px; }
+    .cm-time { font-size: 0.6rem; color: var(--text-dim); margin-top: 3px; padding: 0 4px; display: inline-flex; align-items: center; gap: 4px; }
+    /* Ticks de confirmación de lectura (estilo WhatsApp) */
+    .cm-ticks { display: inline-flex; align-items: center; color: rgba(244,241,250,0.4); }
+    .cm-ticks svg { width: 17px; height: 11px; display: block; }
+    .cm-ticks.sent .ck2 { display: none; }          /* ✓ enviando */
+    .cm-ticks.read { color: #53bdeb; }                /* ✓✓ azul: leído */
     .chat-msg.own { align-self: flex-end; align-items: flex-end; }
     .chat-msg.own .cm-name { color: #6C7BFF; }
     .chat-msg.own .cm-bubble {
@@ -8529,32 +8534,90 @@
       }
     });
 
+    // ── Confirmación de lectura (estilo WhatsApp) ──
+    var seenRef    = db.ref('jj4_chat_seen');
+    var myTicks    = {};   // key -> <span.cm-ticks> de mis mensajes
+    var pendingKeys= {};   // keys enviadas aún sin ack del servidor
+    var seenCache  = {};   // keys ya vistas por alguien
+    var markedSeen = {};   // keys que YO ya he marcado como vistas
+    var chatVisible= false;
+
+    function ticksSvg() {
+      return '<svg viewBox="0 0 20 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'
+           + '<path class="ck1" d="M1 6.4 L4.4 9.6 L10 3.2"/>'
+           + '<path class="ck2" d="M6 6.4 L9.4 9.6 L15 3.2"/></svg>';
+    }
+    function setTickState(key, state) {
+      var el = myTicks[key];
+      if (el) el.className = 'cm-ticks ' + state;
+    }
+    function markSeen(k) {
+      if (!k || markedSeen[k]) return;
+      markedSeen[k] = true;
+      seenRef.child(k).set(firebase.database.ServerValue.TIMESTAMP).catch(function() {});
+    }
+    function markAllVisible() {
+      if (!chatVisible || document.visibilityState !== 'visible') return;
+      messagesEl.querySelectorAll('.chat-msg:not(.own)[data-key]').forEach(function(el) {
+        markSeen(el.getAttribute('data-key'));
+      });
+    }
+
     // Render de mensajes (últimos 100, en tiempo real)
     function nearBottom() {
       return messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 80;
     }
-    function addMessage(m) {
+    function addMessage(key, m) {
       if (!m || typeof m.text !== 'string') return;
       var stick = nearBottom();
       var wrap = document.createElement('div');
       var own = (m.name === nick);
       wrap.className = 'chat-msg' + (own ? ' own' : '');
+      if (key) wrap.setAttribute('data-key', key);
       var t = m.ts ? new Date(m.ts) : new Date();
       var hh = ('0' + t.getHours()).slice(-2), mm = ('0' + t.getMinutes()).slice(-2);
       wrap.innerHTML =
         '<div class="cm-name">' + esc(m.name || 'Anón') + '</div>' +
         '<div class="cm-bubble">' + esc(m.text) + '</div>' +
         '<div class="cm-time">' + hh + ':' + mm + '</div>';
+      if (own && key) {
+        var state = pendingKeys[key] ? 'sent' : 'delivered';
+        if (seenCache[key]) state = 'read';
+        var tick = document.createElement('span');
+        tick.className = 'cm-ticks ' + state;
+        tick.innerHTML = ticksSvg();
+        wrap.querySelector('.cm-time').appendChild(tick);
+        myTicks[key] = tick;
+      }
       messagesEl.appendChild(wrap);
-      // Limita el DOM a 200 nodos
       while (messagesEl.childNodes.length > 200) messagesEl.removeChild(messagesEl.firstChild);
       if (stick || own) messagesEl.scrollTop = messagesEl.scrollHeight;
+      if (!own && key) markSeen(key);   // acabo de "leer" el mensaje de otro
     }
-    msgRef.limitToLast(100).on('child_added', function(snap) { addMessage(snap.val()); }, function(err) {
+    msgRef.limitToLast(100).on('child_added', function(snap) { addMessage(snap.key, snap.val()); }, function(err) {
       // Aún sin permisos en las reglas de la RTDB
-      showStatus('🛠️', 'Activando la sala', 'Falta habilitar los permisos del chat (regla jj4_chat_v1). Se activará al publicarlas.');
+      showStatus('🛠️', 'Activando la sala', 'Falta habilitar los permisos del chat (reglas jj4_chat_v1 / jj4_chat_seen). Se activará al publicarlas.');
       onlineEl.textContent = 'offline';
       input.disabled = true; sendBtn.disabled = true;
+    });
+
+    // Cuando alguien marca un mensaje como visto → pon mis ticks en azul
+    seenRef.on('child_added', function(snap) {
+      seenCache[snap.key] = true;
+      if (myTicks[snap.key]) setTickState(snap.key, 'read');
+    }, function() {});
+
+    // Marca "visto" cuando el chat está a la vista / la pestaña vuelve a foco
+    try {
+      var io = new IntersectionObserver(function(entries) {
+        chatVisible = entries[0].isIntersecting;
+        if (chatVisible) markAllVisible();
+      }, { threshold: 0.15 });
+      var box = document.querySelector('#chat .chat-box');
+      if (box) io.observe(box); else chatVisible = true;
+    } catch (e) { chatVisible = true; }
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') markAllVisible();
     });
 
     // ── Enviar ──
@@ -8567,12 +8630,17 @@
       if (now - lastSent < 1200) return;   // anti-spam básico
       lastSent = now;
       input.value = '';
-      msgRef.push({
+      var ref = msgRef.push({
         name: nick.slice(0, 24),
         text: text,
         ts: firebase.database.ServerValue.TIMESTAMP
+      });
+      pendingKeys[ref.key] = true;   // ✓ enviando hasta que el servidor confirme
+      ref.then(function() {
+        delete pendingKeys[ref.key];
+        setTickState(ref.key, seenCache[ref.key] ? 'read' : 'delivered');   // ✓✓ entregado
       }).catch(function() {
-        addMessage({ name: 'sistema', text: 'No se pudo enviar el mensaje.', ts: Date.now() });
+        addMessage(null, { name: 'sistema', text: 'No se pudo enviar el mensaje.', ts: Date.now() });
       });
     }
     sendBtn.addEventListener('click', send);
