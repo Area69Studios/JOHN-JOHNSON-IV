@@ -3516,6 +3516,99 @@
     }
     @media (max-width: 620px) { #ig-preview { display: none; } }
 
+    /* ===== CHAT COMUNITARIO ===== */
+    #chat { background: var(--black); position: relative; }
+    .chat-header { text-align: center; max-width: 760px; margin: 0 auto 40px; }
+    .chat-wrap { max-width: 760px; margin: 0 auto; }
+    .chat-box {
+      display: flex; flex-direction: column;
+      height: 540px; max-height: 72vh;
+      border: 1px solid rgba(185,90,228,0.22);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.02);
+      box-shadow: 0 30px 70px rgba(0,0,0,0.5), inset 0 0 60px rgba(185,90,228,0.03);
+      overflow: hidden;
+    }
+    .chat-topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 16px; border-bottom: 1px solid rgba(185,90,228,0.15);
+      font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .chat-online { display: inline-flex; align-items: center; gap: 7px; color: var(--gold); }
+    .chat-online::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #4fd18a; box-shadow: 0 0 8px #4fd18a; }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 18px;
+      display: flex; flex-direction: column; gap: 12px;
+      scrollbar-width: thin; scrollbar-color: rgba(185,90,228,0.4) transparent;
+    }
+    .chat-messages::-webkit-scrollbar { width: 8px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(185,90,228,0.3); border-radius: 8px; }
+    .chat-msg { max-width: 80%; display: flex; flex-direction: column; }
+    .cm-name { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.04em; margin-bottom: 3px; padding: 0 4px; }
+    .cm-bubble {
+      background: rgba(185,90,228,0.09);
+      border: 1px solid rgba(185,90,228,0.16);
+      border-radius: 4px 14px 14px 14px;
+      padding: 9px 13px; color: var(--white); font-size: 0.95rem; line-height: 1.5;
+      word-break: break-word; white-space: pre-wrap;
+    }
+    .cm-time { font-size: 0.6rem; color: var(--text-dim); margin-top: 3px; padding: 0 4px; }
+    .chat-msg.own { align-self: flex-end; align-items: flex-end; }
+    .chat-msg.own .cm-name { color: #6C7BFF; }
+    .chat-msg.own .cm-bubble {
+      background: linear-gradient(120deg, rgba(255,60,172,0.16), rgba(108,123,255,0.16));
+      border-color: rgba(108,123,255,0.28);
+      border-radius: 14px 4px 14px 14px;
+    }
+    .chat-sys { align-self: center; font-size: 0.72rem; color: var(--text-dim); font-style: italic; }
+    .chat-input-row { display: flex; gap: 10px; padding: 14px; border-top: 1px solid rgba(185,90,228,0.15); }
+    .chat-input {
+      flex: 1; min-width: 0;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(185,90,228,0.25); border-radius: 999px;
+      padding: 11px 18px; color: var(--white); font-size: 0.95rem;
+      font-family: inherit; outline: none; transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: var(--gold); }
+    .chat-input:disabled { opacity: 0.5; cursor: not-allowed; }
+    .chat-send {
+      flex: none; cursor: pointer; border: none;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: linear-gradient(120deg, #FF3CAC, #A24BFF);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+    .chat-send:hover { transform: scale(1.06); box-shadow: 0 6px 18px rgba(162,75,255,0.5); }
+    .chat-send:active { transform: scale(0.95); }
+    .chat-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .chat-send svg { width: 20px; height: 20px; }
+    /* Barra de apodo */
+    .chat-nick {
+      display: flex; gap: 10px; align-items: center; justify-content: center;
+      margin: 0 auto 18px; max-width: 760px; flex-wrap: wrap;
+    }
+    .chat-nick span { font-size: 0.8rem; color: var(--text-dim); }
+    .chat-nick .cn-current { color: var(--gold); font-weight: 700; }
+    .chat-nick input {
+      background: rgba(0,0,0,0.35); border: 1px solid rgba(185,90,228,0.25); border-radius: 999px;
+      padding: 8px 16px; color: var(--white); font-size: 0.85rem; outline: none; width: 180px;
+    }
+    .chat-nick button {
+      cursor: pointer; border: 1px solid rgba(185,90,228,0.4); background: none;
+      color: var(--gold); border-radius: 999px; padding: 8px 18px;
+      font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; transition: all 0.2s;
+    }
+    .chat-nick button:hover { background: rgba(185,90,228,0.1); border-color: var(--gold); }
+    /* Estado sin configurar / cargando */
+    .chat-status {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; text-align: center; padding: 40px; color: var(--text-dim);
+    }
+    .chat-status .cs-icon { font-size: 2.4rem; opacity: 0.6; }
+    .chat-status .cs-title { font-family: 'Cinzel', serif; color: var(--white); font-size: 1.1rem; }
+    .chat-disclaimer { text-align: center; margin: 16px auto 0; max-width: 620px; font-size: 0.72rem; color: rgba(244,241,250,0.4); line-height: 1.6; }
+    @media (max-width: 600px) { .chat-box { height: 60vh; } .chat-msg { max-width: 90%; } }
+
     /* ===== CONTACTO ===== */
     #contacto {
       background: var(--black);
@@ -6212,6 +6305,7 @@
       <li><a href="#glosario">Glosario</a></li>
       <li><a href="#tiraera" class="nav-tiraera">Tiraera</a></li>
       <li><a href="#equipo">Equipo</a></li>
+      <li><a href="#chat">Chat</a></li>
       <li><a href="#ranking" class="nav-vote-btn">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Vota ya
@@ -8300,6 +8394,189 @@
 
     </div>
   </section>
+
+  <!-- CHAT COMUNITARIO -->
+  <section id="chat">
+    <div class="chat-header">
+      <p class="section-label reveal" style="justify-content:center;">La comunidad</p>
+      <h2 class="section-title reveal reveal-delay-1">La Sala</h2>
+      <p class="reveal reveal-delay-2" style="color:var(--text-dim);margin-top:10px;">Habla en directo con el resto de la comunidad de John Johnson.</p>
+    </div>
+
+    <div class="chat-nick reveal" id="chatNick" style="display:none;">
+      <span>Escribes como <span class="cn-current" id="chatNickCurrent">—</span></span>
+      <input id="chatNickInput" type="text" maxlength="24" placeholder="Tu apodo…" autocomplete="off">
+      <button id="chatNickSave" type="button">Cambiar</button>
+    </div>
+
+    <div class="chat-wrap reveal reveal-delay-2">
+      <div class="chat-box">
+        <div class="chat-topbar">
+          <span>💬 Chat en vivo</span>
+          <span class="chat-online" id="chatOnline">conectando…</span>
+        </div>
+
+        <!-- Estado inicial (sin configurar / cargando) -->
+        <div class="chat-status" id="chatStatus">
+          <div class="cs-icon">💬</div>
+          <div class="cs-title">Preparando la sala…</div>
+          <div id="chatStatusMsg">Conectando con el chat.</div>
+        </div>
+
+        <!-- Mensajes (oculto hasta que hay conexión) -->
+        <div class="chat-messages" id="chatMessages" style="display:none;"></div>
+
+        <div class="chat-input-row" id="chatInputRow" style="display:none;">
+          <input class="chat-input" id="chatInput" type="text" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" disabled>
+          <button class="chat-send" id="chatSend" type="button" aria-label="Enviar" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="chat-disclaimer">Chat público. Sé respetuoso: no compartas datos personales ni contenido ofensivo. Los mensajes los pueden ver todos y quedan moderados.</p>
+    </div>
+  </section>
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+  /* ===== CHAT COMUNITARIO (Firebase Realtime Database) ===== */
+  (function() {
+    // ⬇️ PEGA AQUÍ la config de tu proyecto Firebase (Consola → Configuración → SDK web)
+    var firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_PROYECTO.firebaseapp.com",
+      databaseURL: "https://TU_PROYECTO-default-rtdb.firebaseio.com",
+      projectId: "TU_PROYECTO",
+      appId: "TU_APP_ID"
+    };
+
+    var statusEl   = document.getElementById('chatStatus');
+    var statusMsg  = document.getElementById('chatStatusMsg');
+    var messagesEl = document.getElementById('chatMessages');
+    var inputRow   = document.getElementById('chatInputRow');
+    var input      = document.getElementById('chatInput');
+    var sendBtn    = document.getElementById('chatSend');
+    var onlineEl   = document.getElementById('chatOnline');
+    var nickBar    = document.getElementById('chatNick');
+    var nickCurrent= document.getElementById('chatNickCurrent');
+    var nickInput  = document.getElementById('chatNickInput');
+    var nickSave   = document.getElementById('chatNickSave');
+
+    function showStatus(icon, title, msg) {
+      statusEl.style.display = 'flex';
+      messagesEl.style.display = 'none';
+      inputRow.style.display = 'none';
+      statusEl.querySelector('.cs-icon').textContent = icon;
+      statusEl.querySelector('.cs-title').textContent = title;
+      statusMsg.textContent = msg;
+    }
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function(m) {
+        return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m];
+      });
+    }
+
+    // Si no hay config real, deja la sala en modo "en construcción"
+    if (!firebaseConfig.databaseURL || firebaseConfig.apiKey === 'TU_API_KEY') {
+      showStatus('🛠️', 'Chat en construcción', 'La sala se activará muy pronto. ¡Vuelve en breve!');
+      onlineEl.textContent = 'offline';
+      return;
+    }
+
+    // ── Apodo ──
+    var nick = '';
+    try { nick = localStorage.getItem('jj4_chat_nick') || ''; } catch(e) {}
+    function randomNick() { return 'Anón' + Math.floor(1000 + Math.random() * 9000); }
+    function setNick(n) {
+      n = (n || '').trim().slice(0, 24) || randomNick();
+      nick = n;
+      try { localStorage.setItem('jj4_chat_nick', nick); } catch(e) {}
+      nickCurrent.textContent = nick;
+    }
+    if (!nick) setNick(randomNick()); else nickCurrent.textContent = nick;
+    nickBar.style.display = 'flex';
+    nickSave.addEventListener('click', function() {
+      if (nickInput.value.trim()) { setNick(nickInput.value); nickInput.value = ''; }
+    });
+    nickInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') nickSave.click(); });
+
+    // ── Firebase init ──
+    var db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch (e) {
+      showStatus('⚠️', 'No se pudo conectar', 'Revisa la configuración de Firebase.');
+      onlineEl.textContent = 'error';
+      return;
+    }
+
+    var msgRef = db.ref('messages');
+    var connReady = false;
+
+    // Estado de conexión
+    db.ref('.info/connected').on('value', function(snap) {
+      if (snap.val() === true) {
+        onlineEl.textContent = 'en línea';
+        if (!connReady) {
+          connReady = true;
+          statusEl.style.display = 'none';
+          messagesEl.style.display = 'flex';
+          inputRow.style.display = 'flex';
+          input.disabled = false; sendBtn.disabled = false;
+        }
+      } else {
+        onlineEl.textContent = 'reconectando…';
+      }
+    });
+
+    // Render de mensajes (últimos 100, en tiempo real)
+    function nearBottom() {
+      return messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 80;
+    }
+    function addMessage(m) {
+      if (!m || typeof m.text !== 'string') return;
+      var stick = nearBottom();
+      var wrap = document.createElement('div');
+      var own = (m.name === nick);
+      wrap.className = 'chat-msg' + (own ? ' own' : '');
+      var t = m.ts ? new Date(m.ts) : new Date();
+      var hh = ('0' + t.getHours()).slice(-2), mm = ('0' + t.getMinutes()).slice(-2);
+      wrap.innerHTML =
+        '<div class="cm-name">' + esc(m.name || 'Anón') + '</div>' +
+        '<div class="cm-bubble">' + esc(m.text) + '</div>' +
+        '<div class="cm-time">' + hh + ':' + mm + '</div>';
+      messagesEl.appendChild(wrap);
+      // Limita el DOM a 200 nodos
+      while (messagesEl.childNodes.length > 200) messagesEl.removeChild(messagesEl.firstChild);
+      if (stick || own) messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+    msgRef.limitToLast(100).on('child_added', function(snap) { addMessage(snap.val()); });
+
+    // ── Enviar ──
+    var lastSent = 0;
+    function send() {
+      var text = input.value.trim();
+      if (!text) return;
+      if (text.length > 300) text = text.slice(0, 300);
+      var now = Date.now();
+      if (now - lastSent < 1200) return;   // anti-spam básico
+      lastSent = now;
+      input.value = '';
+      msgRef.push({
+        name: nick.slice(0, 24),
+        text: text,
+        ts: firebase.database.ServerValue.TIMESTAMP
+      }).catch(function() {
+        addMessage({ name: 'sistema', text: 'No se pudo enviar el mensaje.', ts: Date.now() });
+      });
+    }
+    sendBtn.addEventListener('click', send);
+    input.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+  })();
+  </script>
 
   <!-- PREVIEW DE PERFIL INSTAGRAM (hover reparto) -->
   <div id="ig-preview" aria-hidden="true">
@@ -11756,7 +12033,7 @@
   <script>
   /* ===== SECTION DIVIDERS ===== */
   (function() {
-    var sectionIds = ['estreno','sinopsis','capitulos','personajes','quiz','ranking','galeria','glosario','tiraera','equipo'];
+    var sectionIds = ['estreno','sinopsis','capitulos','personajes','quiz','ranking','galeria','glosario','tiraera','equipo','chat'];
 
     sectionIds.forEach(function(id) {
       var el = document.getElementById(id);
