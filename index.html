@@ -10141,6 +10141,11 @@
     var slideTimer = null;
     var slideIndex = 0;
 
+    // ── Easter egg: al entrar en la página, pequeña probabilidad de desbloquear a Panda ──
+    var PANDA_CHANCE = 0.08;               // ~8% por visita
+    var pandaMode = Math.random() < PANDA_CHANCE;
+    var PANDA_IMG = 'images/panda.jpg?v=2';
+
     // Baraja de personajes disponibles
     (function() {
       var row = document.getElementById('quizCharsRow');
@@ -10347,6 +10352,14 @@
         fullname: 'Meregildo Smith',
         desc: 'Eres un enigma tranquilo. Habitas al margen del mundo, inmóvil y sereno, y aun así inspiras una confianza que nadie sabe explicar. No necesitas moverte para dejar huella: tu calma y tu hospitalidad valen más que mil gestos, y tu pasado es un misterio que a todos intriga.',
         tags: ['Misterio', 'Serenidad', 'Hospitalidad', 'Lealtad']
+      },
+      // ── Personaje secreto (easter egg) ──
+      panda: {
+        name: 'Panda',
+        fullname: 'Personaje secreto',
+        desc: 'Enhorabuena: has desbloqueado al personaje más raro de la saga. Diste tu palabra, aceptaste todo… y desapareciste sin decir nada. No lideras, no analizas, no luchas: te esfumas. Eres el rajado oficial, el fantasma del grupo. Que hayas salido tú es pura mala suerte… o justicia poética.',
+        tags: ['Secreto', 'Rajado', 'Fantasma', '???'],
+        panda: true
       }
     };
 
@@ -10391,38 +10404,40 @@
       var winner = Object.keys(scores).reduce(function(a, b) {
         return scores[a] >= scores[b] ? a : b;
       });
+      if (pandaMode) winner = 'panda';   // easter egg
       var c = characters[winner];
 
       // ── Carrusel de retratos ──
-      var sourceProfile = document.querySelector('.char-profile[data-char="' + winner + '"]');
+      var sourceProfile = winner === 'panda' ? null : document.querySelector('.char-profile[data-char="' + winner + '"]');
       var slidesContainer = document.getElementById('quizPortraitSlides');
       slidesContainer.innerHTML = '';
       if (slideTimer) { clearInterval(slideTimer); slideTimer = null; }
       slideIndex = 0;
-      if (sourceProfile) {
+      var srcs = [];
+      if (winner === 'panda') {
+        srcs = [PANDA_IMG];
+      } else if (sourceProfile) {
         // Solo los retratos del personaje; excluye la bandera (.char-flag) y otras imgs de la ficha
-        var allImgs = sourceProfile.querySelectorAll('.char-profile-visuals img');
-        var srcs = [];
-        allImgs.forEach(function(img) {
+        sourceProfile.querySelectorAll('.char-profile-visuals img').forEach(function(img) {
           if (img.src && !img.classList.contains('char-flag')) srcs.push(img.src);
         });
-        if (srcs.length) {
-          srcs.forEach(function(src, i) {
-            var slide = document.createElement('div');
-            slide.className = 'quiz-portrait-slide' + (i === 0 ? ' active' : '');
-            var img = document.createElement('img');
-            img.src = src; img.alt = c.name;
-            slide.appendChild(img);
-            slidesContainer.appendChild(slide);
-          });
-          if (srcs.length > 1) {
-            slideTimer = setInterval(function() {
-              var slides = slidesContainer.querySelectorAll('.quiz-portrait-slide');
-              slides[slideIndex].classList.remove('active');
-              slideIndex = (slideIndex + 1) % slides.length;
-              slides[slideIndex].classList.add('active');
-            }, 3000);
-          }
+      }
+      if (srcs.length) {
+        srcs.forEach(function(src, i) {
+          var slide = document.createElement('div');
+          slide.className = 'quiz-portrait-slide' + (i === 0 ? ' active' : '');
+          var img = document.createElement('img');
+          img.src = src; img.alt = c.name;
+          slide.appendChild(img);
+          slidesContainer.appendChild(slide);
+        });
+        if (srcs.length > 1) {
+          slideTimer = setInterval(function() {
+            var slides = slidesContainer.querySelectorAll('.quiz-portrait-slide');
+            slides[slideIndex].classList.remove('active');
+            slideIndex = (slideIndex + 1) % slides.length;
+            slides[slideIndex].classList.add('active');
+          }, 3000);
         }
       }
 
@@ -10450,6 +10465,14 @@
 
       // Barras de afinidad con target guardado en data
       affinityEl.innerHTML = '';
+      if (winner === 'panda') {
+        // Easter egg: sin barras, mensaje de personaje secreto
+        var egg = document.createElement('div');
+        egg.className = 'quiz-affinity-label';
+        egg.style.cssText = 'color:#FF5470;line-height:1.7;text-align:center;letter-spacing:0.06em;';
+        egg.innerHTML = '🐼 Has desbloqueado un <strong>personaje secreto</strong><br>Probabilidad: ~' + Math.round(PANDA_CHANCE * 100) + '% cada vez que entras en la web';
+        affinityEl.appendChild(egg);
+      } else {
       var afLabel = document.createElement('div');
       afLabel.className = 'quiz-affinity-label';
       afLabel.textContent = 'Afinidad con cada personaje';
@@ -10483,6 +10506,7 @@
         row.appendChild(nm); row.appendChild(track); row.appendChild(pctEl);
         affinityEl.appendChild(row);
       });
+      }
 
       document.getElementById('quizProgressFill').style.width = '100%';
 
@@ -10631,6 +10655,7 @@
       var winner = Object.keys(scores).reduce(function(a, b) {
         return scores[a] >= scores[b] ? a : b;
       });
+      if (pandaMode) winner = 'panda';   // easter egg
       var c = characters[winner];
 
       var charOrder = [
@@ -10656,8 +10681,15 @@
       canvas.width = W; canvas.height = H;
       var ctx = canvas.getContext('2d');
 
-      var sourceProfile = document.querySelector('.char-profile[data-char="' + winner + '"]');
-      var charImg = sourceProfile ? sourceProfile.querySelector('.char-profile-visuals img') : null;
+      var sourceProfile = winner === 'panda' ? null : document.querySelector('.char-profile[data-char="' + winner + '"]');
+      var charImg;
+      if (winner === 'panda') {
+        var _pdom = document.querySelector('.tiraera-card img');
+        if (_pdom && _pdom.complete && _pdom.naturalWidth) { charImg = _pdom; }
+        else { charImg = new Image(); charImg.src = PANDA_IMG; }
+      } else {
+        charImg = sourceProfile ? sourceProfile.querySelector('.char-profile-visuals img') : null;
+      }
 
       function drawCanvas() {
         // Fondo base
