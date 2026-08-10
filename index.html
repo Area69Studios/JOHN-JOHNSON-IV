@@ -3553,15 +3553,25 @@
     .chat-presence .cp-dot { width: 7px; height: 7px; border-radius: 50%; background: #4fd18a; box-shadow: 0 0 6px #4fd18a; flex: none; }
     .chat-presence strong { color: var(--gold); }
     .chat-presence .cp-names { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    /* Acciones editar/borrar en tus mensajes */
-    .cm-actions { position: absolute; top: -10px; right: 2px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
-    .chat-msg:hover .cm-actions { opacity: 1; }
-    .cm-act {
-      cursor: pointer; background: rgba(18,9,18,0.92);
-      border: 1px solid rgba(185,90,228,0.3); border-radius: 7px;
-      padding: 2px 6px; font-size: 0.72rem; line-height: 1;
+    /* Menú contextual (clic derecho) para editar/borrar tus mensajes */
+    #chatCtxMenu {
+      position: fixed; z-index: 400; min-width: 140px;
+      background: #1a0b14; border: 1px solid rgba(185,90,228,0.3);
+      border-radius: 11px; padding: 5px;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.6);
+      opacity: 0; transform: scale(0.95); pointer-events: none;
+      transition: opacity 0.12s ease, transform 0.12s ease;
     }
-    .cm-act:hover { border-color: var(--gold); }
+    #chatCtxMenu.show { opacity: 1; transform: scale(1); pointer-events: auto; }
+    .ctx-item {
+      display: flex; align-items: center; gap: 9px; width: 100%;
+      text-align: left; cursor: pointer; background: none; border: none;
+      color: var(--white); font-family: inherit; font-size: 0.85rem;
+      padding: 8px 12px; border-radius: 7px;
+    }
+    .ctx-item:hover { background: rgba(185,90,228,0.12); }
+    .ctx-item.danger { color: #ff6b6b; }
+    .ctx-item.danger:hover { background: rgba(255,60,60,0.12); }
     .cm-bubble.deleted { font-style: italic; color: var(--text-dim); background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.07); }
     .cm-edited { opacity: 0.7; font-style: italic; }
     /* Banner de edición */
@@ -8484,6 +8494,11 @@
       </div>
       <p class="chat-disclaimer">Chat público. Sé respetuoso: no compartas datos personales ni contenido ofensivo. Los mensajes los pueden ver todos y quedan moderados.</p>
     </div>
+    <!-- Menú contextual del chat (clic derecho en tus mensajes) -->
+    <div id="chatCtxMenu">
+      <button class="ctx-item" data-act="edit">✏️ Editar</button>
+      <button class="ctx-item danger" data-act="del">🗑️ Borrar</button>
+    </div>
   </section>
 
   <!-- Firebase SDK (compat) -->
@@ -8721,11 +8736,6 @@
         tick.innerHTML = ticksSvg();
         wrap.querySelector('.cm-time').appendChild(tick);
         myTicks[key] = tick;
-        var acts = document.createElement('div');
-        acts.className = 'cm-actions';
-        acts.innerHTML = '<button class="cm-act" data-act="edit" title="Editar">✏️</button>'
-                       + '<button class="cm-act" data-act="del" title="Borrar">🗑️</button>';
-        wrap.appendChild(acts);
       }
       if (!existing) {
         if (key) msgNodes[key] = wrap;
@@ -8793,13 +8803,31 @@
       editingKey = null; input.value = ''; editBanner.style.display = 'none';
     }
     editCancel.addEventListener('click', cancelEdit);
-    messagesEl.addEventListener('click', function(e) {
-      var btn = e.target.closest ? e.target.closest('.cm-act') : null;
-      if (!btn) return;
-      var wrap = btn.closest('.chat-msg');
+
+    // Menú contextual (clic derecho) sobre tus propios mensajes
+    var ctxMenu = document.getElementById('chatCtxMenu');
+    var ctxKey = null;
+    function hideCtx() { ctxMenu.classList.remove('show'); ctxKey = null; }
+    messagesEl.addEventListener('contextmenu', function(e) {
+      var wrap = e.target.closest ? e.target.closest('.chat-msg') : null;
       var key = wrap && wrap.getAttribute('data-key');
-      if (!key) return;
-      var act = btn.getAttribute('data-act');
+      var m = key && msgData[key];
+      if (!m || !isOwn(m) || m.deleted) { hideCtx(); return; }   // solo tus mensajes no borrados
+      e.preventDefault();
+      ctxKey = key;
+      ctxMenu.classList.add('show');
+      // Posiciona en el cursor, dentro de la ventana
+      var mw = ctxMenu.offsetWidth, mh = ctxMenu.offsetHeight;
+      var x = Math.min(e.clientX, window.innerWidth - mw - 8);
+      var y = Math.min(e.clientY, window.innerHeight - mh - 8);
+      ctxMenu.style.left = Math.max(8, x) + 'px';
+      ctxMenu.style.top = Math.max(8, y) + 'px';
+    });
+    ctxMenu.addEventListener('click', function(e) {
+      var btn = e.target.closest ? e.target.closest('.ctx-item') : null;
+      if (!btn || !ctxKey) return;
+      var key = ctxKey, act = btn.getAttribute('data-act');
+      hideCtx();
       if (act === 'edit') startEdit(key);
       else if (act === 'del') {
         if (confirm('¿Borrar este mensaje para todos?')) {
@@ -8808,6 +8836,9 @@
         }
       }
     });
+    document.addEventListener('click', function(e) { if (!ctxMenu.contains(e.target)) hideCtx(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideCtx(); });
+    messagesEl.addEventListener('scroll', hideCtx, { passive: true });
 
     // ── Enviar / guardar edición ──
     var lastSent = 0;
