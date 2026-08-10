@@ -3544,6 +3544,34 @@
     }
     .chat-mute:hover { color: var(--gold); transform: scale(1.12); }
     .chat-mute.muted { opacity: 0.65; }
+    /* Presencia: quién está en la sala */
+    .chat-presence {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 16px; font-size: 0.72rem; color: var(--text-dim);
+      border-bottom: 1px solid rgba(185,90,228,0.1); min-width: 0;
+    }
+    .chat-presence .cp-dot { width: 7px; height: 7px; border-radius: 50%; background: #4fd18a; box-shadow: 0 0 6px #4fd18a; flex: none; }
+    .chat-presence strong { color: var(--gold); }
+    .chat-presence .cp-names { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* Acciones editar/borrar en tus mensajes */
+    .cm-actions { position: absolute; top: -10px; right: 2px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+    .chat-msg:hover .cm-actions { opacity: 1; }
+    .cm-act {
+      cursor: pointer; background: rgba(18,9,18,0.92);
+      border: 1px solid rgba(185,90,228,0.3); border-radius: 7px;
+      padding: 2px 6px; font-size: 0.72rem; line-height: 1;
+    }
+    .cm-act:hover { border-color: var(--gold); }
+    .cm-bubble.deleted { font-style: italic; color: var(--text-dim); background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.07); }
+    .cm-edited { opacity: 0.7; font-style: italic; }
+    /* Banner de edición */
+    .chat-editing {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 16px; font-size: 0.75rem; color: var(--gold);
+      border-top: 1px solid rgba(185,90,228,0.15); background: rgba(185,90,228,0.05);
+    }
+    .chat-editing button { margin-left: auto; cursor: pointer; background: none; border: none; color: var(--text-dim); text-decoration: underline; font-size: 0.72rem; }
+    .chat-editing button:hover { color: var(--gold); }
     .chat-messages {
       flex: 1; overflow-y: auto; padding: 18px;
       display: flex; flex-direction: column; gap: 12px;
@@ -3551,7 +3579,7 @@
     }
     .chat-messages::-webkit-scrollbar { width: 8px; }
     .chat-messages::-webkit-scrollbar-thumb { background: rgba(185,90,228,0.3); border-radius: 8px; }
-    .chat-msg { max-width: 80%; display: flex; flex-direction: column; }
+    .chat-msg { max-width: 80%; display: flex; flex-direction: column; position: relative; }
     .cm-name { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.04em; margin-bottom: 3px; padding: 0 4px; }
     .cm-bubble {
       background: rgba(185,90,228,0.09);
@@ -8431,6 +8459,7 @@
             <button class="chat-mute" id="chatMute" type="button" aria-label="Silenciar sonidos del chat" title="Silenciar sonidos del chat">🔊</button>
           </span>
         </div>
+        <div class="chat-presence" id="chatPresence" style="display:none;"></div>
 
         <!-- Estado inicial (sin configurar / cargando) -->
         <div class="chat-status" id="chatStatus">
@@ -8442,6 +8471,10 @@
         <!-- Mensajes (oculto hasta que hay conexión) -->
         <div class="chat-messages" id="chatMessages" style="display:none;"></div>
 
+        <div class="chat-editing" id="chatEditing" style="display:none;">
+          ✏️ Editando mensaje
+          <button id="chatEditCancel" type="button">cancelar</button>
+        </div>
         <div class="chat-input-row" id="chatInputRow" style="display:none;">
           <input class="chat-input" id="chatInput" type="text" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" disabled>
           <button class="chat-send" id="chatSend" type="button" aria-label="Enviar" disabled>
@@ -8545,7 +8578,14 @@
       return;
     }
 
-    // ── Apodo ──
+    // ── Identidad: apodo + id persistente del navegador ──
+    var myUid = '';
+    try { myUid = localStorage.getItem('jj4_chat_uid') || ''; } catch(e) {}
+    if (!myUid) {
+      myUid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      try { localStorage.setItem('jj4_chat_uid', myUid); } catch(e) {}
+    }
+    var myPres = null;   // se asigna al conectar (presencia)
     var nick = '';
     try { nick = localStorage.getItem('jj4_chat_nick') || ''; } catch(e) {}
     function randomNick() { return 'Anón' + Math.floor(1000 + Math.random() * 9000); }
@@ -8554,6 +8594,7 @@
       nick = n;
       try { localStorage.setItem('jj4_chat_nick', nick); } catch(e) {}
       nickCurrent.textContent = nick;
+      if (myPres) myPres.update({ name: nick, ts: firebase.database.ServerValue.TIMESTAMP }).catch(function(){});
     }
     if (!nick) setNick(randomNick()); else nickCurrent.textContent = nick;
     nickBar.style.display = 'flex';
@@ -8576,10 +8617,37 @@
     var msgRef = db.ref('jj4_chat_v1');
     var connReady = false;
 
+    // ── Presencia: quién está en la sala ──
+    var presRef = db.ref('jj4_chat_presence');
+    var presenceEl = document.getElementById('chatPresence');
+    myPres = presRef.child(myUid);
+    function setupPresence() {
+      try {
+        myPres.onDisconnect().remove();
+        myPres.set({ name: nick, ts: firebase.database.ServerValue.TIMESTAMP });
+      } catch (e) {}
+    }
+    setInterval(function() {
+      if (myPres) myPres.update({ name: nick, ts: firebase.database.ServerValue.TIMESTAMP }).catch(function(){});
+    }, 30000);
+    presRef.on('value', function(snap) {
+      var now = Date.now(), names = [];
+      snap.forEach(function(ch) {
+        var v = ch.val() || {};
+        if (v.ts && (now - v.ts) < 130000) names.push(v.name || 'Anón');
+      });
+      var seen = {}; names = names.filter(function(n) { if (seen[n]) return false; seen[n] = true; return true; });
+      if (!names.length) { presenceEl.style.display = 'none'; return; }
+      presenceEl.style.display = 'flex';
+      var shown = names.slice(0, 8).join(', ') + (names.length > 8 ? ' y ' + (names.length - 8) + ' más' : '');
+      presenceEl.innerHTML = '<span class="cp-dot"></span><strong>' + names.length + '</strong>&nbsp;en la sala · <span class="cp-names">' + esc(shown) + '</span>';
+    }, function(){});
+
     // Estado de conexión
     db.ref('.info/connected').on('value', function(snap) {
       if (snap.val() === true) {
         onlineEl.textContent = 'en línea';
+        setupPresence();
         if (!connReady) {
           connReady = true;
           statusEl.style.display = 'none';
@@ -8625,40 +8693,67 @@
     function nearBottom() {
       return messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 80;
     }
-    function addMessage(key, m) {
+    var msgNodes = {};   // key -> elemento del mensaje
+    var msgData  = {};   // key -> datos del mensaje (para editar)
+    function isOwn(m) { return (m.uid && m.uid === myUid) || (!m.uid && m.name === nick); }
+
+    function renderMessage(key, m, isNew) {
       if (!m || typeof m.text !== 'string') return;
+      if (key) msgData[key] = m;
+      var own = isOwn(m);
+      var existing = key ? msgNodes[key] : null;
       var stick = nearBottom();
-      var wrap = document.createElement('div');
-      var own = (m.name === nick);
+      var wrap = existing || document.createElement('div');
       wrap.className = 'chat-msg' + (own ? ' own' : '');
       if (key) wrap.setAttribute('data-key', key);
       var t = m.ts ? new Date(m.ts) : new Date();
       var hh = ('0' + t.getHours()).slice(-2), mm = ('0' + t.getMinutes()).slice(-2);
+      var bubble = m.deleted
+        ? '<div class="cm-bubble deleted">🚫 Mensaje eliminado</div>'
+        : '<div class="cm-bubble">' + esc(m.text) + '</div>';
       wrap.innerHTML =
-        '<div class="cm-name">' + esc(m.name || 'Anón') + '</div>' +
-        '<div class="cm-bubble">' + esc(m.text) + '</div>' +
-        '<div class="cm-time">' + hh + ':' + mm + '</div>';
-      if (own && key) {
-        var state = pendingKeys[key] ? 'sent' : 'delivered';
-        if (seenCache[key]) state = 'read';
+        '<div class="cm-name">' + esc(m.name || 'Anón') + '</div>' + bubble +
+        '<div class="cm-time">' + hh + ':' + mm + (m.edited && !m.deleted ? ' <span class="cm-edited">editado</span>' : '') + '</div>';
+      if (own && key && !m.deleted) {
+        var state = pendingKeys[key] ? 'sent' : (seenCache[key] ? 'read' : 'delivered');
         var tick = document.createElement('span');
         tick.className = 'cm-ticks ' + state;
         tick.innerHTML = ticksSvg();
         wrap.querySelector('.cm-time').appendChild(tick);
         myTicks[key] = tick;
+        var acts = document.createElement('div');
+        acts.className = 'cm-actions';
+        acts.innerHTML = '<button class="cm-act" data-act="edit" title="Editar">✏️</button>'
+                       + '<button class="cm-act" data-act="del" title="Borrar">🗑️</button>';
+        wrap.appendChild(acts);
       }
-      messagesEl.appendChild(wrap);
-      while (messagesEl.childNodes.length > 200) messagesEl.removeChild(messagesEl.firstChild);
-      if (stick || own) messagesEl.scrollTop = messagesEl.scrollHeight;
-      if (!own && key) markSeen(key);   // acabo de "leer" el mensaje de otro
-      // Sonido solo para mensajes NUEVOS (no el historial que se carga al entrar)
-      if (initialLoaded && key) { if (own) playSend(); else playIncoming(); }
+      if (!existing) {
+        if (key) msgNodes[key] = wrap;
+        messagesEl.appendChild(wrap);
+        while (messagesEl.childNodes.length > 200) {
+          var first = messagesEl.firstChild;
+          var fk = first.getAttribute && first.getAttribute('data-key');
+          if (fk) { delete msgNodes[fk]; delete msgData[fk]; }
+          messagesEl.removeChild(first);
+        }
+        if (stick || own) messagesEl.scrollTop = messagesEl.scrollHeight;
+        if (!own && key && !m.deleted) markSeen(key);
+        if (isNew && initialLoaded && key) { if (own) playSend(); else playIncoming(); }
+      }
     }
-    msgRef.limitToLast(100).on('child_added', function(snap) { addMessage(snap.key, snap.val()); }, function(err) {
+
+    var q = msgRef.limitToLast(100);
+    q.on('child_added', function(snap) { renderMessage(snap.key, snap.val(), true); }, function(err) {
       // Aún sin permisos en las reglas de la RTDB
-      showStatus('🛠️', 'Activando la sala', 'Falta habilitar los permisos del chat (reglas jj4_chat_v1 / jj4_chat_seen). Se activará al publicarlas.');
+      showStatus('🛠️', 'Activando la sala', 'Falta habilitar los permisos del chat (reglas jj4_chat_v1 / jj4_chat_seen / jj4_chat_presence). Se activará al publicarlas.');
       onlineEl.textContent = 'offline';
       input.disabled = true; sendBtn.disabled = true;
+    });
+    q.on('child_changed', function(snap) { renderMessage(snap.key, snap.val(), false); });
+    q.on('child_removed', function(snap) {
+      var el = msgNodes[snap.key];
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+      delete msgNodes[snap.key]; delete msgData[snap.key];
     });
     // El historial inicial no suena; a partir de aquí, los mensajes nuevos sí
     msgRef.limitToLast(100).once('value', function() { initialLoaded = true; });
@@ -8682,12 +8777,51 @@
       if (document.visibilityState === 'visible') markAllVisible();
     });
 
-    // ── Enviar ──
+    // ── Editar / borrar (delegación de clics en tus mensajes) ──
+    var editingKey = null;
+    var editBanner = document.getElementById('chatEditing');
+    var editCancel = document.getElementById('chatEditCancel');
+    function startEdit(key) {
+      var m = msgData[key];
+      if (!m || m.deleted) return;
+      editingKey = key;
+      input.value = m.text;
+      input.focus();
+      editBanner.style.display = 'flex';
+    }
+    function cancelEdit() {
+      editingKey = null; input.value = ''; editBanner.style.display = 'none';
+    }
+    editCancel.addEventListener('click', cancelEdit);
+    messagesEl.addEventListener('click', function(e) {
+      var btn = e.target.closest ? e.target.closest('.cm-act') : null;
+      if (!btn) return;
+      var wrap = btn.closest('.chat-msg');
+      var key = wrap && wrap.getAttribute('data-key');
+      if (!key) return;
+      var act = btn.getAttribute('data-act');
+      if (act === 'edit') startEdit(key);
+      else if (act === 'del') {
+        if (confirm('¿Borrar este mensaje para todos?')) {
+          if (editingKey === key) cancelEdit();
+          msgRef.child(key).update({ text: '', deleted: true }).catch(function(){});
+        }
+      }
+    });
+
+    // ── Enviar / guardar edición ──
     var lastSent = 0;
     function send() {
       var text = input.value.trim();
-      if (!text) return;
+      if (!text) { if (editingKey) cancelEdit(); return; }
       if (text.length > 300) text = text.slice(0, 300);
+      // Guardar edición
+      if (editingKey) {
+        var k = editingKey; cancelEdit();
+        msgRef.child(k).update({ text: text, edited: true }).catch(function(){});
+        return;
+      }
+      // Mensaje nuevo
       var now = Date.now();
       if (now - lastSent < 1200) return;   // anti-spam básico
       lastSent = now;
@@ -8695,6 +8829,7 @@
       var ref = msgRef.push({
         name: nick.slice(0, 24),
         text: text,
+        uid: myUid,
         ts: firebase.database.ServerValue.TIMESTAMP
       });
       pendingKeys[ref.key] = true;   // ✓ enviando hasta que el servidor confirme
@@ -8702,11 +8837,14 @@
         delete pendingKeys[ref.key];
         setTickState(ref.key, seenCache[ref.key] ? 'read' : 'delivered');   // ✓✓ entregado
       }).catch(function() {
-        addMessage(null, { name: 'sistema', text: 'No se pudo enviar el mensaje.', ts: Date.now() });
+        renderMessage(null, { name: 'sistema', text: 'No se pudo enviar el mensaje.', ts: Date.now() }, false);
       });
     }
     sendBtn.addEventListener('click', send);
-    input.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); send(); }
+      else if (e.key === 'Escape' && editingKey) { cancelEdit(); }
+    });
   })();
   </script>
 
