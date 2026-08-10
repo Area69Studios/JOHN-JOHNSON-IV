@@ -3587,6 +3587,27 @@
     .cm-react-chip:hover { border-color: var(--gold); }
     .chat-msg.cm-flash .cm-bubble { animation: cmFlash 1.2s ease; }
     @keyframes cmFlash { 0%,100% { box-shadow: none; } 30% { box-shadow: 0 0 0 2px var(--gold), 0 0 18px rgba(185,90,228,0.5); } }
+    /* Menciones @apodo */
+    .cm-mention { color: #6C7BFF; font-weight: 700; }
+    .cm-mention.me { background: rgba(108,123,255,0.28); border-radius: 4px; padding: 0 3px; }
+    .chat-msg.mention-me .cm-bubble { border-color: #6C7BFF; box-shadow: inset 3px 0 0 #6C7BFF; }
+    /* Separador de día */
+    .chat-day-sep {
+      align-self: center; margin: 6px 0; font-size: 0.66rem;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim);
+      background: rgba(255,255,255,0.05); border-radius: 999px; padding: 3px 14px;
+    }
+    /* Botón "↓ nuevos" */
+    .chat-jump {
+      position: absolute; right: 16px; bottom: 80px; z-index: 6;
+      cursor: pointer; display: none; align-items: center; gap: 6px;
+      background: linear-gradient(120deg, #FF3CAC, #A24BFF); color: #fff;
+      border: none; border-radius: 999px; padding: 8px 15px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
+      box-shadow: 0 8px 22px rgba(162,75,255,0.5); transition: transform 0.15s;
+    }
+    .chat-jump.show { display: inline-flex; }
+    .chat-jump:hover { transform: translateY(-2px); }
     /* Banner de respuesta */
     .chat-replying { color: var(--text-dim); }
     .chat-replying .cr-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -8524,6 +8545,7 @@
 
         <!-- Mensajes (oculto hasta que hay conexión) -->
         <div class="chat-messages" id="chatMessages" style="display:none;"></div>
+        <button class="chat-jump" id="chatJump" type="button">↓ nuevos</button>
 
         <div class="chat-typing" id="chatTyping" style="display:none;"></div>
         <div class="chat-editing" id="chatEditing" style="display:none;">
@@ -8791,6 +8813,61 @@
     var msgData  = {};   // key -> datos del mensaje (para editar)
     function isOwn(m) { return (m.uid && m.uid === myUid) || (!m.uid && m.name === nick); }
 
+    // Color por usuario (a partir de su id/nombre)
+    function hashHue(s) {
+      var h = 2166136261;
+      for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+      h ^= h >>> 13; h = Math.imul(h, 0x5bd1e995) >>> 0; h ^= h >>> 15;
+      return (h >>> 0) % 360;
+    }
+    function colorFor(m) { return 'hsl(' + hashHue(m.uid || m.name || 'x') + ', 70%, 68%)'; }
+
+    // Menciones @apodo
+    function reEscape(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function formatText(txt) {
+      return esc(txt).replace(/(^|\s)@([^\s@]{1,24})/g, function(full, pre, tok) {
+        var me = tok.toLowerCase() === nick.toLowerCase();
+        return pre + '<span class="cm-mention' + (me ? ' me' : '') + '">@' + tok + '</span>';
+      });
+    }
+    function mentionsMe(txt) {
+      if (!txt || !nick) return false;
+      return new RegExp('(^|\\s)@' + reEscape(nick) + '(\\b|$|[^\\w])', 'i').test(txt);
+    }
+
+    // Aviso al ser mencionado (sonido + título de pestaña parpadeante)
+    var origTitle = document.title, titleTimer = null;
+    function flashTitle(msg) {
+      if (titleTimer) return;
+      var on = false;
+      titleTimer = setInterval(function() { document.title = on ? origTitle : msg; on = !on; }, 1000);
+    }
+    function clearTitleFlash() { if (titleTimer) { clearInterval(titleTimer); titleTimer = null; document.title = origTitle; } }
+    window.addEventListener('focus', clearTitleFlash);
+    document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible') clearTitleFlash(); });
+    function onMention() {
+      if (!muted && actx) beep([1046, 1318], 0.18, 0.13, 'sine');   // tono más agudo
+      if (!(document.hasFocus() && chatVisible && document.visibilityState === 'visible')) flashTitle('💬 Te han mencionado');
+    }
+
+    // Separadores de día
+    var lastDay = null;
+    function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+    function dayLabel(ts) {
+      var d = new Date(ts), today = new Date(), yest = new Date(); yest.setDate(today.getDate() - 1);
+      if (sameDay(d, today)) return 'Hoy';
+      if (sameDay(d, yest)) return 'Ayer';
+      return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+    }
+
+    // Botón "↓ nuevos"
+    var jumpBtn = document.getElementById('chatJump');
+    var jumpCount = 0;
+    function showJump() { jumpCount++; jumpBtn.textContent = '↓ ' + jumpCount + ' nuevo' + (jumpCount > 1 ? 's' : ''); jumpBtn.classList.add('show'); }
+    function hideJump() { jumpCount = 0; jumpBtn.classList.remove('show'); }
+    jumpBtn.addEventListener('click', function() { messagesEl.scrollTop = messagesEl.scrollHeight; hideJump(); });
+    messagesEl.addEventListener('scroll', function() { if (nearBottom()) hideJump(); });
+
     function renderMessage(key, m, isNew) {
       if (!m || typeof m.text !== 'string') return;
       if (key) msgData[key] = m;
@@ -8798,7 +8875,8 @@
       var existing = key ? msgNodes[key] : null;
       var stick = nearBottom();
       var wrap = existing || document.createElement('div');
-      wrap.className = 'chat-msg' + (own ? ' own' : '');
+      var mentioned = !own && !m.deleted && mentionsMe(m.text);
+      wrap.className = 'chat-msg' + (own ? ' own' : '') + (mentioned ? ' mention-me' : '');
       if (key) wrap.setAttribute('data-key', key);
       var t = m.ts ? new Date(m.ts) : new Date();
       var hh = ('0' + t.getHours()).slice(-2), mm = ('0' + t.getMinutes()).slice(-2);
@@ -8807,7 +8885,7 @@
         : '';
       var bubble = m.deleted
         ? '<div class="cm-bubble deleted">🚫 Mensaje eliminado</div>'
-        : '<div class="cm-bubble">' + replyHtml + '<span class="cm-txt">' + esc(m.text) + '</span></div>';
+        : '<div class="cm-bubble">' + replyHtml + '<span class="cm-txt">' + formatText(m.text) + '</span></div>';
       var reactsHtml = '';
       if (m.reactions && !m.deleted) {
         var counts = {}, mine = {};
@@ -8831,21 +8909,34 @@
         wrap.querySelector('.cm-time').appendChild(tick);
         myTicks[key] = tick;
       }
+      if (!own) { var nmEl = wrap.querySelector('.cm-name'); if (nmEl) nmEl.style.color = colorFor(m); }
       if (!existing) {
+        // Separador de día
+        if (key && m.ts) {
+          var dl = dayLabel(m.ts);
+          if (dl !== lastDay) {
+            var sep = document.createElement('div');
+            sep.className = 'chat-day-sep'; sep.textContent = dl;
+            messagesEl.appendChild(sep);
+            lastDay = dl;
+          }
+        }
         if (key) msgNodes[key] = wrap;
         messagesEl.appendChild(wrap);
-        while (messagesEl.childNodes.length > 200) {
+        while (messagesEl.childNodes.length > 220) {
           var first = messagesEl.firstChild;
           var fk = first.getAttribute && first.getAttribute('data-key');
           if (fk) { delete msgNodes[fk]; delete msgData[fk]; }
           messagesEl.removeChild(first);
         }
         if (stick || own) messagesEl.scrollTop = messagesEl.scrollHeight;
+        else if (isNew && !own) showJump();
         if (!own && key && !m.deleted) markSeen(key);
         if (isNew && initialLoaded && key) {
           if (own) playSend();
           else {
             playIncoming();
+            if (mentioned) onMention();
             if (!(chatVisible && document.visibilityState === 'visible')) bumpUnread();
           }
         }
