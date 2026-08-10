@@ -3572,6 +3572,50 @@
     .ctx-item:hover { background: rgba(185,90,228,0.12); }
     .ctx-item.danger { color: #ff6b6b; }
     .ctx-item.danger:hover { background: rgba(255,60,60,0.12); }
+    .ctx-reacts { display: flex; gap: 2px; padding: 3px 4px 5px; border-bottom: 1px solid rgba(185,90,228,0.15); margin-bottom: 4px; }
+    .ctx-react { cursor: pointer; background: none; border: none; font-size: 1.15rem; padding: 4px 5px; border-radius: 8px; line-height: 1; transition: transform 0.1s, background 0.15s; }
+    .ctx-react:hover { transform: scale(1.25); background: rgba(185,90,228,0.12); }
+    /* Cita de respuesta dentro de la burbuja */
+    .cm-reply { display: block; border-left: 3px solid var(--gold); padding: 3px 8px; margin-bottom: 5px; background: rgba(0,0,0,0.22); border-radius: 4px; font-size: 0.82rem; cursor: pointer; }
+    .cm-reply .cr-name { display: block; color: var(--gold); font-size: 0.72rem; font-weight: 700; }
+    .cm-reply .cr-text { display: block; color: rgba(244,241,250,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+    /* Chips de reacciones */
+    .cm-reacts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .chat-msg.own .cm-reacts { justify-content: flex-end; }
+    .cm-react-chip { cursor: pointer; font-size: 0.72rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(185,90,228,0.2); border-radius: 999px; padding: 1px 8px; user-select: none; }
+    .cm-react-chip.mine { background: rgba(185,90,228,0.22); border-color: var(--gold); }
+    .cm-react-chip:hover { border-color: var(--gold); }
+    .chat-msg.cm-flash .cm-bubble { animation: cmFlash 1.2s ease; }
+    @keyframes cmFlash { 0%,100% { box-shadow: none; } 30% { box-shadow: 0 0 0 2px var(--gold), 0 0 18px rgba(185,90,228,0.5); } }
+    /* Banner de respuesta */
+    .chat-replying { color: var(--text-dim); }
+    .chat-replying .cr-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chat-replying strong { color: var(--gold); }
+    .chat-replying .cr-preview { opacity: 0.75; }
+    /* "Está escribiendo…" */
+    .chat-typing { padding: 6px 16px; font-size: 0.72rem; color: var(--gold); font-style: italic; border-top: 1px solid rgba(185,90,228,0.12); }
+    /* Botón + panel de emojis */
+    .chat-input-row { position: relative; }
+    .chat-emoji-btn { flex: none; cursor: pointer; background: none; border: none; font-size: 1.35rem; line-height: 1; padding: 0 4px; opacity: 0.85; transition: transform 0.15s, opacity 0.2s; }
+    .chat-emoji-btn:hover { transform: scale(1.12); opacity: 1; }
+    .chat-emoji-panel {
+      position: absolute; bottom: 62px; left: 10px; z-index: 5;
+      display: none; grid-template-columns: repeat(8, 1fr); gap: 2px;
+      width: 300px; max-width: calc(100% - 20px);
+      background: #1a0b14; border: 1px solid rgba(185,90,228,0.3);
+      border-radius: 12px; padding: 8px; box-shadow: 0 14px 34px rgba(0,0,0,0.6);
+    }
+    .chat-emoji-panel.show { display: grid; }
+    .chat-emoji-panel button { cursor: pointer; background: none; border: none; font-size: 1.25rem; padding: 4px; border-radius: 7px; line-height: 1; }
+    .chat-emoji-panel button:hover { background: rgba(185,90,228,0.15); transform: scale(1.15); }
+    /* Badge de no leídos en el nav */
+    .nav-chat-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 16px; height: 16px; padding: 0 4px; margin-left: 6px;
+      background: #FF3CAC; color: #fff; border-radius: 999px;
+      font-size: 0.6rem; font-weight: 700; line-height: 1;
+      box-shadow: 0 0 8px rgba(255,60,172,0.6); vertical-align: middle;
+    }
     .cm-bubble.deleted { font-style: italic; color: var(--text-dim); background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.07); }
     .cm-edited { opacity: 0.7; font-style: italic; }
     /* Banner de edición */
@@ -8481,21 +8525,37 @@
         <!-- Mensajes (oculto hasta que hay conexión) -->
         <div class="chat-messages" id="chatMessages" style="display:none;"></div>
 
+        <div class="chat-typing" id="chatTyping" style="display:none;"></div>
         <div class="chat-editing" id="chatEditing" style="display:none;">
           ✏️ Editando mensaje
           <button id="chatEditCancel" type="button">cancelar</button>
         </div>
+        <div class="chat-editing chat-replying" id="chatReply" style="display:none;">
+          <span class="cr-label">↩️ Respondiendo a <strong id="chatReplyName"></strong>: <span id="chatReplyText" class="cr-preview"></span></span>
+          <button id="chatReplyCancel" type="button">cancelar</button>
+        </div>
         <div class="chat-input-row" id="chatInputRow" style="display:none;">
+          <button class="chat-emoji-btn" id="chatEmojiBtn" type="button" aria-label="Emojis" title="Emojis">😀</button>
           <input class="chat-input" id="chatInput" type="text" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" disabled>
           <button class="chat-send" id="chatSend" type="button" aria-label="Enviar" disabled>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
+          <div class="chat-emoji-panel" id="chatEmoji"></div>
         </div>
       </div>
       <p class="chat-disclaimer">Chat público. Sé respetuoso: no compartas datos personales ni contenido ofensivo. Los mensajes los pueden ver todos y quedan moderados.</p>
     </div>
     <!-- Menú contextual del chat (clic derecho en tus mensajes) -->
     <div id="chatCtxMenu">
+      <div class="ctx-reacts">
+        <button class="ctx-react" data-emo="👍">👍</button>
+        <button class="ctx-react" data-emo="❤️">❤️</button>
+        <button class="ctx-react" data-emo="😂">😂</button>
+        <button class="ctx-react" data-emo="😮">😮</button>
+        <button class="ctx-react" data-emo="😢">😢</button>
+        <button class="ctx-react" data-emo="🔥">🔥</button>
+      </div>
+      <button class="ctx-item" data-act="reply">↩️ Responder</button>
       <button class="ctx-item" data-act="edit">✏️ Editar</button>
       <button class="ctx-item danger" data-act="del">🗑️ Borrar</button>
     </div>
@@ -8645,17 +8705,36 @@
     setInterval(function() {
       if (myPres) myPres.update({ name: nick, ts: firebase.database.ServerValue.TIMESTAMP }).catch(function(){});
     }, 30000);
+    var typingHideTimer = null;
     presRef.on('value', function(snap) {
-      var now = Date.now(), names = [];
+      var now = Date.now(), names = [], typers = [];
       snap.forEach(function(ch) {
-        var v = ch.val() || {};
+        var v = ch.val() || {}, uid = ch.key;
         if (v.ts && (now - v.ts) < 130000) names.push(v.name || 'Anón');
+        if (uid !== myUid && v.typingTs && (now - v.typingTs) < 5000) typers.push(v.name || 'Anón');
       });
+      // Presencia
       var seen = {}; names = names.filter(function(n) { if (seen[n]) return false; seen[n] = true; return true; });
-      if (!names.length) { presenceEl.style.display = 'none'; return; }
-      presenceEl.style.display = 'flex';
-      var shown = names.slice(0, 8).join(', ') + (names.length > 8 ? ' y ' + (names.length - 8) + ' más' : '');
-      presenceEl.innerHTML = '<span class="cp-dot"></span><strong>' + names.length + '</strong>&nbsp;en la sala · <span class="cp-names">' + esc(shown) + '</span>';
+      if (!names.length) { presenceEl.style.display = 'none'; }
+      else {
+        presenceEl.style.display = 'flex';
+        var shown = names.slice(0, 8).join(', ') + (names.length > 8 ? ' y ' + (names.length - 8) + ' más' : '');
+        presenceEl.innerHTML = '<span class="cp-dot"></span><strong>' + names.length + '</strong>&nbsp;en la sala · <span class="cp-names">' + esc(shown) + '</span>';
+      }
+      // Escribiendo…
+      var te = document.getElementById('chatTyping');
+      if (te) {
+        var ts2 = {}; typers = typers.filter(function(n) { if (ts2[n]) return false; ts2[n] = true; return true; });
+        if (typingHideTimer) { clearTimeout(typingHideTimer); typingHideTimer = null; }
+        if (!typers.length) { te.style.display = 'none'; }
+        else {
+          te.style.display = 'block';
+          te.textContent = typers.length === 1 ? (typers[0] + ' está escribiendo…')
+            : typers.length === 2 ? (typers.join(' y ') + ' están escribiendo…')
+            : 'Varias personas están escribiendo…';
+          typingHideTimer = setTimeout(function() { te.style.display = 'none'; }, 6000);
+        }
+      }
     }, function(){});
 
     // Estado de conexión
@@ -8723,11 +8802,26 @@
       if (key) wrap.setAttribute('data-key', key);
       var t = m.ts ? new Date(m.ts) : new Date();
       var hh = ('0' + t.getHours()).slice(-2), mm = ('0' + t.getMinutes()).slice(-2);
+      var replyHtml = (m.replyTo && !m.deleted)
+        ? '<div class="cm-reply" data-goto="' + esc(m.replyTo.key || '') + '"><span class="cr-name">' + esc(m.replyTo.name || '') + '</span><span class="cr-text">' + esc(m.replyTo.text || '') + '</span></div>'
+        : '';
       var bubble = m.deleted
         ? '<div class="cm-bubble deleted">🚫 Mensaje eliminado</div>'
-        : '<div class="cm-bubble">' + esc(m.text) + '</div>';
+        : '<div class="cm-bubble">' + replyHtml + '<span class="cm-txt">' + esc(m.text) + '</span></div>';
+      var reactsHtml = '';
+      if (m.reactions && !m.deleted) {
+        var counts = {}, mine = {};
+        Object.keys(m.reactions).forEach(function(u) {
+          var e = m.reactions[u]; if (!e) return;
+          counts[e] = (counts[e] || 0) + 1; if (u === myUid) mine[e] = true;
+        });
+        var chips = Object.keys(counts).map(function(e) {
+          return '<span class="cm-react-chip' + (mine[e] ? ' mine' : '') + '" data-emo="' + esc(e) + '">' + esc(e) + ' ' + counts[e] + '</span>';
+        }).join('');
+        if (chips) reactsHtml = '<div class="cm-reacts">' + chips + '</div>';
+      }
       wrap.innerHTML =
-        '<div class="cm-name">' + esc(m.name || 'Anón') + '</div>' + bubble +
+        '<div class="cm-name">' + esc(m.name || 'Anón') + '</div>' + bubble + reactsHtml +
         '<div class="cm-time">' + hh + ':' + mm + (m.edited && !m.deleted ? ' <span class="cm-edited">editado</span>' : '') + '</div>';
       if (own && key && !m.deleted) {
         var state = pendingKeys[key] ? 'sent' : (seenCache[key] ? 'read' : 'delivered');
@@ -8748,7 +8842,13 @@
         }
         if (stick || own) messagesEl.scrollTop = messagesEl.scrollHeight;
         if (!own && key && !m.deleted) markSeen(key);
-        if (isNew && initialLoaded && key) { if (own) playSend(); else playIncoming(); }
+        if (isNew && initialLoaded && key) {
+          if (own) playSend();
+          else {
+            playIncoming();
+            if (!(chatVisible && document.visibilityState === 'visible')) bumpUnread();
+          }
+        }
       }
     }
 
@@ -8774,37 +8874,77 @@
       if (myTicks[snap.key]) setTickState(snap.key, 'read');
     }, function() {});
 
+    // ── Contador de no leídos (badge en el nav) ──
+    var unread = 0;
+    var navChatLink = document.querySelector('.nav-links a[href="#chat"]');
+    var navBadge = null;
+    if (navChatLink) {
+      navBadge = document.createElement('span');
+      navBadge.className = 'nav-chat-badge';
+      navBadge.style.display = 'none';
+      navChatLink.appendChild(navBadge);
+    }
+    function renderUnread() {
+      if (!navBadge) return;
+      if (unread > 0) { navBadge.textContent = unread > 99 ? '99+' : unread; navBadge.style.display = 'inline-flex'; }
+      else navBadge.style.display = 'none';
+    }
+    function bumpUnread() { unread++; renderUnread(); }
+    function clearUnread() { if (unread) { unread = 0; renderUnread(); } }
+
     // Marca "visto" cuando el chat está a la vista / la pestaña vuelve a foco
     try {
       var io = new IntersectionObserver(function(entries) {
         chatVisible = entries[0].isIntersecting;
-        if (chatVisible) markAllVisible();
+        if (chatVisible) { markAllVisible(); clearUnread(); }
       }, { threshold: 0.15 });
       var box = document.querySelector('#chat .chat-box');
       if (box) io.observe(box); else chatVisible = true;
     } catch (e) { chatVisible = true; }
     document.addEventListener('visibilitychange', function() {
-      if (document.visibilityState === 'visible') markAllVisible();
+      if (document.visibilityState === 'visible') { markAllVisible(); if (chatVisible) clearUnread(); }
     });
 
-    // ── Editar / borrar (delegación de clics en tus mensajes) ──
-    var editingKey = null;
+    // ── Editar / responder / reaccionar / borrar ──
+    var editingKey = null, replyingTo = null;
     var editBanner = document.getElementById('chatEditing');
     var editCancel = document.getElementById('chatEditCancel');
+    var replyBanner = document.getElementById('chatReply');
+    var replyCancel = document.getElementById('chatReplyCancel');
+    var replyNameEl = document.getElementById('chatReplyName');
+    var replyTextEl = document.getElementById('chatReplyText');
+
     function startEdit(key) {
-      var m = msgData[key];
-      if (!m || m.deleted) return;
+      var m = msgData[key]; if (!m || m.deleted) return;
+      cancelReply();
       editingKey = key;
-      input.value = m.text;
-      input.focus();
+      input.value = m.text; input.focus();
       editBanner.style.display = 'flex';
     }
-    function cancelEdit() {
-      editingKey = null; input.value = ''; editBanner.style.display = 'none';
-    }
+    function cancelEdit() { editingKey = null; input.value = ''; editBanner.style.display = 'none'; }
     editCancel.addEventListener('click', cancelEdit);
 
-    // Menú contextual (clic derecho) sobre tus propios mensajes
+    function startReply(key) {
+      var m = msgData[key]; if (!m || m.deleted) return;
+      cancelEdit();
+      replyingTo = { key: key, name: m.name || 'Anón', text: (m.text || '').slice(0, 120) };
+      replyNameEl.textContent = replyingTo.name;
+      replyTextEl.textContent = replyingTo.text;
+      replyBanner.style.display = 'flex';
+      input.focus();
+    }
+    function cancelReply() { replyingTo = null; replyBanner.style.display = 'none'; }
+    replyCancel.addEventListener('click', cancelReply);
+
+    function toggleReaction(key, emo) {
+      var m = msgData[key]; if (!m || m.deleted) return;
+      var mineNow = m.reactions && m.reactions[myUid];
+      var rref = msgRef.child(key).child('reactions').child(myUid);
+      if (mineNow === emo) rref.remove().catch(function(){});
+      else rref.set(emo).catch(function(){});
+    }
+
+    // Menú contextual (clic derecho) en cualquier mensaje
     var ctxMenu = document.getElementById('chatCtxMenu');
     var ctxKey = null;
     function hideCtx() { ctxMenu.classList.remove('show'); ctxKey = null; }
@@ -8812,11 +8952,13 @@
       var wrap = e.target.closest ? e.target.closest('.chat-msg') : null;
       var key = wrap && wrap.getAttribute('data-key');
       var m = key && msgData[key];
-      if (!m || !isOwn(m) || m.deleted) { hideCtx(); return; }   // solo tus mensajes no borrados
+      if (!m || m.deleted) { hideCtx(); return; }
       e.preventDefault();
       ctxKey = key;
+      var own = isOwn(m);
+      ctxMenu.querySelector('[data-act="edit"]').style.display = own ? '' : 'none';
+      ctxMenu.querySelector('[data-act="del"]').style.display = own ? '' : 'none';
       ctxMenu.classList.add('show');
-      // Posiciona en el cursor, dentro de la ventana
       var mw = ctxMenu.offsetWidth, mh = ctxMenu.offsetHeight;
       var x = Math.min(e.clientX, window.innerWidth - mw - 8);
       var y = Math.min(e.clientY, window.innerHeight - mh - 8);
@@ -8824,11 +8966,15 @@
       ctxMenu.style.top = Math.max(8, y) + 'px';
     });
     ctxMenu.addEventListener('click', function(e) {
+      if (!ctxKey) return;
+      var react = e.target.closest ? e.target.closest('.ctx-react') : null;
+      if (react) { toggleReaction(ctxKey, react.getAttribute('data-emo')); hideCtx(); return; }
       var btn = e.target.closest ? e.target.closest('.ctx-item') : null;
-      if (!btn || !ctxKey) return;
+      if (!btn) return;
       var key = ctxKey, act = btn.getAttribute('data-act');
       hideCtx();
-      if (act === 'edit') startEdit(key);
+      if (act === 'reply') startReply(key);
+      else if (act === 'edit') startEdit(key);
       else if (act === 'del') {
         if (confirm('¿Borrar este mensaje para todos?')) {
           if (editingKey === key) cancelEdit();
@@ -8839,6 +8985,55 @@
     document.addEventListener('click', function(e) { if (!ctxMenu.contains(e.target)) hideCtx(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideCtx(); });
     messagesEl.addEventListener('scroll', hideCtx, { passive: true });
+
+    // Clic en chip de reacción → alterna tu reacción · clic en cita → ir al mensaje
+    messagesEl.addEventListener('click', function(e) {
+      var chip = e.target.closest ? e.target.closest('.cm-react-chip') : null;
+      if (chip) {
+        var w = chip.closest('.chat-msg'), k = w && w.getAttribute('data-key');
+        if (k) toggleReaction(k, chip.getAttribute('data-emo'));
+        return;
+      }
+      var rep = e.target.closest ? e.target.closest('.cm-reply') : null;
+      if (rep) {
+        var target = msgNodes[rep.getAttribute('data-goto')];
+        if (target) {
+          target.scrollIntoView({ block: 'center' });
+          target.classList.add('cm-flash');
+          setTimeout(function() { target.classList.remove('cm-flash'); }, 1200);
+        }
+      }
+    });
+
+    // ── Selector de emojis ──
+    var emojiBtn = document.getElementById('chatEmojiBtn');
+    var emojiPanel = document.getElementById('chatEmoji');
+    var EMOJIS = '😀 😁 😂 🤣 😊 😍 😎 😭 😢 😡 👍 👎 🙏 🔥 💯 🎉 ❤️ 💔 👀 😴 🤔 😳 🥳 🤯 💀 👏 🙌 🚀 ⚡ ✨ 🍄 🐼 🎬 🎥 ⭐ 😅 😜 🤝 🫡 😤'.split(' ');
+    emojiPanel.innerHTML = EMOJIS.map(function(e) { return '<button type="button">' + e + '</button>'; }).join('');
+    emojiBtn.addEventListener('click', function(e) { e.stopPropagation(); emojiPanel.classList.toggle('show'); });
+    emojiPanel.addEventListener('click', function(e) {
+      var b = e.target.closest ? e.target.closest('button') : null;
+      if (!b) return;
+      input.value += b.textContent; input.focus();
+    });
+    document.addEventListener('click', function(e) {
+      if (e.target !== emojiBtn && !emojiPanel.contains(e.target)) emojiPanel.classList.remove('show');
+    });
+
+    // ── "Está escribiendo…" (se propaga por la presencia) ──
+    var lastTypingSent = 0;
+    function pingTyping() {
+      if (!myPres) return;
+      var now = Date.now();
+      if (now - lastTypingSent < 1500) return;
+      lastTypingSent = now;
+      myPres.update({ typingTs: firebase.database.ServerValue.TIMESTAMP }).catch(function(){});
+    }
+    function stopTyping() {
+      lastTypingSent = 0;
+      if (myPres) myPres.update({ typingTs: 0 }).catch(function(){});
+    }
+    input.addEventListener('input', function() { if (input.value.trim()) pingTyping(); else stopTyping(); });
 
     // ── Enviar / guardar edición ──
     var lastSent = 0;
@@ -8857,12 +9052,11 @@
       if (now - lastSent < 1200) return;   // anti-spam básico
       lastSent = now;
       input.value = '';
-      var ref = msgRef.push({
-        name: nick.slice(0, 24),
-        text: text,
-        uid: myUid,
-        ts: firebase.database.ServerValue.TIMESTAMP
-      });
+      emojiPanel.classList.remove('show');
+      var payload = { name: nick.slice(0, 24), text: text, uid: myUid, ts: firebase.database.ServerValue.TIMESTAMP };
+      if (replyingTo) { payload.replyTo = { key: replyingTo.key, name: replyingTo.name, text: replyingTo.text }; cancelReply(); }
+      stopTyping();
+      var ref = msgRef.push(payload);
       pendingKeys[ref.key] = true;   // ✓ enviando hasta que el servidor confirme
       ref.then(function() {
         delete pendingKeys[ref.key];
@@ -8874,7 +9068,7 @@
     sendBtn.addEventListener('click', send);
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { e.preventDefault(); send(); }
-      else if (e.key === 'Escape' && editingKey) { cancelEdit(); }
+      else if (e.key === 'Escape') { if (editingKey) cancelEdit(); else if (replyingTo) cancelReply(); }
     });
   })();
   </script>
