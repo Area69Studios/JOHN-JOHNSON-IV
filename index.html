@@ -3669,6 +3669,25 @@
     }
     #chatImgOverlay.show { display: flex; }
     #chatImgOverlay img { max-width: 92vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+    /* Grabación de nota de voz */
+    .chat-mic-btn { font-size: 1.2rem; }
+    .chat-recording { display: none; align-items: center; gap: 12px; padding: 14px; border-top: 1px solid rgba(185,90,228,0.15); }
+    .chat-recording.show { display: flex; }
+    .rec-dot { width: 12px; height: 12px; border-radius: 50%; background: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; animation: recPulse 1s infinite; flex: none; }
+    @keyframes recPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+    .rec-time { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; color: var(--white); font-size: 1rem; }
+    .rec-hint { flex: 1; color: var(--text-dim); font-size: 0.8rem; }
+    .rec-btn { cursor: pointer; border: none; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex: none; }
+    .rec-cancel { background: rgba(255,255,255,0.08); color: var(--text-dim); }
+    .rec-cancel:hover { color: #ff6b6b; }
+    .rec-send { background: linear-gradient(120deg, #FF3CAC, #A24BFF); color: #fff; }
+    /* Reproductor de nota de voz */
+    .cm-audio { display: flex; align-items: center; gap: 9px; min-width: 172px; padding: 2px; }
+    .cm-audio-btn { cursor: pointer; flex: none; width: 30px; height: 30px; border-radius: 50%; border: none; background: rgba(185,90,228,0.28); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+    .chat-msg.own .cm-audio-btn { background: rgba(108,123,255,0.4); }
+    .cm-audio-bar { flex: 1; height: 4px; border-radius: 999px; background: rgba(255,255,255,0.15); position: relative; overflow: hidden; min-width: 70px; }
+    .cm-audio-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--gold); }
+    .cm-audio-time { font-size: 0.66rem; color: var(--text-dim); flex: none; }
     .cm-edited { opacity: 0.7; font-style: italic; }
     /* Banner de edición */
     .chat-editing {
@@ -8590,6 +8609,7 @@
         <div class="chat-input-row" id="chatInputRow" style="display:none;">
           <button class="chat-emoji-btn" id="chatEmojiBtn" type="button" aria-label="Emojis" title="Emojis">😀</button>
           <button class="chat-emoji-btn chat-attach-btn" id="chatAttachBtn" type="button" aria-label="Enviar imagen" title="Enviar imagen">🖼️</button>
+          <button class="chat-emoji-btn chat-mic-btn" id="chatMicBtn" type="button" aria-label="Nota de voz" title="Nota de voz">🎤</button>
           <input type="file" id="chatFile" accept="image/*" style="display:none">
           <input class="chat-input" id="chatInput" type="text" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" disabled>
           <button class="chat-send" id="chatSend" type="button" aria-label="Enviar" disabled>
@@ -8597,6 +8617,13 @@
           </button>
           <div class="chat-emoji-panel" id="chatEmoji"></div>
           <div class="chat-mention" id="chatMention"></div>
+        </div>
+        <div class="chat-recording" id="chatRecording">
+          <span class="rec-dot"></span>
+          <span class="rec-time" id="recTime">0:00</span>
+          <span class="rec-hint">Grabando nota de voz…</span>
+          <button class="rec-btn rec-cancel" id="recCancel" type="button" title="Cancelar">✕</button>
+          <button class="rec-btn rec-send" id="recSend" type="button" title="Enviar">➤</button>
         </div>
       </div>
       <p class="chat-disclaimer">Chat público. Sé respetuoso: no compartas datos personales ni contenido ofensivo. Los mensajes los pueden ver todos y quedan moderados.</p>
@@ -8859,6 +8886,7 @@
       return (h >>> 0) % 360;
     }
     function colorFor(m) { return 'hsl(' + hashHue(m.uid || m.name || 'x') + ', 70%, 68%)'; }
+    function fmtDur(s) { s = Math.max(0, Math.round(s)); var m = Math.floor(s / 60), ss = s % 60; return m + ':' + (ss < 10 ? '0' : '') + ss; }
 
     // Menciones @apodo
     function reEscape(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -8923,10 +8951,12 @@
         : '';
       var imgHtml = (m.img && !m.deleted && /^data:image\//.test(m.img))
         ? '<img class="cm-img" src="' + m.img + '" alt="imagen" loading="lazy">' : '';
+      var audioHtml = (m.audio && !m.deleted && /^data:audio\//.test(m.audio))
+        ? '<div class="cm-audio"><button class="cm-audio-btn" type="button">▶</button><div class="cm-audio-bar"><div class="cm-audio-fill"></div></div><span class="cm-audio-time">' + fmtDur(m.dur || 0) + '</span></div>' : '';
       var txtHtml = (m.text && !m.deleted) ? '<span class="cm-txt">' + formatText(m.text) + '</span>' : '';
       var bubble = m.deleted
         ? '<div class="cm-bubble deleted">🚫 Mensaje eliminado</div>'
-        : '<div class="cm-bubble' + (imgHtml ? ' has-img' : '') + '">' + replyHtml + imgHtml + txtHtml + '</div>';
+        : '<div class="cm-bubble' + (imgHtml ? ' has-img' : '') + '">' + replyHtml + imgHtml + audioHtml + txtHtml + '</div>';
       var reactsHtml = '';
       if (m.reactions && !m.deleted) {
         var counts = {}, mine = {};
@@ -9123,8 +9153,33 @@
     var imgFull = document.getElementById('chatImgFull');
     imgOverlay.addEventListener('click', function() { imgOverlay.classList.remove('show'); imgFull.src = ''; });
 
-    // Clic en chip de reacción → alterna reacción · en imagen → amplía · en cita → ir al mensaje
+    // Reproductor de notas de voz (una a la vez)
+    var playing = { audio: null, btn: null, fill: null, key: null };
+    function stopPlaying() {
+      if (playing.audio) { try { playing.audio.pause(); } catch (e) {} }
+      if (playing.btn) playing.btn.textContent = '▶';
+      if (playing.fill) playing.fill.style.width = '0%';
+      playing = { audio: null, btn: null, fill: null, key: null };
+    }
+
+    // Clic en nota de voz → reproduce · reacción → alterna · imagen → amplía · cita → salta
     messagesEl.addEventListener('click', function(e) {
+      var abtn = e.target.closest ? e.target.closest('.cm-audio-btn') : null;
+      if (abtn) {
+        var aw = abtn.closest('.chat-msg'), ak = aw && aw.getAttribute('data-key');
+        var am = ak && msgData[ak];
+        if (!am || !am.audio) return;
+        if (playing.key === ak && playing.audio && !playing.audio.paused) { stopPlaying(); return; }
+        stopPlaying();
+        var au = new Audio(am.audio);
+        var fill = aw.querySelector('.cm-audio-fill');
+        playing = { audio: au, btn: abtn, fill: fill, key: ak };
+        abtn.textContent = '⏸';
+        au.addEventListener('timeupdate', function() { if (au.duration && isFinite(au.duration)) fill.style.width = (au.currentTime / au.duration * 100) + '%'; });
+        au.addEventListener('ended', stopPlaying);
+        au.play().catch(function() { stopPlaying(); });
+        return;
+      }
       var pic = e.target.closest ? e.target.closest('.cm-img') : null;
       if (pic) { imgFull.src = pic.getAttribute('src'); imgOverlay.classList.add('show'); return; }
       var chip = e.target.closest ? e.target.closest('.cm-react-chip') : null;
@@ -9320,6 +9375,76 @@
         renderMessage(null, { name: 'sistema', text: 'No se pudo enviar la imagen.', ts: Date.now() }, false);
       });
     }
+
+    // ── Notas de voz (MediaRecorder; se comprimen y viajan dentro del mensaje) ──
+    var micBtn = document.getElementById('chatMicBtn');
+    var recBar = document.getElementById('chatRecording');
+    var recTimeEl = document.getElementById('recTime');
+    var recCancelBtn = document.getElementById('recCancel');
+    var recSendBtn = document.getElementById('recSend');
+    var mediaRec = null, recChunks = [], recStart = 0, recTimer = null, recStream = null, recMime = '', recCancelFlag = false;
+
+    function pickAudioMime() {
+      var cands = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+      if (window.MediaRecorder) for (var i = 0; i < cands.length; i++) { try { if (MediaRecorder.isTypeSupported(cands[i])) return cands[i]; } catch (e) {} }
+      return '';
+    }
+    function showRecUI() { inputRow.style.display = 'none'; recBar.classList.add('show'); }
+    function hideRecUI() { recBar.classList.remove('show'); inputRow.style.display = 'flex'; }
+    function updateRecTime() {
+      var s = Math.floor((Date.now() - recStart) / 1000);
+      recTimeEl.textContent = fmtDur(s);
+      if (s >= 60) finishRecording(false);   // tope 60 s
+    }
+    function startRecording() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+        alert('Tu navegador no permite grabar notas de voz.'); return;
+      }
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+        recStream = stream; recChunks = []; recCancelFlag = false;
+        recMime = pickAudioMime();
+        try { mediaRec = recMime ? new MediaRecorder(stream, { mimeType: recMime, audioBitsPerSecond: 24000 }) : new MediaRecorder(stream); }
+        catch (e) { mediaRec = new MediaRecorder(stream); }
+        recMime = mediaRec.mimeType || recMime || 'audio/webm';
+        mediaRec.ondataavailable = function(e) { if (e.data && e.data.size) recChunks.push(e.data); };
+        mediaRec.onstop = onRecStop;
+        mediaRec.start();
+        recStart = Date.now();
+        recTimeEl.textContent = '0:00';
+        showRecUI();
+        recTimer = setInterval(updateRecTime, 250);
+      }).catch(function() { alert('No se pudo acceder al micrófono. Revisa los permisos.'); });
+    }
+    function finishRecording(cancel) {
+      recCancelFlag = !!cancel;
+      if (recTimer) { clearInterval(recTimer); recTimer = null; }
+      hideRecUI();
+      if (mediaRec && mediaRec.state !== 'inactive') { try { mediaRec.stop(); } catch (e) {} }
+    }
+    function onRecStop() {
+      if (recStream) { recStream.getTracks().forEach(function(t) { t.stop(); }); recStream = null; }
+      var dur = Math.round((Date.now() - recStart) / 1000);
+      if (recCancelFlag || !recChunks.length) { recCancelFlag = false; return; }
+      var blob = new Blob(recChunks, { type: recMime });
+      if (blob.size > 700000) { alert('La nota de voz es demasiado larga, prueba una más corta.'); return; }
+      var reader = new FileReader();
+      reader.onload = function() { sendAudio(reader.result, dur); };
+      reader.readAsDataURL(blob);
+    }
+    function sendAudio(dataUrl, dur) {
+      var now = Date.now();
+      if (now - lastSent < 1200) return;
+      lastSent = now;
+      var payload = { name: nick.slice(0, 24), text: '', audio: dataUrl, dur: dur, uid: myUid, ts: firebase.database.ServerValue.TIMESTAMP };
+      if (replyingTo) { payload.replyTo = { key: replyingTo.key, name: replyingTo.name, text: replyingTo.text }; cancelReply(); }
+      var ref = msgRef.push(payload);
+      pendingKeys[ref.key] = true;
+      ref.then(function() { delete pendingKeys[ref.key]; setTickState(ref.key, seenCache[ref.key] ? 'read' : 'delivered'); })
+         .catch(function() { renderMessage(null, { name: 'sistema', text: 'No se pudo enviar la nota de voz.', ts: Date.now() }, false); });
+    }
+    micBtn.addEventListener('click', startRecording);
+    recCancelBtn.addEventListener('click', function() { finishRecording(true); });
+    recSendBtn.addEventListener('click', function() { finishRecording(false); });
   })();
   </script>
 
