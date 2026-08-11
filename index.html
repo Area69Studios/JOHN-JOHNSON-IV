@@ -3659,6 +3659,20 @@
     /* Imagen dentro de un mensaje */
     .cm-bubble.has-img { padding: 5px; }
     .cm-img { display: block; max-width: 240px; max-height: 260px; border-radius: 10px; cursor: zoom-in; }
+    /* Stickers de la saga */
+    .cm-sticker { display: block; width: 112px; height: 112px; object-fit: cover; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+    .chat-sticker-panel {
+      position: absolute; bottom: 62px; left: 10px; z-index: 6;
+      display: none; grid-template-columns: repeat(4, 1fr); gap: 6px;
+      width: 300px; max-width: calc(100% - 20px);
+      background: #1a0b14; border: 1px solid rgba(185,90,228,0.3);
+      border-radius: 12px; padding: 8px; box-shadow: 0 14px 34px rgba(0,0,0,0.6);
+      max-height: 260px; overflow-y: auto;
+    }
+    .chat-sticker-panel.show { display: grid; }
+    .chat-sticker-panel button { cursor: pointer; background: none; border: none; padding: 0; border-radius: 10px; overflow: hidden; }
+    .chat-sticker-panel img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; transition: transform 0.15s; }
+    .chat-sticker-panel button:hover img { transform: scale(1.08); }
     .cm-bubble.has-img .cm-txt { display: block; padding: 5px 8px 2px; }
     .chat-attach-btn { font-size: 1.2rem; }
     /* Visor de imagen a pantalla completa */
@@ -8610,12 +8624,14 @@
           <button class="chat-emoji-btn" id="chatEmojiBtn" type="button" aria-label="Emojis" title="Emojis">😀</button>
           <button class="chat-emoji-btn chat-attach-btn" id="chatAttachBtn" type="button" aria-label="Enviar imagen" title="Enviar imagen">🖼️</button>
           <button class="chat-emoji-btn chat-mic-btn" id="chatMicBtn" type="button" aria-label="Nota de voz" title="Nota de voz">🎤</button>
+          <button class="chat-emoji-btn" id="chatStickerBtn" type="button" aria-label="Stickers" title="Stickers">🎭</button>
           <input type="file" id="chatFile" accept="image/*" style="display:none">
           <input class="chat-input" id="chatInput" type="text" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" disabled>
           <button class="chat-send" id="chatSend" type="button" aria-label="Enviar" disabled>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
           <div class="chat-emoji-panel" id="chatEmoji"></div>
+          <div class="chat-sticker-panel" id="chatStickers"></div>
           <div class="chat-mention" id="chatMention"></div>
         </div>
         <div class="chat-recording" id="chatRecording">
@@ -8792,13 +8808,24 @@
     }, 30000);
     var typingHideTimer = null;
     var roomNames = [];   // nombres actualmente en la sala (para autocompletar @)
+    var presentSet = {}, presenceBaselined = false;   // para avisos de entrar/salir
     presRef.on('value', function(snap) {
-      var now = Date.now(), names = [], typers = [];
+      var now = Date.now(), names = [], typers = [], current = {};
       snap.forEach(function(ch) {
         var v = ch.val() || {}, uid = ch.key;
-        if (v.ts && (now - v.ts) < 130000) names.push(v.name || 'Anón');
+        if (v.ts && (now - v.ts) < 130000) { names.push(v.name || 'Anón'); current[uid] = v.name || 'Anón'; }
         if (uid !== myUid && v.typingTs && (now - v.typingTs) < 5000) typers.push(v.name || 'Anón');
       });
+      // Avisos de sistema: quién entra / sale (a partir de la primera foto)
+      if (presenceBaselined) {
+        Object.keys(current).forEach(function(uid) {
+          if (uid !== myUid && !(uid in presentSet)) renderMessage(null, { name: 'sistema', text: '👋 ' + current[uid] + ' se unió a la sala', ts: Date.now() }, false);
+        });
+        Object.keys(presentSet).forEach(function(uid) {
+          if (uid !== myUid && !(uid in current)) renderMessage(null, { name: 'sistema', text: '👋 ' + presentSet[uid] + ' salió de la sala', ts: Date.now() }, false);
+        });
+      }
+      presentSet = current; presenceBaselined = true;
       // Presencia
       var seen = {}; names = names.filter(function(n) { if (seen[n]) return false; seen[n] = true; return true; });
       roomNames = names.slice();
@@ -8888,6 +8915,15 @@
     function colorFor(m) { return 'hsl(' + hashHue(m.uid || m.name || 'x') + ', 70%, 68%)'; }
     function fmtDur(s) { s = Math.max(0, Math.round(s)); var m = Math.floor(s / 60), ss = s % 60; return m + ':' + (ss < 10 ? '0' : '') + ss; }
 
+    // Stickers de la saga (imágenes propias; se envían por id validado)
+    var STICKERS = [
+      ['johnson', 'images/johnson.jpg'], ['tomas', 'images/tomas.jpg'],
+      ['emilio', 'images/emilio.jpg'], ['shima', 'images/shima.jpg'],
+      ['panda', 'images/panda.jpg?v=2'], ['meregildo', 'images/meregildo1.jpg'],
+      ['python', 'images/rev1.jpg'], ['logo', 'images/logo-256.png']
+    ];
+    var STICKER_MAP = {}; STICKERS.forEach(function(s) { STICKER_MAP[s[0]] = s[1]; });
+
     // Menciones @apodo
     function reEscape(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
     function formatText(txt) {
@@ -8936,6 +8972,17 @@
 
     function renderMessage(key, m, isNew) {
       if (!m || typeof m.text !== 'string') return;
+      // Aviso de sistema (unirse/salir, errores): línea centrada, sin burbuja
+      if (m.system || m.name === 'sistema') {
+        var stickSys = nearBottom();
+        var sys = document.createElement('div');
+        sys.className = 'chat-sys';
+        sys.textContent = m.text || '';
+        messagesEl.appendChild(sys);
+        while (messagesEl.childNodes.length > 220) messagesEl.removeChild(messagesEl.firstChild);
+        if (stickSys) messagesEl.scrollTop = messagesEl.scrollHeight;
+        return;
+      }
       if (key) msgData[key] = m;
       var own = isOwn(m);
       var existing = key ? msgNodes[key] : null;
@@ -8954,9 +9001,10 @@
       var audioHtml = (m.audio && !m.deleted && /^data:audio\//.test(m.audio))
         ? '<div class="cm-audio"><button class="cm-audio-btn" type="button">▶</button><div class="cm-audio-bar"><div class="cm-audio-fill"></div></div><span class="cm-audio-time">' + fmtDur(m.dur || 0) + '</span></div>' : '';
       var txtHtml = (m.text && !m.deleted) ? '<span class="cm-txt">' + formatText(m.text) + '</span>' : '';
+      var stickerHtml = (m.sticker && STICKER_MAP[m.sticker] && !m.deleted) ? '<img class="cm-sticker" src="' + STICKER_MAP[m.sticker] + '" alt="sticker">' : '';
       var bubble = m.deleted
         ? '<div class="cm-bubble deleted">🚫 Mensaje eliminado</div>'
-        : '<div class="cm-bubble' + (imgHtml ? ' has-img' : '') + '">' + replyHtml + imgHtml + audioHtml + txtHtml + '</div>';
+        : (stickerHtml || ('<div class="cm-bubble' + (imgHtml ? ' has-img' : '') + '">' + replyHtml + imgHtml + audioHtml + txtHtml + '</div>'));
       var reactsHtml = '';
       if (m.reactions && !m.deleted) {
         var counts = {}, mine = {};
@@ -9213,6 +9261,35 @@
     document.addEventListener('click', function(e) {
       if (e.target !== emojiBtn && !emojiPanel.contains(e.target)) emojiPanel.classList.remove('show');
     });
+
+    // ── Stickers de la saga ──
+    var stickerBtn = document.getElementById('chatStickerBtn');
+    var stickerPanel = document.getElementById('chatStickers');
+    stickerPanel.innerHTML = STICKERS.map(function(s) {
+      return '<button type="button" data-sticker="' + s[0] + '"><img src="' + s[1] + '" alt="' + s[0] + '" loading="lazy"></button>';
+    }).join('');
+    stickerBtn.addEventListener('click', function(e) { e.stopPropagation(); stickerPanel.classList.toggle('show'); emojiPanel.classList.remove('show'); });
+    stickerPanel.addEventListener('click', function(e) {
+      var b = e.target.closest ? e.target.closest('button[data-sticker]') : null;
+      if (!b) return;
+      sendSticker(b.getAttribute('data-sticker'));
+      stickerPanel.classList.remove('show');
+    });
+    document.addEventListener('click', function(e) {
+      if (e.target !== stickerBtn && !stickerPanel.contains(e.target)) stickerPanel.classList.remove('show');
+    });
+    function sendSticker(id) {
+      if (!STICKER_MAP[id]) return;
+      var now = Date.now();
+      if (now - lastSent < 1200) return;
+      lastSent = now;
+      var payload = { name: nick.slice(0, 24), text: '', sticker: id, uid: myUid, ts: firebase.database.ServerValue.TIMESTAMP };
+      if (replyingTo) { payload.replyTo = { key: replyingTo.key, name: replyingTo.name, text: replyingTo.text }; cancelReply(); }
+      var ref = msgRef.push(payload);
+      pendingKeys[ref.key] = true;
+      ref.then(function() { delete pendingKeys[ref.key]; setTickState(ref.key, seenCache[ref.key] ? 'read' : 'delivered'); })
+         .catch(function() { renderMessage(null, { name: 'sistema', text: 'No se pudo enviar el sticker.', ts: Date.now() }, false); });
+    }
 
     // ── Autocompletar de menciones (@) estilo WhatsApp ──
     var mentionEl = document.getElementById('chatMention');
