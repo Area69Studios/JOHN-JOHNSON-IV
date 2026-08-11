@@ -8831,6 +8831,7 @@
       // Presencia
       var seen = {}; names = names.filter(function(n) { if (seen[n]) return false; seen[n] = true; return true; });
       roomNames = names.slice();
+      names.forEach(addKnown);
       if (!names.length) { presenceEl.style.display = 'none'; }
       else {
         presenceEl.style.display = 'flex';
@@ -8927,11 +8928,15 @@
     ];
     var STICKER_MAP = {}; STICKERS.forEach(function(s) { STICKER_MAP[s[0]] = s[1]; });
 
-    // Menciones @apodo
+    // Menciones @apodo — solo se resaltan si el @nombre es un usuario conocido
+    var knownNames = {};   // nombres vistos en la sala / en mensajes (en minúsculas)
+    function addKnown(name) { if (name) knownNames[String(name).toLowerCase()] = true; }
     function reEscape(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
     function formatText(txt) {
       return esc(txt).replace(/(^|\s)@([^\s@]{1,24})/g, function(full, pre, tok) {
-        var me = tok.toLowerCase() === nick.toLowerCase();
+        var low = tok.toLowerCase();
+        var me = low === (nick || '').toLowerCase();
+        if (!me && !knownNames[low]) return pre + '@' + tok;   // no es usuario conocido → texto normal
         return pre + '<span class="cm-mention' + (me ? ' me' : '') + '">@' + tok + '</span>';
       });
     }
@@ -8987,6 +8992,7 @@
         return;
       }
       if (key) msgData[key] = m;
+      addKnown(m.name);
       var own = isOwn(m);
       var existing = key ? msgNodes[key] : null;
       var stick = nearBottom();
