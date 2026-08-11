@@ -3553,6 +3553,20 @@
     .chat-presence .cp-dot { width: 7px; height: 7px; border-radius: 50%; background: #4fd18a; box-shadow: 0 0 6px #4fd18a; flex: none; }
     .chat-presence strong { color: var(--gold); }
     .chat-presence .cp-names { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* Mensaje fijado */
+    .chat-pinned {
+      display: none; align-items: center; gap: 9px;
+      padding: 9px 14px; border-bottom: 1px solid rgba(185,90,228,0.15);
+      background: rgba(185,90,228,0.07); font-size: 0.78rem; cursor: pointer;
+    }
+    .chat-pinned.show { display: flex; }
+    .chat-pinned .cp-pin { flex: none; }
+    .chat-pinned .cp-body { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .chat-pinned .cp-who { color: var(--gold); font-weight: 700; }
+    .chat-pinned .cp-text { color: var(--text-dim); }
+    .chat-pinned .cp-unpin { flex: none; cursor: pointer; background: none; border: none; color: var(--text-dim); font-size: 0.9rem; display: none; }
+    .chat-pinned.admin .cp-unpin { display: inline; }
+    .chat-pinned .cp-unpin:hover { color: #ff6b6b; }
     /* Menú contextual (clic derecho) para editar/borrar tus mensajes */
     #chatCtxMenu {
       position: fixed; z-index: 400; min-width: 140px;
@@ -8599,6 +8613,11 @@
           </span>
         </div>
         <div class="chat-presence" id="chatPresence" style="display:none;"></div>
+        <div class="chat-pinned" id="chatPinned">
+          <span class="cp-pin">📌</span>
+          <span class="cp-body"><span class="cp-who" id="cpWho"></span> <span class="cp-text" id="cpText"></span></span>
+          <button class="cp-unpin" id="cpUnpin" type="button" title="Quitar fijado">✕</button>
+        </div>
 
         <!-- Estado inicial (sin configurar / cargando) -->
         <div class="chat-status" id="chatStatus">
@@ -8659,6 +8678,7 @@
         <button class="ctx-react" data-emo="🔥">🔥</button>
       </div>
       <button class="ctx-item" data-act="reply">↩️ Responder</button>
+      <button class="ctx-item" data-act="pin">📌 Fijar</button>
       <button class="ctx-item" data-act="edit">✏️ Editar</button>
       <button class="ctx-item danger" data-act="del">🗑️ Borrar</button>
     </div>
@@ -8802,6 +8822,7 @@
       adminMode = !!on;
       try { on ? localStorage.setItem('jj4_chat_admin', '1') : localStorage.removeItem('jj4_chat_admin'); } catch (e) {}
       updateAdminUI();
+      if (typeof updatePin === 'function') updatePin();
     }
     updateAdminUI();
 
@@ -9096,17 +9117,18 @@
     }
 
     var q = msgRef.limitToLast(100);
-    q.on('child_added', function(snap) { renderMessage(snap.key, snap.val(), true); }, function(err) {
+    q.on('child_added', function(snap) { renderMessage(snap.key, snap.val(), true); updatePin(); }, function(err) {
       // Aún sin permisos en las reglas de la RTDB
       showStatus('🛠️', 'Activando la sala', 'Falta habilitar los permisos del chat (reglas jj4_chat_v1 / jj4_chat_seen / jj4_chat_presence). Se activará al publicarlas.');
       onlineEl.textContent = 'offline';
       input.disabled = true; sendBtn.disabled = true;
     });
-    q.on('child_changed', function(snap) { renderMessage(snap.key, snap.val(), false); });
+    q.on('child_changed', function(snap) { renderMessage(snap.key, snap.val(), false); updatePin(); });
     q.on('child_removed', function(snap) {
       var el = msgNodes[snap.key];
       if (el && el.parentNode) el.parentNode.removeChild(el);
       delete msgNodes[snap.key]; delete msgData[snap.key];
+      updatePin();
     });
     // El historial inicial no suena; a partir de aquí, los mensajes nuevos sí
     msgRef.limitToLast(100).once('value', function() { initialLoaded = true; });
@@ -9201,6 +9223,9 @@
       var own = isOwn(m);
       ctxMenu.querySelector('[data-act="edit"]').style.display = own ? '' : 'none';
       ctxMenu.querySelector('[data-act="del"]').style.display = (own || adminMode) ? '' : 'none';
+      var pinItem = ctxMenu.querySelector('[data-act="pin"]');
+      pinItem.style.display = adminMode ? '' : 'none';
+      pinItem.textContent = m.pinned ? '📌 Quitar fijado' : '📌 Fijar';
       ctxMenu.classList.add('show');
       var mw = ctxMenu.offsetWidth, mh = ctxMenu.offsetHeight;
       var x = Math.min(e.clientX, window.innerWidth - mw - 8);
@@ -9217,6 +9242,7 @@
       var key = ctxKey, act = btn.getAttribute('data-act');
       hideCtx();
       if (act === 'reply') startReply(key);
+      else if (act === 'pin') { var pm = msgData[key]; if (pm && pm.pinned) unpinMessage(key); else pinMessage(key); }
       else if (act === 'edit') startEdit(key);
       else if (act === 'del') {
         if (confirm('¿Borrar este mensaje?')) {
@@ -9230,6 +9256,32 @@
     document.addEventListener('click', function(e) { if (!ctxMenu.contains(e.target)) hideCtx(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideCtx(); });
     messagesEl.addEventListener('scroll', hideCtx, { passive: true });
+
+    // ── Mensaje fijado (admin) ──
+    var pinnedKey = null;
+    var pinBar = document.getElementById('chatPinned');
+    var cpUnpin = document.getElementById('cpUnpin');
+    function updatePin() {
+      if (!pinBar) return;
+      var best = null, bestKey = null;
+      for (var k in msgData) { var m = msgData[k]; if (m && m.pinned && !m.deleted) { if (!best || (m.ts || 0) > (best.ts || 0)) { best = m; bestKey = k; } } }
+      pinnedKey = bestKey;
+      if (!best) { pinBar.classList.remove('show'); return; }
+      document.getElementById('cpWho').textContent = best.name || 'Anón';
+      document.getElementById('cpText').textContent = best.img ? '📷 Imagen' : best.audio ? '🎤 Nota de voz' : best.sticker ? 'Sticker' : (best.text || '');
+      pinBar.classList.add('show');
+      pinBar.classList.toggle('admin', adminMode);
+    }
+    function pinMessage(key) {
+      for (var k in msgData) { if (k !== key && msgData[k] && msgData[k].pinned) msgRef.child(k).child('pinned').remove().catch(function(){}); }
+      msgRef.child(key).update({ pinned: true }).catch(function(){});
+    }
+    function unpinMessage(key) { if (key) msgRef.child(key).child('pinned').remove().catch(function(){}); }
+    pinBar.addEventListener('click', function(e) {
+      if (e.target === cpUnpin) { if (adminMode) unpinMessage(pinnedKey); return; }
+      var t = pinnedKey && msgNodes[pinnedKey];
+      if (t) { t.scrollIntoView({ block: 'center' }); t.classList.add('cm-flash'); setTimeout(function() { t.classList.remove('cm-flash'); }, 1200); }
+    });
 
     // Visor de imágenes
     var imgOverlay = document.getElementById('chatImgOverlay');
@@ -9409,8 +9461,17 @@
         if (arg.toLowerCase() === 'off') { setAdmin(false); renderMessage(null, { name: 'sistema', text: '🛡️ Modo admin desactivado', ts: Date.now() }, false); return; }
         var pass = arg || (window.prompt ? window.prompt('Contraseña de admin:') : '');
         if (!pass) return;
-        if (adminHash(pass) === ADMIN_HASH) { setAdmin(true); renderMessage(null, { name: 'sistema', text: '🛡️ Modo admin activado — puedes borrar cualquier mensaje', ts: Date.now() }, false); }
+        if (adminHash(pass) === ADMIN_HASH) { setAdmin(true); renderMessage(null, { name: 'sistema', text: '🛡️ Modo admin activado — puedes borrar/fijar cualquier mensaje', ts: Date.now() }, false); }
         else { renderMessage(null, { name: 'sistema', text: '❌ Contraseña incorrecta', ts: Date.now() }, false); }
+        return;
+      }
+      // Comando: vaciar todo el chat (solo admin)
+      if (/^\/clear(\s|$)/i.test(text)) {
+        input.value = ''; hideMention();
+        if (!adminMode) { renderMessage(null, { name: 'sistema', text: 'Solo el admin puede vaciar el chat (/admin).', ts: Date.now() }, false); return; }
+        if (window.confirm('¿Vaciar TODO el chat para todos? No se puede deshacer.')) {
+          msgRef.once('value', function(snap) { snap.forEach(function(c) { msgRef.child(c.key).remove().catch(function(){}); }); });
+        }
         return;
       }
       if (!text) { if (editingKey) cancelEdit(); return; }
