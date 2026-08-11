@@ -8781,6 +8781,30 @@
     });
     nickInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') nickSave.click(); });
 
+    // ── Modo admin (moderación por contraseña) ──
+    function adminHash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return (h >>> 0).toString(16); }
+    var ADMIN_HASH = 'b501f1ed';   // contraseña por defecto: area69JJ (cambiable)
+    var adminMode = false;
+    try { adminMode = localStorage.getItem('jj4_chat_admin') === '1'; } catch (e) {}
+    var adminBadge = null;
+    function updateAdminUI() {
+      var bar = document.querySelector('#chat .chat-topbar-right');
+      if (adminMode) {
+        if (!adminBadge && bar) {
+          adminBadge = document.createElement('span');
+          adminBadge.textContent = '🛡️ admin';
+          adminBadge.style.cssText = 'color:#4fd18a;font-size:0.7rem;letter-spacing:0.08em;font-weight:700;';
+          bar.insertBefore(adminBadge, bar.firstChild);
+        }
+      } else if (adminBadge) { adminBadge.remove(); adminBadge = null; }
+    }
+    function setAdmin(on) {
+      adminMode = !!on;
+      try { on ? localStorage.setItem('jj4_chat_admin', '1') : localStorage.removeItem('jj4_chat_admin'); } catch (e) {}
+      updateAdminUI();
+    }
+    updateAdminUI();
+
     // ── Firebase init ──
     var db;
     try {
@@ -9176,7 +9200,7 @@
       ctxKey = key;
       var own = isOwn(m);
       ctxMenu.querySelector('[data-act="edit"]').style.display = own ? '' : 'none';
-      ctxMenu.querySelector('[data-act="del"]').style.display = own ? '' : 'none';
+      ctxMenu.querySelector('[data-act="del"]').style.display = (own || adminMode) ? '' : 'none';
       ctxMenu.classList.add('show');
       var mw = ctxMenu.offsetWidth, mh = ctxMenu.offsetHeight;
       var x = Math.min(e.clientX, window.innerWidth - mw - 8);
@@ -9195,9 +9219,11 @@
       if (act === 'reply') startReply(key);
       else if (act === 'edit') startEdit(key);
       else if (act === 'del') {
-        if (confirm('¿Borrar este mensaje para todos?')) {
+        if (confirm('¿Borrar este mensaje?')) {
           if (editingKey === key) cancelEdit();
-          msgRef.child(key).update({ text: '', deleted: true }).catch(function(){});
+          var dm = msgData[key];
+          if (adminMode && dm && !isOwn(dm)) msgRef.child(key).remove().catch(function(){});   // admin: desaparece
+          else msgRef.child(key).update({ text: '', deleted: true }).catch(function(){});        // propio: "mensaje eliminado"
         }
       }
     });
@@ -9376,6 +9402,17 @@
     var lastSent = 0;
     function send() {
       var text = input.value.trim();
+      // Comando de admin (no se envía como mensaje)
+      if (/^\/admin(\s|$)/i.test(text)) {
+        var arg = text.replace(/^\/admin\s*/i, '').trim();
+        input.value = ''; hideMention();
+        if (arg.toLowerCase() === 'off') { setAdmin(false); renderMessage(null, { name: 'sistema', text: '🛡️ Modo admin desactivado', ts: Date.now() }, false); return; }
+        var pass = arg || (window.prompt ? window.prompt('Contraseña de admin:') : '');
+        if (!pass) return;
+        if (adminHash(pass) === ADMIN_HASH) { setAdmin(true); renderMessage(null, { name: 'sistema', text: '🛡️ Modo admin activado — puedes borrar cualquier mensaje', ts: Date.now() }, false); }
+        else { renderMessage(null, { name: 'sistema', text: '❌ Contraseña incorrecta', ts: Date.now() }, false); }
+        return;
+      }
       if (!text) { if (editingKey) cancelEdit(); return; }
       if (text.length > 300) text = text.slice(0, 300);
       // Guardar edición
