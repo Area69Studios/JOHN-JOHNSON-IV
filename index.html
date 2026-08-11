@@ -3656,6 +3656,19 @@
       box-shadow: 0 0 8px rgba(255,60,172,0.6); vertical-align: middle;
     }
     .cm-bubble.deleted { font-style: italic; color: var(--text-dim); background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.07); }
+    /* Imagen dentro de un mensaje */
+    .cm-bubble.has-img { padding: 5px; }
+    .cm-img { display: block; max-width: 240px; max-height: 260px; border-radius: 10px; cursor: zoom-in; }
+    .cm-bubble.has-img .cm-txt { display: block; padding: 5px 8px 2px; }
+    .chat-attach-btn { font-size: 1.2rem; }
+    /* Visor de imagen a pantalla completa */
+    #chatImgOverlay {
+      position: fixed; inset: 0; z-index: 420;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(5,5,5,0.92); cursor: zoom-out; padding: 30px;
+    }
+    #chatImgOverlay.show { display: flex; }
+    #chatImgOverlay img { max-width: 92vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
     .cm-edited { opacity: 0.7; font-style: italic; }
     /* Banner de edición */
     .chat-editing {
@@ -3683,7 +3696,7 @@
     }
     .cm-time { font-size: 0.6rem; color: var(--text-dim); margin-top: 3px; padding: 0 4px; display: inline-flex; align-items: center; gap: 4px; }
     /* Ticks de confirmación de lectura (estilo WhatsApp) */
-    .cm-ticks { display: inline-flex; align-items: center; color: rgba(244,241,250,0.4); }
+    .cm-ticks { display: inline-flex; align-items: center; color: #9aa0ab; }  /* gris: enviando/entregado */
     .cm-ticks svg { width: 17px; height: 11px; display: block; }
     .cm-ticks.sent .ck2 { display: none; }          /* ✓ enviando */
     .cm-ticks.read { color: #53bdeb; }                /* ✓✓ azul: leído */
@@ -8576,6 +8589,8 @@
         </div>
         <div class="chat-input-row" id="chatInputRow" style="display:none;">
           <button class="chat-emoji-btn" id="chatEmojiBtn" type="button" aria-label="Emojis" title="Emojis">😀</button>
+          <button class="chat-emoji-btn chat-attach-btn" id="chatAttachBtn" type="button" aria-label="Enviar imagen" title="Enviar imagen">🖼️</button>
+          <input type="file" id="chatFile" accept="image/*" style="display:none">
           <input class="chat-input" id="chatInput" type="text" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" disabled>
           <button class="chat-send" id="chatSend" type="button" aria-label="Enviar" disabled>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
@@ -8586,6 +8601,8 @@
       </div>
       <p class="chat-disclaimer">Chat público. Sé respetuoso: no compartas datos personales ni contenido ofensivo. Los mensajes los pueden ver todos y quedan moderados.</p>
     </div>
+    <!-- Visor de imágenes del chat -->
+    <div id="chatImgOverlay"><img id="chatImgFull" src="" alt=""></div>
     <!-- Menú contextual del chat (clic derecho en tus mensajes) -->
     <div id="chatCtxMenu">
       <div class="ctx-reacts">
@@ -8904,9 +8921,12 @@
       var replyHtml = (m.replyTo && !m.deleted)
         ? '<div class="cm-reply" data-goto="' + esc(m.replyTo.key || '') + '"><span class="cr-name">' + esc(m.replyTo.name || '') + '</span><span class="cr-text">' + esc(m.replyTo.text || '') + '</span></div>'
         : '';
+      var imgHtml = (m.img && !m.deleted && /^data:image\//.test(m.img))
+        ? '<img class="cm-img" src="' + m.img + '" alt="imagen" loading="lazy">' : '';
+      var txtHtml = (m.text && !m.deleted) ? '<span class="cm-txt">' + formatText(m.text) + '</span>' : '';
       var bubble = m.deleted
         ? '<div class="cm-bubble deleted">🚫 Mensaje eliminado</div>'
-        : '<div class="cm-bubble">' + replyHtml + '<span class="cm-txt">' + formatText(m.text) + '</span></div>';
+        : '<div class="cm-bubble' + (imgHtml ? ' has-img' : '') + '">' + replyHtml + imgHtml + txtHtml + '</div>';
       var reactsHtml = '';
       if (m.reactions && !m.deleted) {
         var counts = {}, mine = {};
@@ -9098,8 +9118,15 @@
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideCtx(); });
     messagesEl.addEventListener('scroll', hideCtx, { passive: true });
 
-    // Clic en chip de reacción → alterna tu reacción · clic en cita → ir al mensaje
+    // Visor de imágenes
+    var imgOverlay = document.getElementById('chatImgOverlay');
+    var imgFull = document.getElementById('chatImgFull');
+    imgOverlay.addEventListener('click', function() { imgOverlay.classList.remove('show'); imgFull.src = ''; });
+
+    // Clic en chip de reacción → alterna reacción · en imagen → amplía · en cita → ir al mensaje
     messagesEl.addEventListener('click', function(e) {
+      var pic = e.target.closest ? e.target.closest('.cm-img') : null;
+      if (pic) { imgFull.src = pic.getAttribute('src'); imgOverlay.classList.add('show'); return; }
       var chip = e.target.closest ? e.target.closest('.cm-react-chip') : null;
       if (chip) {
         var w = chip.closest('.chat-msg'), k = w && w.getAttribute('data-key');
@@ -9246,6 +9273,53 @@
       if (e.key === 'Enter') { e.preventDefault(); send(); }
       else if (e.key === 'Escape') { if (editingKey) cancelEdit(); else if (replyingTo) cancelReply(); }
     });
+
+    // ── Subir imágenes (se comprimen y viajan dentro del mensaje) ──
+    var attachBtn = document.getElementById('chatAttachBtn');
+    var fileInput = document.getElementById('chatFile');
+    attachBtn.addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function() {
+      var f = fileInput.files && fileInput.files[0];
+      fileInput.value = '';
+      if (!f || !/^image\//.test(f.type)) return;
+      compressImage(f, function(dataUrl) {
+        if (!dataUrl) { alert('No se pudo procesar la imagen.'); return; }
+        if (dataUrl.length > 700000) { alert('La imagen es demasiado grande. Prueba con una más ligera.'); return; }
+        sendImage(dataUrl);
+      });
+    });
+    function compressImage(file, cb) {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var max = 1000, w = img.width, h = img.height;
+        if (w > max || h > max) { if (w >= h) { h = Math.round(h * max / w); w = max; } else { w = Math.round(w * max / h); h = max; } }
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        var q = 0.62, out;
+        try { out = c.toDataURL('image/jpeg', q); } catch (e) { cb(null); return; }
+        while (out.length > 600000 && q > 0.3) { q -= 0.12; out = c.toDataURL('image/jpeg', q); }
+        cb(out);
+      };
+      img.onerror = function() { URL.revokeObjectURL(url); cb(null); };
+      img.src = url;
+    }
+    function sendImage(dataUrl) {
+      var now = Date.now();
+      if (now - lastSent < 1200) return;
+      lastSent = now;
+      var payload = { name: nick.slice(0, 24), text: '', img: dataUrl, uid: myUid, ts: firebase.database.ServerValue.TIMESTAMP };
+      if (replyingTo) { payload.replyTo = { key: replyingTo.key, name: replyingTo.name, text: replyingTo.text }; cancelReply(); }
+      var ref = msgRef.push(payload);
+      pendingKeys[ref.key] = true;
+      ref.then(function() {
+        delete pendingKeys[ref.key];
+        setTickState(ref.key, seenCache[ref.key] ? 'read' : 'delivered');
+      }).catch(function() {
+        renderMessage(null, { name: 'sistema', text: 'No se pudo enviar la imagen.', ts: Date.now() }, false);
+      });
+    }
   })();
   </script>
 
