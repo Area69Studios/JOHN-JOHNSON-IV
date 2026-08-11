@@ -3660,7 +3660,7 @@
     .cm-bubble.has-img { padding: 5px; }
     .cm-img { display: block; max-width: 240px; max-height: 260px; border-radius: 10px; cursor: zoom-in; }
     /* Stickers de la saga */
-    .cm-sticker { display: block; width: 112px; height: 112px; object-fit: cover; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+    .cm-sticker { display: block; height: 130px; width: auto; max-width: 200px; border-radius: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
     .chat-sticker-panel {
       position: absolute; bottom: 62px; left: 10px; z-index: 6;
       display: none; grid-template-columns: repeat(4, 1fr); gap: 6px;
@@ -8917,6 +8917,7 @@
 
     // Stickers de la saga (imágenes propias; se envían por id validado)
     var STICKERS = [
+      ['pelea', 'images/sticker1.jpeg'], ['rally', 'images/sticker2.jpg'], ['quinta', 'images/sticker3.jpg'],
       ['johnson', 'images/johnson.jpg'], ['tomas', 'images/tomas.jpg'],
       ['emilio', 'images/emilio.jpg'], ['shima', 'images/shima.jpg'],
       ['panda', 'images/panda.jpg?v=2'], ['meregildo', 'images/meregildo1.jpg'],
