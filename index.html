@@ -3633,6 +3633,7 @@
     .chat-input-row { position: relative; }
     .chat-emoji-btn { flex: none; cursor: pointer; background: none; border: none; font-size: 1.35rem; line-height: 1; padding: 0 4px; opacity: 0.85; transition: transform 0.15s, opacity 0.2s; }
     .chat-emoji-btn:hover { transform: scale(1.12); opacity: 1; }
+    .chat-more-btn { display: none; }   /* solo visible en móvil */
     .chat-emoji-panel {
       position: absolute; bottom: 62px; left: 10px; z-index: 5;
       display: none; grid-template-columns: repeat(8, 1fr); gap: 2px;
@@ -3801,7 +3802,30 @@
     .chat-status .cs-icon { font-size: 2.4rem; opacity: 0.6; }
     .chat-status .cs-title { font-family: 'Cinzel', serif; color: var(--white); font-size: 1.1rem; }
     .chat-disclaimer { text-align: center; margin: 16px auto 0; max-width: 620px; font-size: 0.72rem; color: rgba(244,241,250,0.4); line-height: 1.6; }
-    @media (max-width: 600px) { .chat-box { height: 60vh; } .chat-msg { max-width: 90%; } }
+    @media (max-width: 600px) {
+      #chat { padding-left: 10px; padding-right: 10px; }
+      .chat-box { height: 66vh; max-height: 66vh; border-radius: 14px; }
+      .chat-msg { max-width: 88%; }
+      .chat-messages { padding: 12px; gap: 10px; }
+      /* Barra de escritura compacta: el input gana ancho */
+      .chat-input-row { gap: 5px; padding: 8px; }
+      .chat-input { padding: 11px 14px; font-size: 16px; }   /* 16px evita el zoom automático de iOS */
+      .chat-emoji-btn { font-size: 1.15rem; padding: 0; width: 30px; }
+      .chat-send, .chat-mic-btn { width: 40px; height: 40px; }
+      .chat-send svg { width: 18px; height: 18px; }
+      /* Botón ➕ agrupa los tools; el input gana ancho al escribir */
+      .chat-more-btn { display: flex; align-items: center; justify-content: center; transition: transform 0.2s, color 0.2s; }
+      .chat-input-row .chat-tool { display: none; }
+      .chat-input-row.tools-open .chat-tool { display: flex; align-items: center; justify-content: center; }
+      .chat-input-row.tools-open .chat-more-btn { transform: rotate(45deg); color: var(--gold); }
+      /* Paneles a casi todo el ancho */
+      .chat-emoji-panel, .chat-sticker-panel, .chat-mention { left: 8px; right: 8px; width: auto; max-width: none; bottom: 58px; }
+      .chat-emoji-panel { grid-template-columns: repeat(7, 1fr); }
+      .chat-nick { gap: 8px; }
+      .chat-nick input { width: 150px; }
+      .chat-topbar { padding: 10px 12px; }
+      .chat-presence, .chat-pinned { padding: 8px 12px; }
+    }
 
     /* ===== CONTACTO ===== */
     #contacto {
@@ -8640,9 +8664,10 @@
           <button id="chatReplyCancel" type="button">cancelar</button>
         </div>
         <div class="chat-input-row" id="chatInputRow" style="display:none;">
-          <button class="chat-emoji-btn" id="chatEmojiBtn" type="button" aria-label="Emojis" title="Emojis">😀</button>
-          <button class="chat-emoji-btn chat-attach-btn" id="chatAttachBtn" type="button" aria-label="Enviar imagen" title="Enviar imagen">🖼️</button>
-          <button class="chat-emoji-btn" id="chatStickerBtn" type="button" aria-label="Stickers" title="Stickers">🎭</button>
+          <button class="chat-emoji-btn chat-more-btn" id="chatMoreBtn" type="button" aria-label="Más opciones" title="Más">➕</button>
+          <button class="chat-emoji-btn chat-tool" id="chatEmojiBtn" type="button" aria-label="Emojis" title="Emojis">😀</button>
+          <button class="chat-emoji-btn chat-attach-btn chat-tool" id="chatAttachBtn" type="button" aria-label="Enviar imagen" title="Enviar imagen">🖼️</button>
+          <button class="chat-emoji-btn chat-tool" id="chatStickerBtn" type="button" aria-label="Stickers" title="Stickers">🎭</button>
           <input type="file" id="chatFile" accept="image/*" style="display:none">
           <input class="chat-input" id="chatInput" type="text" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" disabled>
           <button class="chat-send chat-mic-btn" id="chatMicBtn" type="button" aria-label="Nota de voz" title="Nota de voz">
@@ -9339,6 +9364,9 @@
     var emojiPanel = document.getElementById('chatEmoji');
     var EMOJIS = '😀 😁 😂 🤣 😊 😍 😎 😭 😢 😡 👍 👎 🙏 🔥 💯 🎉 ❤️ 💔 👀 😴 🤔 😳 🥳 🤯 💀 👏 🙌 🚀 ⚡ ✨ 🍄 🐼 🎬 🎥 ⭐ 😅 😜 🤝 🫡 😤'.split(' ');
     emojiPanel.innerHTML = EMOJIS.map(function(e) { return '<button type="button">' + e + '</button>'; }).join('');
+    // Botón ➕ (móvil): despliega/pliega los botones de herramientas
+    var moreBtn = document.getElementById('chatMoreBtn');
+    if (moreBtn) moreBtn.addEventListener('click', function(e) { e.stopPropagation(); inputRow.classList.toggle('tools-open'); });
     emojiBtn.addEventListener('click', function(e) { e.stopPropagation(); emojiPanel.classList.toggle('show'); });
     emojiPanel.addEventListener('click', function(e) {
       var b = e.target.closest ? e.target.closest('button') : null;
@@ -9488,6 +9516,7 @@
       lastSent = now;
       input.value = '';
       emojiPanel.classList.remove('show');
+      inputRow.classList.remove('tools-open');
       hideMention();
       var payload = { name: nick.slice(0, 24), text: text, uid: myUid, ts: firebase.database.ServerValue.TIMESTAMP };
       if (replyingTo) { payload.replyTo = { key: replyingTo.key, name: replyingTo.name, text: replyingTo.text }; cancelReply(); }
