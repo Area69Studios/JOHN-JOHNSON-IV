@@ -11501,9 +11501,9 @@
     var slideTimer = null;
     var slideIndex = 0;
 
-    // ── Easter egg: al entrar en la página, pequeña probabilidad de desbloquear a Panda ──
-    var PANDA_CHANCE = 0.30;               // ~30% por visita
-    var pandaMode = Math.random() < PANDA_CHANCE;
+    // ── Easter egg: probabilidad de desbloquear a Panda (se tira en cada intento del quiz) ──
+    var PANDA_CHANCE = 0.30;               // ~30% por intento
+    var pandaMode = false;
     var PANDA_IMG = 'images/panda.jpg?v=2';
 
     // Baraja de personajes disponibles
@@ -11761,6 +11761,7 @@
       document.getElementById('quizQuestions').style.display = 'none';
       document.getElementById('quizProgressLabel').style.display = 'none';
 
+      pandaMode = Math.random() < PANDA_CHANCE;   // se tira el dado en cada intento
       var winner = Object.keys(scores).reduce(function(a, b) {
         return scores[a] >= scores[b] ? a : b;
       });
