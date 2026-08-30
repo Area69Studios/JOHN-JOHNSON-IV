@@ -7418,6 +7418,18 @@
       .ranking-card[data-char="meregildo"].rk-top { box-shadow: inset 3px 0 0 #5ad0d0; }
       .ranking-card[data-char="meregildo"].rk-top:hover { box-shadow: inset 3px 0 0 #5ad0d0, 0 20px 50px rgba(0,0,0,0.65), 0 0 0 1px rgba(90,208,208,0.3); }
       .ranking-card[data-char="meregildo"] .rk-flash { background: rgba(90,208,208,0.18); }
+      .ranking-card[data-char="kaia"]  .ranking-vote-btn { border-color: rgba(255,60,80,0.45); color: #ff3c50; animation-name: rk-btn-breathe-kaia; }
+      .ranking-card[data-char="kaia"]  .ranking-vote-btn::before { background: linear-gradient(135deg, rgba(255,60,80,0.24), rgba(255,60,80,0.06)); }
+      .ranking-card[data-char="kaia"]  .ranking-vote-btn::after { background: linear-gradient(90deg, transparent, rgba(255,120,140,0.75), transparent); }
+      .ranking-card[data-char="kaia"]  .ranking-vote-btn:hover:not(:disabled) { border-color: #ff3c50; box-shadow: 0 0 22px rgba(255,60,80,0.4), 0 5px 20px rgba(0,0,0,0.4); color: #ff9aa8; }
+      .ranking-card[data-char="kaia"]  .ranking-vote-btn:active:not(:disabled) { box-shadow: 0 0 30px rgba(255,60,80,0.55); }
+      .ranking-card[data-char="kaia"]  .ranking-vote-btn.rk-voted { border-color: #ff3c50; background: linear-gradient(135deg, rgba(255,60,80,0.25), rgba(255,60,80,0.09)); color: #ff9aa8; animation-name: rk-voted-glow-kaia; }
+      .ranking-card[data-char="kaia"]  .rk-shine { background: linear-gradient(90deg, transparent, rgba(255,120,140,0.32), transparent); }
+      .ranking-card[data-char="kaia"].rk-top { box-shadow: inset 3px 0 0 #ff3c50; }
+      .ranking-card[data-char="kaia"].rk-top:hover { box-shadow: inset 3px 0 0 #ff3c50, 0 20px 50px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,60,80,0.3); }
+      .ranking-card[data-char="kaia"] .rk-flash { background: rgba(255,60,80,0.18); }
+      @keyframes rk-btn-breathe-kaia { 0%,100%{box-shadow:0 0 0 0 rgba(255,60,80,0)} 50%{box-shadow:0 0 12px 3px rgba(255,60,80,0.2)} }
+      @keyframes rk-voted-glow-kaia { 0%,100%{box-shadow:0 0 10px rgba(255,60,80,0.22),inset 0 0 8px rgba(255,60,80,0.07)} 50%{box-shadow:0 0 24px rgba(255,60,80,0.55),inset 0 0 16px rgba(255,60,80,0.15)} }
       @keyframes rk-btn-breathe-meregildo { 0%,100%{box-shadow:0 0 0 0 rgba(90,208,208,0)} 50%{box-shadow:0 0 12px 3px rgba(90,208,208,0.2)} }
       @keyframes rk-voted-glow-meregildo { 0%,100%{box-shadow:0 0 10px rgba(90,208,208,0.22),inset 0 0 8px rgba(90,208,208,0.07)} 50%{box-shadow:0 0 24px rgba(90,208,208,0.55),inset 0 0 16px rgba(90,208,208,0.15)} }
       @keyframes rk-voted-glow        { 0%,100%{box-shadow:0 0 10px rgba(185,90,228,0.22),inset 0 0 8px rgba(185,90,228,0.07)} 50%{box-shadow:0 0 24px rgba(185,90,228,0.55),inset 0 0 16px rgba(185,90,228,0.15)} }
@@ -7769,6 +7781,31 @@
         </div>
       </div>
 
+      <div class="ranking-card" data-char="kaia" id="rk-card-kaia">
+        <div class="ranking-photo-wrap">
+          <img class="ranking-photo" id="rk-photo-kaia" src="" alt="Kaia Vuković">
+          <div class="ranking-pos" id="rk-medal-kaia">6</div>
+        </div>
+        <div class="ranking-content">
+          <div class="ranking-top-row">
+            <div class="ranking-info">
+              <span class="ranking-char-name">Kaia Vuković</span>
+              <span class="ranking-char-fullname">Kaia Vuković</span>
+            </div>
+            <button class="ranking-vote-btn" id="rk-btn-kaia"><span>Votar</span></button>
+          </div>
+          <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-kaia"></div></div>
+          <div class="ranking-bottom-row">
+            <span class="ranking-pct" id="rk-pct-kaia">0%</span>
+            <span class="ranking-votes-count" id="rk-votes-kaia">0 votos</span>
+            <button class="ranking-share-btn" id="rk-share-kaia">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+              <span>Compartir</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="ranking-footer">
         <span id="rk-total">0 votos totales</span><br>
         <span style="display:inline-flex;align-items:center;margin-top:8px;">
@@ -7782,7 +7819,7 @@
 
     <script>
     (function() {
-      var CHARS      = ['johnson', 'tomas', 'emilio', 'shima', 'meregildo'];
+      var CHARS      = ['johnson', 'tomas', 'emilio', 'shima', 'meregildo', 'kaia'];
       var KEY_VOTES  = 'jj4_votes_v1';
       var KEY_MYVOTE = 'jj4_myvote_v1';
 
@@ -8054,7 +8091,7 @@
       }
 
       /* ──────────────── Compartir ──────────────── */
-      var charNames = { johnson: 'John Johnson', tomas: 'Tomás Carreta', emilio: 'Emilio Shuang Ye', shima: 'Shima Asuka', meregildo: 'Meregildo Smith' };
+      var charNames = { johnson: 'John Johnson', tomas: 'Tomás Carreta', emilio: 'Emilio Shuang Ye', shima: 'Shima Asuka', meregildo: 'Meregildo Smith', kaia: 'Kaia Vuković' };
       CHARS.forEach(function(char) {
         var btn = document.getElementById('rk-share-' + char);
         if (!btn) return;
@@ -12022,7 +12059,7 @@
     }
 
     function reset() {
-      scores = { johnson: 0, tomas: 0, emilio: 0, shima: 0, meregildo: 0 };
+      scores = { johnson: 0, tomas: 0, emilio: 0, shima: 0, meregildo: 0, kaia: 0 };
       current = 0;
       document.querySelectorAll('.quiz-option').forEach(function(b) {
         b.classList.remove('selected');
