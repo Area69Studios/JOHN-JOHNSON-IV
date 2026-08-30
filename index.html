@@ -11811,9 +11811,7 @@
         idx++;
       });
 
-      // 2 cartas bloqueadas
-      row.appendChild(makeLockedCard());
-      row.appendChild(makeLockedCard());
+      // Sin cartas bloqueadas: todos los personajes ya están desbloqueados
 
       // Efectos 3D tilt + shimmer por ratón
       row.querySelectorAll('.quiz-char-card').forEach(function(card, i) {
