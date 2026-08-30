@@ -7473,16 +7473,22 @@
       @keyframes rk-bar-shimmer-tomas   { 0%{background-position:150% 0} 100%{background-position:-50% 0} }
       @keyframes rk-bar-shimmer-emilio  { 0%{background-position:150% 0} 100%{background-position:-50% 0} }
       @keyframes rk-bar-shimmer-shima   { 0%{background-position:150% 0} 100%{background-position:-50% 0} }
+      @keyframes rk-bar-shimmer-meregildo { 0%{background-position:150% 0} 100%{background-position:-50% 0} }
+      @keyframes rk-bar-shimmer-kaia    { 0%{background-position:150% 0} 100%{background-position:-50% 0} }
 
       @keyframes rk-bar-glow-johnson { 0%,100%{ box-shadow: 0 0 4px 1px rgba(185,90,228,0.35), 0 0 10px 2px rgba(185,90,228,0.15); } 50%{ box-shadow: 0 0 8px 2px rgba(185,90,228,0.65), 0 0 20px 4px rgba(185,90,228,0.3); } }
       @keyframes rk-bar-glow-tomas   { 0%,100%{ box-shadow: 0 0 4px 1px rgba(137,168,90,0.35), 0 0 10px 2px rgba(137,168,90,0.15); } 50%{ box-shadow: 0 0 8px 2px rgba(137,168,90,0.65), 0 0 20px 4px rgba(137,168,90,0.3); } }
       @keyframes rk-bar-glow-emilio  { 0%,100%{ box-shadow: 0 0 4px 1px rgba(192,88,56,0.35),  0 0 10px 2px rgba(192,88,56,0.15);  } 50%{ box-shadow: 0 0 8px 2px rgba(192,88,56,0.65),  0 0 20px 4px rgba(192,88,56,0.3);  } }
       @keyframes rk-bar-glow-shima   { 0%,100%{ box-shadow: 0 0 4px 1px rgba(168,119,216,0.35), 0 0 10px 2px rgba(168,119,216,0.15); } 50%{ box-shadow: 0 0 8px 2px rgba(168,119,216,0.65), 0 0 20px 4px rgba(168,119,216,0.3); } }
+      @keyframes rk-bar-glow-meregildo { 0%,100%{ box-shadow: 0 0 4px 1px rgba(90,208,208,0.35), 0 0 10px 2px rgba(90,208,208,0.15); } 50%{ box-shadow: 0 0 8px 2px rgba(90,208,208,0.65), 0 0 20px 4px rgba(90,208,208,0.3); } }
+      @keyframes rk-bar-glow-kaia    { 0%,100%{ box-shadow: 0 0 4px 1px rgba(255,60,80,0.35), 0 0 10px 2px rgba(255,60,80,0.15); } 50%{ box-shadow: 0 0 8px 2px rgba(255,60,80,0.65), 0 0 20px 4px rgba(255,60,80,0.3); } }
 
       @keyframes rk-bar-glow-lit-johnson { 0%,100%{ box-shadow: 0 0 8px 2px rgba(185,90,228,0.55), 0 0 20px 4px rgba(185,90,228,0.25); } 50%{ box-shadow: 0 0 14px 4px rgba(185,90,228,1), 0 0 34px 8px rgba(185,90,228,0.45), 0 0 60px 10px rgba(185,90,228,0.15); } }
       @keyframes rk-bar-glow-lit-tomas   { 0%,100%{ box-shadow: 0 0 8px 2px rgba(137,168,90,0.55), 0 0 20px 4px rgba(137,168,90,0.25); } 50%{ box-shadow: 0 0 14px 4px rgba(137,168,90,1), 0 0 34px 8px rgba(137,168,90,0.45), 0 0 60px 10px rgba(137,168,90,0.15); } }
       @keyframes rk-bar-glow-lit-emilio  { 0%,100%{ box-shadow: 0 0 8px 2px rgba(192,88,56,0.55),  0 0 20px 4px rgba(192,88,56,0.25);  } 50%{ box-shadow: 0 0 14px 4px rgba(192,88,56,1),  0 0 34px 8px rgba(192,88,56,0.45),  0 0 60px 10px rgba(192,88,56,0.15);  } }
       @keyframes rk-bar-glow-lit-shima   { 0%,100%{ box-shadow: 0 0 8px 2px rgba(168,119,216,0.55), 0 0 20px 4px rgba(168,119,216,0.25); } 50%{ box-shadow: 0 0 14px 4px rgba(168,119,216,1), 0 0 34px 8px rgba(168,119,216,0.45), 0 0 60px 10px rgba(168,119,216,0.15); } }
+      @keyframes rk-bar-glow-lit-meregildo { 0%,100%{ box-shadow: 0 0 8px 2px rgba(90,208,208,0.55), 0 0 20px 4px rgba(90,208,208,0.25); } 50%{ box-shadow: 0 0 14px 4px rgba(90,208,208,1), 0 0 34px 8px rgba(90,208,208,0.45), 0 0 60px 10px rgba(90,208,208,0.15); } }
+      @keyframes rk-bar-glow-lit-kaia    { 0%,100%{ box-shadow: 0 0 8px 2px rgba(255,60,80,0.55), 0 0 20px 4px rgba(255,60,80,0.25); } 50%{ box-shadow: 0 0 14px 4px rgba(255,60,80,1), 0 0 34px 8px rgba(255,60,80,0.45), 0 0 60px 10px rgba(255,60,80,0.15); } }
 
       .ranking-bar-fill {
         height: 100%; width: 0%; border-radius: 3px;
@@ -7524,13 +7530,27 @@
         background-size: 220% 100%;
         animation: rk-bar-shimmer-shima 4s linear infinite, rk-bar-glow-shima 2.6s ease-in-out infinite;
       }
+      .ranking-card[data-char="meregildo"] .ranking-bar-fill {
+        background: linear-gradient(90deg, #0f3a3a 0%, #3ea8a8 45%, #a0f0f0 55%, #3ea8a8 65%, #0f3a3a 100%);
+        background-size: 220% 100%;
+        animation: rk-bar-shimmer-meregildo 4s linear infinite, rk-bar-glow-meregildo 2.6s ease-in-out infinite;
+      }
+      .ranking-card[data-char="kaia"] .ranking-bar-fill {
+        background: linear-gradient(90deg, #4a0810 0%, #d02840 45%, #ff8a98 55%, #d02840 65%, #4a0810 100%);
+        background-size: 220% 100%;
+        animation: rk-bar-shimmer-kaia 4s linear infinite, rk-bar-glow-kaia 2.6s ease-in-out infinite;
+      }
       .ranking-card[data-char="tomas"]  .ranking-bar-fill.rk-bar-lit { animation: rk-bar-shimmer-tomas  2.2s linear infinite, rk-bar-glow-lit-tomas  1.8s ease-in-out infinite; }
       .ranking-card[data-char="emilio"] .ranking-bar-fill.rk-bar-lit { animation: rk-bar-shimmer-emilio 2.2s linear infinite, rk-bar-glow-lit-emilio 1.8s ease-in-out infinite; }
       .ranking-card[data-char="shima"]  .ranking-bar-fill.rk-bar-lit { animation: rk-bar-shimmer-shima  2.2s linear infinite, rk-bar-glow-lit-shima  1.8s ease-in-out infinite; }
+      .ranking-card[data-char="meregildo"] .ranking-bar-fill.rk-bar-lit { animation: rk-bar-shimmer-meregildo 2.2s linear infinite, rk-bar-glow-lit-meregildo 1.8s ease-in-out infinite; }
+      .ranking-card[data-char="kaia"]   .ranking-bar-fill.rk-bar-lit { animation: rk-bar-shimmer-kaia  2.2s linear infinite, rk-bar-glow-lit-kaia  1.8s ease-in-out infinite; }
 
       .ranking-card[data-char="tomas"]  .ranking-bar-fill::after { background: #a0c868; box-shadow: 0 0 10px 3px rgba(137,168,90,0.7), 0 0 22px 6px rgba(137,168,90,0.35); }
       .ranking-card[data-char="emilio"] .ranking-bar-fill::after { background: #d06848; box-shadow: 0 0 10px 3px rgba(192,88,56,0.7),  0 0 22px 6px rgba(192,88,56,0.35);  }
       .ranking-card[data-char="shima"]  .ranking-bar-fill::after { background: #c8a0f0; box-shadow: 0 0 10px 3px rgba(168,119,216,0.7), 0 0 22px 6px rgba(168,119,216,0.35); }
+      .ranking-card[data-char="meregildo"] .ranking-bar-fill::after { background: #a0f0f0; box-shadow: 0 0 10px 3px rgba(90,208,208,0.7), 0 0 22px 6px rgba(90,208,208,0.35); }
+      .ranking-card[data-char="kaia"]   .ranking-bar-fill::after { background: #ff8a98; box-shadow: 0 0 10px 3px rgba(255,60,80,0.7), 0 0 22px 6px rgba(255,60,80,0.35); }
 
       /* ── Bottom row: % + votos + compartir ── */
       .ranking-bottom-row {
