@@ -11731,6 +11731,22 @@
     var slideIndex = 0;
     var lastWinner = null;   // guarda el resultado ya sorteado para reutilizarlo (ej. al compartir)
 
+    // ── Orden aleatorio de las respuestas ──
+    // Evita que el orden de los botones sea memorizable (p.ej. "elijo siempre
+    // las de abajo para que me salga Kaia"). Se reordena el DOM de verdad
+    // (no solo visualmente), así que no hay patrón fijo que explotar.
+    function shuffleQuestionOptions() {
+      document.querySelectorAll('.quiz-options').forEach(function(container) {
+        var opts = Array.prototype.slice.call(container.children);
+        for (var i = opts.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = opts[i]; opts[i] = opts[j]; opts[j] = tmp;
+        }
+        opts.forEach(function(opt) { container.appendChild(opt); });
+      });
+    }
+    shuffleQuestionOptions();
+
     // ── Selección del ganador ──
     // El ganador es SIEMPRE el personaje con más puntos (coincide con el
     // % de afinidad más alto que se muestra en pantalla). Si hay un empate
@@ -12167,6 +12183,7 @@
       slideIndex = 0;
       document.getElementById('quizQuestions').style.display = '';
       document.getElementById('quizProgressLabel').style.display = '';
+      shuffleQuestionOptions();
       showQuestion(0);
       updateProgress();
     }
