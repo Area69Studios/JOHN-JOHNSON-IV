@@ -11720,9 +11720,30 @@
     var total = 6;
     var slideTimer = null;
     var slideIndex = 0;
+    var lastWinner = null;   // guarda el resultado ya sorteado para reutilizarlo (ej. al compartir)
+
+    // ── Selección ponderada del ganador ──
+    // En vez de quedarnos siempre con el máximo (lo que hace que solo 1-2
+    // personajes salgan casi siempre), sorteamos el resultado dando a cada
+    // personaje una probabilidad proporcional a su puntuación, más una base
+    // mínima para que TODOS tengan alguna chance real de salir, incluso los
+    // que quedaron en 0 puntos.
+    var MIN_WEIGHT = 1;   // "piso" de peso para que ningún personaje quede en 0% de chance
+    function pickWinner() {
+      var keys = Object.keys(scores);
+      var weights = keys.map(function(k) { return Math.max(scores[k], 0) + MIN_WEIGHT; });
+      var totalWeight = weights.reduce(function(s, w) { return s + w; }, 0);
+      var roll = Math.random() * totalWeight;
+      var acc = 0;
+      for (var i = 0; i < keys.length; i++) {
+        acc += weights[i];
+        if (roll < acc) return keys[i];
+      }
+      return keys[keys.length - 1]; // fallback de seguridad
+    }
 
     // ── Easter egg: probabilidad de desbloquear a Panda (se tira en cada intento del quiz) ──
-    var PANDA_CHANCE = 0.30;               // ~30% por intento
+    var PANDA_CHANCE = 0.08;               // ~8% por intento
     var pandaMode = false;
     var PANDA_IMG = 'images/panda.jpg?v=2';
 
@@ -11986,10 +12007,9 @@
       document.getElementById('quizProgressLabel').style.display = 'none';
 
       pandaMode = Math.random() < PANDA_CHANCE;   // se tira el dado en cada intento
-      var winner = Object.keys(scores).reduce(function(a, b) {
-        return scores[a] >= scores[b] ? a : b;
-      });
+      var winner = pickWinner();
       if (pandaMode) winner = 'panda';   // easter egg
+      lastWinner = winner;               // se reutiliza en el botón de compartir
       var c = characters[winner];
 
       // ── Carrusel de retratos ──
@@ -12121,6 +12141,7 @@
 
     function reset() {
       scores = { johnson: 0, tomas: 0, emilio: 0, shima: 0, meregildo: 0, kaia: 0 };
+      lastWinner = null;
       current = 0;
       document.querySelectorAll('.quiz-option').forEach(function(b) {
         b.classList.remove('selected');
@@ -12238,10 +12259,7 @@
       btn.classList.add('generating');
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Generando imagen…';
 
-      var winner = Object.keys(scores).reduce(function(a, b) {
-        return scores[a] >= scores[b] ? a : b;
-      });
-      if (pandaMode) winner = 'panda';   // easter egg
+      var winner = lastWinner || pickWinner();   // usa el mismo resultado ya mostrado
       var c = characters[winner];
 
       var charOrder = [
