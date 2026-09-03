@@ -3421,6 +3421,9 @@
       font-size: 1rem;
       font-weight: 700;
       color: var(--white);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
     }
 
     .team-bio {
@@ -7063,6 +7066,7 @@
             <button class="quiz-option" data-chars="johnson:2,tomas:1">Me paro a pensar. Cabeza fría: mido cada paso y analizo antes de moverme.</button>
             <button class="quiz-option" data-chars="emilio:2,shima:1">Reacciono al instante. Me lanzo sin dudar, o ataco justo en el momento exacto.</button>
             <button class="quiz-option" data-chars="meregildo:2,johnson:1,kaia:1">Me quedo inmóvil y observo. La quietud desconcierta más que cualquier reacción.</button>
+            <button class="quiz-option" data-chars="kaia:2,tomas:1">Espero el momento exacto. No me muevo hasta tener la certeza absoluta de acertar.</button>
           </div>
         </div>
 
@@ -7073,6 +7077,7 @@
             <button class="quiz-option" data-chars="tomas:2,johnson:1,kaia:1">La cabeza. Observo, analizo y decido con la información en la mano.</button>
             <button class="quiz-option" data-chars="shima:2,emilio:1">El cuerpo. Disciplina, fuerza y precisión que responden como una sola arma.</button>
             <button class="quiz-option" data-chars="meregildo:2,tomas:1">La serenidad. Nada me altera; recibo a cualquiera con la misma calma.</button>
+            <button class="quiz-option" data-chars="kaia:2,shima:1">El cálculo frío. No siento el peligro como los demás: solo mido probabilidades.</button>
           </div>
         </div>
 
@@ -7083,6 +7088,7 @@
             <button class="quiz-option" data-chars="johnson:2,emilio:1">Organizo la búsqueda y salgo yo mismo. Alguien tiene que dar la cara.</button>
             <button class="quiz-option" data-chars="emilio:2,meregildo:1">Me lanzo a buscarlo sin pensar en el riesgo; que el mundo espere.</button>
             <button class="quiz-option" data-chars="meregildo:2,shima:1,kaia:1">Aguardo en mi sitio, sin moverme. Quien me necesita siempre acaba llegando.</button>
+            <button class="quiz-option" data-chars="kaia:2,johnson:1">Calculo primero. Sin un plan certero, salir a buscarlo es un riesgo que no me permito.</button>
           </div>
         </div>
 
@@ -7093,6 +7099,7 @@
             <button class="quiz-option" data-chars="tomas:2,shima:1,kaia:1">Las respeto, pero la verdad y mi propio código van siempre primero.</button>
             <button class="quiz-option" data-chars="shima:2,meregildo:1">Sigo un código de honor propio, más estricto que cualquier ley.</button>
             <button class="quiz-option" data-chars="johnson:2,meregildo:1">Son orientativas. Vivo a mi manera y lo que importa es el resultado.</button>
+            <button class="quiz-option" data-chars="kaia:2,tomas:1">Son datos. Las sigo o las rompo según lo que garantice el resultado.</button>
           </div>
         </div>
 
@@ -7103,6 +7110,7 @@
             <button class="quiz-option" data-chars="johnson:2,tomas:1,kaia:1">El que todos miran para decidir, y el que lo ve todo desde fuera.</button>
             <button class="quiz-option" data-chars="emilio:2,shima:1">El que aparece cuando lo necesitan y actúa con precisión, pase lo que pase.</button>
             <button class="quiz-option" data-chars="meregildo:2,tomas:1">El enigma silencioso al que, sin saber muy bien por qué, todos acaban tomando cariño.</button>
+            <button class="quiz-option" data-chars="kaia:2,meregildo:1">El que se mantiene al margen, calculando en silencio mientras los demás actúan.</button>
           </div>
         </div>
 
@@ -7113,6 +7121,7 @@
             <button class="quiz-option" data-chars="tomas:2,johnson:1">La información y la calma. Saber más que el rival siempre da ventaja.</button>
             <button class="quiz-option" data-chars="shima:2,emilio:1,kaia:1">El filo y la fuerza. Aparezco donde no me esperan y resuelvo.</button>
             <button class="quiz-option" data-chars="meregildo:2,emilio:1">Lo desconocido. Nadie sabe qué soy, y esa incertidumbre lo cambia todo.</button>
+            <button class="quiz-option" data-chars="kaia:2,shima:1">La precisión. Nunca golpeo sin la certeza de que el resultado está garantizado.</button>
           </div>
         </div>
 
@@ -11722,29 +11731,19 @@
     var slideIndex = 0;
     var lastWinner = null;   // guarda el resultado ya sorteado para reutilizarlo (ej. al compartir)
 
-    // ── Selección ponderada del ganador ──
-    // En vez de quedarnos siempre con el máximo (lo que hace que solo 1-2
-    // personajes salgan casi siempre), sorteamos el resultado dando a cada
-    // personaje una probabilidad proporcional a su puntuación, más una base
-    // mínima para que TODOS tengan alguna chance real de salir, incluso los
-    // que quedaron en 0 puntos.
-    var MIN_WEIGHT = 1;   // "piso" de peso para que ningún personaje quede en 0% de chance
+    // ── Selección del ganador ──
+    // El ganador es SIEMPRE el personaje con más puntos (coincide con el
+    // % de afinidad más alto que se muestra en pantalla). Si hay un empate
+    // exacto en el primer puesto, se resuelve con un orden fijo (johnson >
+    // tomas > emilio > shima > meregildo > kaia), sin ningún sorteo:
+    // el único elemento random de todo el quiz es el easter egg del panda.
     function pickWinner() {
       var keys = Object.keys(scores);
-      // Peso cuadrático: el que más afinidad tiene pesa MUCHO más que el resto,
-      // pero todos conservan una chance mínima (MIN_WEIGHT) de salir sorteados.
-      var weights = keys.map(function(k) {
-        var s = Math.max(scores[k], 0);
-        return (s * s) + MIN_WEIGHT;
-      });
-      var totalWeight = weights.reduce(function(s, w) { return s + w; }, 0);
-      var roll = Math.random() * totalWeight;
-      var acc = 0;
+      var maxScore = Math.max.apply(null, keys.map(function(k) { return scores[k]; }));
       for (var i = 0; i < keys.length; i++) {
-        acc += weights[i];
-        if (roll < acc) return keys[i];
+        if (scores[keys[i]] === maxScore) return keys[i];
       }
-      return keys[keys.length - 1]; // fallback de seguridad
+      return keys[0]; // fallback de seguridad
     }
 
     // ── Easter egg: probabilidad de desbloquear a Panda (se tira en cada intento del quiz) ──
