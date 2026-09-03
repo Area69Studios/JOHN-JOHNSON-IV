@@ -11731,7 +11731,12 @@
     var MIN_WEIGHT = 1;   // "piso" de peso para que ningún personaje quede en 0% de chance
     function pickWinner() {
       var keys = Object.keys(scores);
-      var weights = keys.map(function(k) { return Math.max(scores[k], 0) + MIN_WEIGHT; });
+      // Peso cuadrático: el que más afinidad tiene pesa MUCHO más que el resto,
+      // pero todos conservan una chance mínima (MIN_WEIGHT) de salir sorteados.
+      var weights = keys.map(function(k) {
+        var s = Math.max(scores[k], 0);
+        return (s * s) + MIN_WEIGHT;
+      });
       var totalWeight = weights.reduce(function(s, w) { return s + w; }, 0);
       var roll = Math.random() * totalWeight;
       var acc = 0;
