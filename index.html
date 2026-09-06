@@ -88,6 +88,7 @@
       max-width: 90vw; max-height: 85vh;
       object-fit: contain;
       display: block;
+      border-radius: 16px;
       box-shadow: 0 0 0 1px rgba(185,90,228,0.2), 0 40px 100px rgba(0,0,0,0.8);
       transition: opacity 0.2s ease;
     }
@@ -155,7 +156,7 @@
     }
     #video-modal .vm-player-wrap {
       position: relative; width: 100%; aspect-ratio: 16 / 9;
-      background: #000; border-radius: 12px; overflow: hidden;
+      background: #000; border-radius: 20px; overflow: hidden;
       box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(185,90,228,0.25);
     }
     #video-modal .vm-player-wrap iframe,
@@ -211,20 +212,27 @@
     }
 
     nav {
-      position: fixed; top: 0; width: 100%; z-index: 300;
+      position: fixed; top: 0; left: 0; right: 0; width: 100%; z-index: 300;
       padding: 20px 60px;
       display: flex; justify-content: space-between; align-items: center;
-      transition: background 0.4s, padding 0.4s;
+      overflow: hidden;
+      transition: background 0.4s, padding 0.4s, top 0.4s, left 0.4s, right 0.4s, border-radius 0.4s, box-shadow 0.4s;
     }
     nav.scrolled {
+      top: 14px;
+      left: 16px;
+      right: 16px;
+      width: auto;
       background: rgba(5,5,5,0.95);
-      padding: 14px 60px;
-      border-bottom: 1px solid rgba(185,90,228,0.15);
+      padding: 12px 32px;
+      border: 1px solid rgba(185,90,228,0.15);
+      border-radius: 20px;
     }
     nav.scrolled::before {
       content: '';
       position: absolute;
       inset: 0;
+      border-radius: inherit;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       z-index: -1;
@@ -1882,6 +1890,7 @@
       width: 300px;
       background: rgba(6,6,6,0.97);
       border: 1px solid rgba(185,90,228,0.4);
+      border-radius: 14px;
       box-shadow: 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(185,90,228,0.1);
       pointer-events: none;
       opacity: 0;
@@ -2654,6 +2663,7 @@
       max-height: 90vh;
       background: #0a0806;
       border: 1px solid rgba(185,90,228,0.2);
+      border-radius: 24px;
       display: grid;
       grid-template-columns: 1.1fr 1fr;
       overflow: hidden;
@@ -3980,7 +3990,7 @@
       pointer-events: none;
       mix-blend-mode: soft-light;
       background-color: rgb(162,75,255);
-      opacity: 0.6;
+      opacity: 0.18;
       will-change: background-color;
     }
 
@@ -4028,13 +4038,15 @@
     }
     nav.scrolled {
       background: rgba(5, 5, 5, 0.55);
-      border-bottom: 1px solid rgba(185,90,228,0.18);
+      border: 1px solid rgba(185,90,228,0.18);
+      border-radius: 20px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.05) inset;
     }
     nav.scrolled::before {
       content: '';
       position: absolute;
       inset: 0;
+      border-radius: inherit;
       backdrop-filter: blur(32px) saturate(200%);
       -webkit-backdrop-filter: blur(32px) saturate(200%);
       z-index: -1;
@@ -11312,34 +11324,8 @@
     });
   })();
   </script>
-  <!-- ── VHS / CRT overlay (scanlines + grain) ── -->
-  <style>
-    #vhs {
-      position: fixed; inset: 0; z-index: 9996; pointer-events: none;
-    }
-    #vhs::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(to bottom,
-        rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
-        rgba(0,0,0,0.10) 2px, rgba(0,0,0,0.10) 3px);
-      opacity: 0.55;
-    }
-    #vhs::after {
-      content: ''; position: absolute; inset: -60%;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: 0.045;
-      animation: vhsGrain 0.5s steps(3) infinite;
-    }
-    @keyframes vhsGrain {
-      0%   { transform: translate(0,0); }
-      50%  { transform: translate(-2%,1.5%); }
-      100% { transform: translate(1.5%,-2%); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      #vhs::after { animation: none; }
-    }
-  </style>
-  <div id="vhs" aria-hidden="true"></div>
+  <!-- ── VHS / CRT overlay eliminado para un look más limpio ── -->
+  <div id="vhs" aria-hidden="true" style="display:none;"></div>
 
   <!-- ── Micro-interactions (magnetic buttons) ── -->
   <style>
