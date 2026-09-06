@@ -30,7 +30,7 @@
       --red: #8B1A1A;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 110px; }
 
     body {
       background: var(--black);
@@ -45,6 +45,35 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--black); }
     ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+    /* ===== FOCUS VISIBLE (teclado / accesibilidad) ===== */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+    /* Elementos ya redondeados: que el foco siga esa forma */
+    .btn-primary:focus-visible,
+    .btn-secondary:focus-visible,
+    .nav-vote-btn:focus-visible,
+    .ranking-vote-btn:focus-visible,
+    .glosario-filter:focus-visible,
+    .share-modal-btn:focus-visible,
+    .team-member:focus-visible,
+    .gallery-item:focus-visible,
+    .char-profile-text:focus-visible {
+      outline-offset: 2px;
+      border-radius: inherit;
+    }
+    .lb-btn:focus-visible,
+    .nav-hamburger:focus-visible {
+      outline-offset: 2px;
+    }
 
     /* ===== NAV ===== */
     /* ===== LIGHTBOX ===== */
@@ -97,6 +126,8 @@
       position: fixed; top: 50%; z-index: 2;
       transform: translateY(-50%);
       background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
       border: 1px solid rgba(185,90,228,0.25);
       border-radius: 50%;
       color: rgba(185,90,228,0.7);
