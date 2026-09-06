@@ -3844,6 +3844,11 @@
       cursor: default;
       pointer-events: auto;
     }
+    /* Bloqueado: no crece al pasar el ratón, para dar sensación de deshabilitado */
+    .capitulos-list:has(.cap-btn:hover) .cap-btn-soon:hover,
+    .capitulos-list .cap-btn-soon:hover {
+      transform: none !important;
+    }
     .cap-btn-soon::before {
       background: linear-gradient(90deg, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.78) 55%, rgba(5,5,5,0.55) 100%);
     }
