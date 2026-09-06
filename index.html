@@ -3841,13 +3841,24 @@
     .cap-btn-soon {
       opacity: 0.75;
       border-color: rgba(185,90,228,0.2);
-      cursor: default;
+      cursor: not-allowed;
       pointer-events: auto;
+      filter: grayscale(70%) brightness(0.75);
+      transition: filter 0.35s ease, opacity 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
     }
-    /* Bloqueado: no crece al pasar el ratón, para dar sensación de deshabilitado */
+    /* Bloqueado: no crece al pasar el ratón, se oscurece aún más y no proyecta sombra, para dar sensación de deshabilitado */
     .capitulos-list:has(.cap-btn:hover) .cap-btn-soon:hover,
     .capitulos-list .cap-btn-soon:hover {
       transform: none !important;
+      filter: grayscale(85%) brightness(0.6) !important;
+      box-shadow: none !important;
+      border-color: rgba(185,90,228,0.15) !important;
+    }
+    .cap-btn-soon:hover .cap-number,
+    .cap-btn-soon:hover .cap-label,
+    .cap-btn-soon:hover .cap-title,
+    .cap-btn-soon:hover .cap-sub {
+      opacity: 0.7;
     }
     .cap-btn-soon::before {
       background: linear-gradient(90deg, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.78) 55%, rgba(5,5,5,0.55) 100%);
