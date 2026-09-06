@@ -5987,24 +5987,6 @@
       </div>
     </div>
 
-    <div class="sinopsis-stats" id="sagaStats">
-      <div class="stat reveal">
-        <div class="stat-number" data-target="47"><span class="stat-count">0</span><span class="stat-suffix">min</span></div>
-        <div class="stat-label">Contenido<br>completado</div>
-      </div>
-      <div class="stat reveal reveal-delay-1">
-        <div class="stat-number" data-target="2024"><span class="stat-count">0</span></div>
-        <div class="stat-label">Año de<br>inicio</div>
-      </div>
-      <div class="stat reveal reveal-delay-2">
-        <div class="stat-number" data-target="3"><span class="stat-count">0</span></div>
-        <div class="stat-label">Personajes<br>principales</div>
-      </div>
-      <div class="stat reveal reveal-delay-3">
-        <div class="stat-number" data-target="3"><span class="stat-count">0</span></div>
-        <div class="stat-label">Localizaciones<br>filmadas</div>
-      </div>
-    </div>
   </section>
 
   <!-- CAPÍTULOS -->
@@ -9014,42 +8996,6 @@
       var docHeight = document.documentElement.scrollHeight - window.innerHeight;
       bar.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
     }, { passive: true });
-  })();
-  </script>
-
-  <!-- SAGA STATS COUNTER JS -->
-  <script>
-  (function() {
-    var stats = document.getElementById('sagaStats');
-    if (!stats) return;
-    function animateCount(el, target, duration) {
-      var start = null;
-      var startVal = 0;
-      function step(ts) {
-        if (!start) start = ts;
-        var progress = Math.min((ts - start) / duration, 1);
-        var ease = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.floor(ease * target);
-        if (progress < 1) requestAnimationFrame(step);
-        else el.textContent = target;
-      }
-      requestAnimationFrame(step);
-    }
-    var triggered = false;
-    var observer = new IntersectionObserver(function(entries) {
-      if (entries[0].isIntersecting && !triggered) {
-        triggered = true;
-        stats.querySelectorAll('.stat-number').forEach(function(num, i) {
-          var target = parseInt(num.getAttribute('data-target'), 10);
-          var countEl = num.querySelector('.stat-count');
-          var delay = i * 120;
-          var duration = target > 100 ? 1800 : 900;
-          setTimeout(function() { animateCount(countEl, target, duration); }, delay);
-        });
-        observer.disconnect();
-      }
-    }, { threshold: 0.3 });
-    observer.observe(stats);
   })();
   </script>
 
