@@ -97,6 +97,7 @@
       transform: translateY(-50%);
       background: rgba(0,0,0,0.5);
       border: 1px solid rgba(185,90,228,0.25);
+      border-radius: 50%;
       color: rgba(185,90,228,0.7);
       font-size: 1.4rem; width: 48px; height: 48px;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -355,6 +356,7 @@
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 13px;
       border: 1px solid rgba(185,90,228,0.5);
+      border-radius: 999px;
       color: #FF8AD8;
       font-family: 'Bebas Neue', sans-serif !important;
       font-size: 0.78rem !important;
@@ -1015,11 +1017,11 @@
       background-position: 0% 50%;
       padding: 14px 36px;
       border: none;
+      border-radius: 999px;
       text-decoration: none;
       cursor: pointer;
       transition: background-position 0.5s ease, box-shadow 0.3s, transform 0.2s;
       box-shadow: 0 4px 22px rgba(185,90,228,0.35);
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
     }
     .btn-primary:hover { background-position: 100% 50%; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(62,139,255,0.45); }
 
@@ -1033,6 +1035,7 @@
       background: transparent;
       padding: 14px 36px;
       border: 1px solid var(--gold-dim);
+      border-radius: 999px;
       text-decoration: none;
       cursor: pointer;
       transition: border-color 0.3s, color 0.3s, transform 0.2s;
@@ -1521,7 +1524,7 @@
       position: relative;
       overflow: hidden;
       /* bg handled by slides */
-      border-radius: 0;
+      border-radius: 18px;
       border: 1px solid rgba(185,90,228,0.45);
       box-shadow: 0 8px 40px rgba(0,0,0,0.5);
       backdrop-filter: blur(2px);
@@ -1736,7 +1739,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      border-radius: 0;
+      border-radius: 18px;
       border: 1px solid rgba(185,90,228,0.35);
       box-shadow: 0 8px 40px rgba(0,0,0,0.5);
       backdrop-filter: blur(2px);
@@ -2534,6 +2537,7 @@
     .glosario-card {
       background: rgba(185,90,228,0.03);
       border: 1px solid rgba(185,90,228,0.12);
+      border-radius: 14px;
       padding: 26px 28px 22px;
       display: flex;
       flex-direction: column;
@@ -4071,16 +4075,17 @@
       box-shadow: var(--glass-shadow-hover);
     }
 
-    /* Reset glass overrides for the full-width info cards in #personajes */
+    /* Estilo moderno redondeado para las tarjetas de información de personajes */
     #personajes .char-profile {
       background: transparent;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      box-shadow: var(--glass-shadow);
       padding: 0;
-      overflow: visible;
+      overflow: hidden;
+      transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s;
     }
     #personajes .char-profile::before,
     #personajes .char-profile::after {
@@ -4088,8 +4093,14 @@
     }
     #personajes .char-profile:hover {
       background: transparent;
-      border-color: transparent;
-      box-shadow: none;
+      border-color: var(--glass-border-hover);
+      box-shadow: var(--glass-shadow-hover);
+    }
+    #personajes .char-profile + .char-profile {
+      margin-top: 48px;
+    }
+    @media (max-width: 900px) {
+      #personajes .char-profile { border-radius: 20px; }
     }
 
     /* GALLERY ITEMS — glass overlay on hover */
@@ -5221,6 +5232,7 @@
       text-align: left;
       padding: 18px 24px;
       cursor: pointer;
+      border-radius: 12px;
       transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.2s;
       position: relative;
       letter-spacing: 0.02em;
@@ -5520,6 +5532,7 @@
       letter-spacing: 0.38em;
       padding: 14px 32px;
       cursor: pointer;
+      border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -5564,6 +5577,8 @@
     .share-modal {
       background: #0d0b09;
       border: 1px solid rgba(185,90,228,0.3);
+      border-radius: 20px;
+      overflow: hidden;
       max-width: 420px;
       width: 100%;
       display: flex;
@@ -5670,6 +5685,7 @@
       letter-spacing: 0.4em;
       padding: 12px 32px;
       cursor: pointer;
+      border-radius: 999px;
       transition: border-color 0.25s, color 0.25s, background 0.25s;
     }
     .quiz-retry:hover {
@@ -6469,6 +6485,7 @@
         grid-template-rows: 120px;
         background: var(--surface);
         border: 1px solid rgba(185,90,228,0.1);
+        border-radius: 20px;
         overflow: hidden;
         cursor: default;
         transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
@@ -6575,6 +6592,7 @@
         padding: 11px 0;
         background: transparent;
         border: 1px solid rgba(185,90,228,0.45);
+        border-radius: 999px;
         color: var(--gold);
         font: 600 0.74rem/1 'Crimson Pro', Georgia, serif;
         letter-spacing: 0.18em; text-transform: uppercase;
