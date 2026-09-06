@@ -1268,57 +1268,6 @@
       z-index: -1;
     }
 
-    .sinopsis-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      margin-top: 48px;
-      background: rgba(185,90,228,0.1);
-      position: relative; z-index: 3;
-    }
-    .stat {
-      background: var(--dark);
-      padding: 28px 24px 24px;
-      display: flex; flex-direction: column; gap: 6px;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.3s;
-    }
-    .stat::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background-image: var(--grad-neon);
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
-    .stat:hover { background: rgba(10,10,10,0.95); }
-    .stat:hover::before { opacity: 0.6; }
-    .stat-number {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.8rem;
-      line-height: 1;
-      transition: transform 0.3s;
-    }
-    .stat-count, .stat-suffix {
-      background-image: var(--grad-neon);
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent; color: transparent;
-    }
-    .stat:hover .stat-number { transform: scale(1.04); }
-    .stat-suffix {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      color: rgba(185,90,228,0.5);
-      margin-left: 2px;
-    }
-    .stat-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      line-height: 1.4;
-    }
-
     /* ===== PERSONAJES ===== */
     #personajes {
       background: var(--black);
@@ -3991,7 +3940,6 @@
       .equipo-grid { grid-template-columns: 1fr !important; }
       .gallery-grid { grid-template-columns: 1fr !important; }
       .gallery-item { height: 220px !important; }
-      .sinopsis-stats { grid-template-columns: 1fr 1fr; }
       .trailer-btn { max-width: 100%; }
       .capitulos-list { gap: 14px; }
       .cap-btn { font-size: 0.9rem; }
