@@ -6,7 +6,7 @@
   <title>JOHN JOHNSON — Serie Oficial</title>
   <link rel="icon" type="image/png" href="images/logo-64.png?v=2" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <style>
     /* ===== RESET & BASE ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1001,12 +1001,17 @@
       animation: fade-up 0.9s 0.5s forwards;
     }
 
-    .hero-title span {
-      display: block;
-      color: var(--gold);
-      font-size: 0.38em;
-      letter-spacing: 0.3em;
-      margin-top: 8px;
+    .hero-title .iv-badge {
+      display: inline;
+      vertical-align: baseline;
+      font-size: 1em;
+      line-height: 1;
+      margin-left: 0.12em;
+      background: var(--grad-neon);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 18px rgba(162, 75, 255, 0.4));
     }
 
     .hero-tagline {
@@ -5891,8 +5896,7 @@
     <div class="hero-content">
       <p class="hero-overline">Serie original · 2024</p>
       <h1 class="hero-title">
-        JOHN<br>JOHNSON
-        <span>— IV —</span>
+        JOHN<br>JOHNSON<span class="iv-badge">4</span>
       </h1>
       <p class="hero-tagline">
         De las pistas de rally a una isla que no existe en ningún mapa. Algunos desaparecen. Otros regresan distintos.
