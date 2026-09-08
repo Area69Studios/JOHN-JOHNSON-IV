@@ -11499,8 +11499,8 @@
       opacity: 0;
     }
 
-    /* Tilt 3D: contenedores con perspectiva */
-    #personajes, #equipo {
+    /* Tilt 3D: contenedores con perspectiva (solo equipo; personajes sin 3D) */
+    #equipo {
       perspective: 1000px;
     }
   </style>
@@ -11510,7 +11510,7 @@
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!fine || reduce) return;
 
-    var cards = document.querySelectorAll('#personajes .char-profile, .team-member');
+    var cards = document.querySelectorAll('.team-member');
     cards.forEach(function (card) {
       var maxTilt = card.classList.contains('team-member') ? 8 : 4;
       var ease = 0.12; // suavizado: más bajo = más "amortiguado", menos glitch
