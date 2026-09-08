@@ -1481,10 +1481,14 @@
       top: 40px; right: 40px;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 9rem;
-      color: rgba(185,90,228,0.05);
       line-height: 1;
       pointer-events: none;
       user-select: none;
+      background: var(--grad-neon);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      opacity: 0.06;
     }
 
 
@@ -1492,7 +1496,10 @@
       font-size: 0.68rem;
       letter-spacing: 0.45em;
       text-transform: uppercase;
-      color: var(--gold);
+      background: var(--grad-neon);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       margin-bottom: 14px;
       display: flex; align-items: center; gap: 14px;
     }
@@ -1500,7 +1507,7 @@
       content: '';
       display: inline-block;
       width: 28px; height: 1px;
-      background: var(--gold);
+      background: var(--grad-neon);
       flex-shrink: 0;
     }
 
@@ -1788,9 +1795,11 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.5);
       backdrop-filter: blur(2px);
       background: rgba(10,10,10,0.85);
+      background-size: 108% auto;
+      background-position: center;
       width: 100%;
       transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
-                  border-color 0.3s, box-shadow 0.4s;
+                  border-color 0.3s, box-shadow 0.4s, background-size 0.6s ease;
     }
     .cap-btn::before {
       content: '';
@@ -1803,7 +1812,7 @@
     .cap-btn::after {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, rgba(185,90,228,0.45), rgba(255,255,255,0.1), transparent 70%);
+      background: linear-gradient(90deg, rgba(255,60,172,0.55), rgba(162,75,255,0.45), rgba(62,139,255,0.35), transparent 70%);
       border-radius: inherit;
       z-index: 2;
     }
@@ -1811,6 +1820,7 @@
       transform: translateY(-3px);
       border-color: var(--gold);
       box-shadow: 0 0 18px rgba(185,90,228,0.4), 0 0 40px rgba(185,90,228,0.12), 0 20px 50px rgba(0,0,0,0.5);
+      background-size: 116% auto;
     }
     .cap-btn:hover::before { opacity: 0.85; }
 
@@ -1825,12 +1835,16 @@
     .cap-number {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 2.4rem;
-      color: var(--gold);
       line-height: 1;
-      opacity: 0.85;
-      transition: opacity 0.3s, transform 0.3s;
+      opacity: 0.9;
+      background: var(--grad-neon);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 10px rgba(162,75,255,0.35));
+      transition: opacity 0.3s, transform 0.3s, filter 0.3s;
     }
-    .cap-btn:hover .cap-number { opacity: 1; transform: scale(1.06); }
+    .cap-btn:hover .cap-number { opacity: 1; transform: scale(1.08); filter: drop-shadow(0 0 16px rgba(162,75,255,0.55)); }
 
     /* Vertical divider */
     .cap-divider {
@@ -1874,14 +1888,15 @@
       align-items: center;
       gap: 5px;
       margin-top: 8px;
-      padding: 3px 9px 3px 7px;
+      padding: 3px 10px 3px 8px;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 0.72rem;
       letter-spacing: 0.14em;
-      color: rgba(185,90,228,0.9);
-      background: rgba(185,90,228,0.07);
-      border: 1px solid rgba(185,90,228,0.25);
-      border-radius: 3px;
+      color: rgba(230,215,255,0.9);
+      background: rgba(185,90,228,0.08);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(185,90,228,0.28);
+      border-radius: 20px;
       width: fit-content;
       transition: background 0.3s, border-color 0.3s, color 0.3s;
     }
@@ -1901,15 +1916,26 @@
     /* Arrow */
     .cap-arrow {
       position: relative; z-index: 1;
-      padding-right: 22px;
-      color: rgba(185,90,228,0.45);
-      font-size: 1.2rem;
-      transition: transform 0.3s, color 0.3s;
+      margin-right: 20px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid rgba(185,90,228,0.35);
+      color: rgba(255,255,255,0.7);
+      font-size: 1.05rem;
+      background: rgba(185,90,228,0.06);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.3s, background 0.3s, border-color 0.3s;
       flex-shrink: 0;
     }
     .cap-btn:hover .cap-arrow {
-      transform: translateX(4px);
-      color: var(--gold);
+      transform: translateX(3px) scale(1.08);
+      color: #fff;
+      border-color: transparent;
+      background: var(--grad-neon);
+      box-shadow: 0 0 16px rgba(162,75,255,0.45);
     }
 
     @media (max-width: 600px) {
@@ -3894,14 +3920,14 @@
       padding: 26px 28px 22px;
       background: rgba(8,8,8,0.75);
       border: 1px solid rgba(185,90,228,0.13);
-      border-radius: 3px;
+      border-radius: 14px;
       position: relative;
       overflow: hidden;
     }
     .saga-progress::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, rgba(185,90,228,0.75) 0%, transparent 65%);
+      background: linear-gradient(90deg, rgba(255,60,172,0.65), rgba(162,75,255,0.55), rgba(62,139,255,0.4), transparent 75%);
     }
     .sp-header {
       display: flex; justify-content: space-between; align-items: baseline;
@@ -3946,7 +3972,7 @@
     }
     .sp-fill {
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(185,90,228,0.95) 0%, rgba(240,210,110,0.8) 100%);
+      background: var(--grad-neon);
       transform-origin: left;
       transform: scaleX(0);
       border-radius: inherit;
@@ -3992,7 +4018,10 @@
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.15rem;
       letter-spacing: 0.08em;
-      color: rgba(185,90,228,0.88);
+      background: var(--grad-neon);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       line-height: 1;
     }
     .sp-footer-label {
@@ -4157,8 +4186,8 @@
     }
     #personajes .char-profile:hover {
       background: transparent;
-      border-color: var(--glass-border-hover);
-      box-shadow: var(--glass-shadow-hover);
+      border-color: rgba(185,90,228,0.4);
+      box-shadow: var(--glass-shadow-hover), 0 0 30px rgba(162,75,255,0.15);
     }
     #personajes .char-profile + .char-profile {
       margin-top: 48px;
@@ -11430,131 +11459,6 @@
     requestAnimationFrame(frame);
   })();
   </script>
-  <!-- ── Tarjetas: tilt 3D, borde con gradiente animado, overlay duotono ── -->
-  <style>
-    @property --glow-angle {
-      syntax: '<angle>';
-      inherits: false;
-      initial-value: 0deg;
-    }
-    @keyframes glow-rotate { to { --glow-angle: 360deg; } }
-
-    /* Borde con gradiente animado (glow border) en vez de sólido */
-    #personajes .char-profile,
-    .team-member {
-      transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
-      will-change: transform;
-    }
-    /* El tilt 3D controla el transform por JS; se anula el translateY
-       de hover para que no compita con él y provoque saltos */
-    a.team-member:hover {
-      transform: none;
-    }
-    #personajes .char-profile::after,
-    .team-member::after {
-      content: '';
-      display: block;
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 1.5px;
-      background: conic-gradient(from var(--glow-angle, 0deg), var(--c-pink), var(--c-purple), var(--c-blue), var(--c-purple), var(--c-pink));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      animation: glow-rotate 5s linear infinite;
-      pointer-events: none;
-      z-index: 3;
-    }
-    #personajes .char-profile:hover::after,
-    .team-member:hover::after {
-      opacity: 1;
-    }
-    #personajes .char-profile:hover,
-    .team-member:hover {
-      box-shadow: 0 0 30px rgba(162,75,255,0.32), 0 0 60px rgba(255,60,172,0.16);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      #personajes .char-profile::after,
-      .team-member::after { animation: none; }
-    }
-
-    /* Overlay duotono (magenta/violeta) que se desatura al hover */
-    .char-profile-visuals::before,
-    .team-photo::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      background: linear-gradient(135deg, rgba(255,60,172,0.5), rgba(162,75,255,0.5));
-      mix-blend-mode: color;
-      opacity: 1;
-      transition: opacity 0.5s ease;
-    }
-    #personajes .char-profile:hover .char-profile-visuals::before,
-    .team-member:hover .team-photo::before {
-      opacity: 0;
-    }
-
-    /* Tilt 3D: contenedores con perspectiva (solo equipo; personajes sin 3D) */
-    #equipo {
-      perspective: 1000px;
-    }
-  </style>
-  <script>
-  (function () {
-    var fine   = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!fine || reduce) return;
-
-    var cards = document.querySelectorAll('.team-member');
-    cards.forEach(function (card) {
-      var maxTilt = card.classList.contains('team-member') ? 8 : 4;
-      var ease = 0.12; // suavizado: más bajo = más "amortiguado", menos glitch
-      var targetRX = 0, targetRY = 0, curRX = 0, curRY = 0;
-      var hovering = false, raf = null;
-
-      function updateTarget(e) {
-        var r = card.getBoundingClientRect();
-        var px = (e.clientX - r.left) / r.width;
-        var py = (e.clientY - r.top) / r.height;
-        targetRX = (0.5 - py) * maxTilt;
-        targetRY = (px - 0.5) * maxTilt;
-      }
-
-      function loop() {
-        curRX += (targetRX - curRX) * ease;
-        curRY += (targetRY - curRY) * ease;
-        card.style.transform = 'perspective(1000px) rotateX(' + curRX.toFixed(2) + 'deg) rotateY(' + curRY.toFixed(2) + 'deg)';
-
-        var settled = Math.abs(targetRX - curRX) < 0.03 && Math.abs(targetRY - curRY) < 0.03;
-        if (hovering || !settled) {
-          raf = requestAnimationFrame(loop);
-        } else {
-          card.style.transform = '';
-          raf = null;
-        }
-      }
-
-      card.addEventListener('mouseenter', function (e) {
-        hovering = true;
-        updateTarget(e);
-        if (!raf) raf = requestAnimationFrame(loop);
-      });
-      card.addEventListener('mousemove', updateTarget);
-      card.addEventListener('mouseleave', function () {
-        hovering = false;
-        targetRX = 0;
-        targetRY = 0;
-        if (!raf) raf = requestAnimationFrame(loop);
-      });
-    });
-  })();
-  </script>
-
   <div id="hueveil" aria-hidden="true"></div>
   <script>
   /* ===== VELO DE COLOR POR SECCION (paleta synthwave) ===== */
