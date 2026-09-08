@@ -4189,6 +4189,68 @@
       border-color: rgba(185,90,228,0.4);
       box-shadow: var(--glass-shadow-hover), 0 0 30px rgba(162,75,255,0.15);
     }
+
+    /* ── Borde neón degradado animado al pasar el ratón por la tarjeta ──
+       Se usa box-shadow (no clipado por el overflow:hidden de la tarjeta)
+       con tres colores del degradado que rotan de posición para simular
+       un borde de neón que "recorre" el contorno con intensidad variable. */
+    #personajes .char-profile {
+      position: relative;
+      box-shadow:
+        var(--glass-shadow),
+        0 0 0 1px rgba(255,60,172,0),
+        0 0 0 1px rgba(162,75,255,0),
+        0 0 0 1px rgba(62,139,255,0);
+      transition: border-color 0.4s, box-shadow 0.5s ease, transform 0.4s;
+    }
+    #personajes .char-profile:hover {
+      animation: charNeonBorder 3.2s ease-in-out infinite;
+    }
+    @keyframes charNeonBorder {
+      0% {
+        box-shadow:
+          var(--glass-shadow-hover),
+          0 0 0 2px rgba(255,60,172,0.85),
+          0 0 22px 4px rgba(255,60,172,0.55),
+          0 0 42px 10px rgba(162,75,255,0.3);
+        border-color: rgba(255,60,172,0.6);
+      }
+      33% {
+        box-shadow:
+          var(--glass-shadow-hover),
+          0 0 0 2px rgba(162,75,255,0.85),
+          0 0 22px 4px rgba(162,75,255,0.55),
+          0 0 42px 10px rgba(62,139,255,0.3);
+        border-color: rgba(162,75,255,0.6);
+      }
+      66% {
+        box-shadow:
+          var(--glass-shadow-hover),
+          0 0 0 2px rgba(62,139,255,0.85),
+          0 0 22px 4px rgba(62,139,255,0.55),
+          0 0 42px 10px rgba(255,60,172,0.3);
+        border-color: rgba(62,139,255,0.6);
+      }
+      100% {
+        box-shadow:
+          var(--glass-shadow-hover),
+          0 0 0 2px rgba(255,60,172,0.85),
+          0 0 22px 4px rgba(255,60,172,0.55),
+          0 0 42px 10px rgba(162,75,255,0.3);
+        border-color: rgba(255,60,172,0.6);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #personajes .char-profile:hover {
+        animation: none;
+        box-shadow:
+          var(--glass-shadow-hover),
+          0 0 0 2px rgba(185,90,228,0.85),
+          0 0 26px 6px rgba(185,90,228,0.5);
+        border-color: rgba(185,90,228,0.6);
+      }
+    }
+
     #personajes .char-profile + .char-profile {
       margin-top: 48px;
     }
