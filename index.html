@@ -11430,6 +11430,131 @@
     requestAnimationFrame(frame);
   })();
   </script>
+  <!-- ── Tarjetas: tilt 3D, borde con gradiente animado, overlay duotono ── -->
+  <style>
+    @property --glow-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+    @keyframes glow-rotate { to { --glow-angle: 360deg; } }
+
+    /* Borde con gradiente animado (glow border) en vez de sólido */
+    #personajes .char-profile,
+    .team-member {
+      transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+      will-change: transform;
+    }
+    /* El tilt 3D controla el transform por JS; se anula el translateY
+       de hover para que no compita con él y provoque saltos */
+    a.team-member:hover {
+      transform: none;
+    }
+    #personajes .char-profile::after,
+    .team-member::after {
+      content: '';
+      display: block;
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: conic-gradient(from var(--glow-angle, 0deg), var(--c-pink), var(--c-purple), var(--c-blue), var(--c-purple), var(--c-pink));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      animation: glow-rotate 5s linear infinite;
+      pointer-events: none;
+      z-index: 3;
+    }
+    #personajes .char-profile:hover::after,
+    .team-member:hover::after {
+      opacity: 1;
+    }
+    #personajes .char-profile:hover,
+    .team-member:hover {
+      box-shadow: 0 0 30px rgba(162,75,255,0.32), 0 0 60px rgba(255,60,172,0.16);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #personajes .char-profile::after,
+      .team-member::after { animation: none; }
+    }
+
+    /* Overlay duotono (magenta/violeta) que se desatura al hover */
+    .char-profile-visuals::before,
+    .team-photo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(255,60,172,0.5), rgba(162,75,255,0.5));
+      mix-blend-mode: color;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    #personajes .char-profile:hover .char-profile-visuals::before,
+    .team-member:hover .team-photo::before {
+      opacity: 0;
+    }
+
+    /* Tilt 3D: contenedores con perspectiva */
+    #personajes, #equipo {
+      perspective: 1000px;
+    }
+  </style>
+  <script>
+  (function () {
+    var fine   = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!fine || reduce) return;
+
+    var cards = document.querySelectorAll('#personajes .char-profile, .team-member');
+    cards.forEach(function (card) {
+      var maxTilt = card.classList.contains('team-member') ? 8 : 4;
+      var ease = 0.12; // suavizado: más bajo = más "amortiguado", menos glitch
+      var targetRX = 0, targetRY = 0, curRX = 0, curRY = 0;
+      var hovering = false, raf = null;
+
+      function updateTarget(e) {
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width;
+        var py = (e.clientY - r.top) / r.height;
+        targetRX = (0.5 - py) * maxTilt;
+        targetRY = (px - 0.5) * maxTilt;
+      }
+
+      function loop() {
+        curRX += (targetRX - curRX) * ease;
+        curRY += (targetRY - curRY) * ease;
+        card.style.transform = 'perspective(1000px) rotateX(' + curRX.toFixed(2) + 'deg) rotateY(' + curRY.toFixed(2) + 'deg)';
+
+        var settled = Math.abs(targetRX - curRX) < 0.03 && Math.abs(targetRY - curRY) < 0.03;
+        if (hovering || !settled) {
+          raf = requestAnimationFrame(loop);
+        } else {
+          card.style.transform = '';
+          raf = null;
+        }
+      }
+
+      card.addEventListener('mouseenter', function (e) {
+        hovering = true;
+        updateTarget(e);
+        if (!raf) raf = requestAnimationFrame(loop);
+      });
+      card.addEventListener('mousemove', updateTarget);
+      card.addEventListener('mouseleave', function () {
+        hovering = false;
+        targetRX = 0;
+        targetRY = 0;
+        if (!raf) raf = requestAnimationFrame(loop);
+      });
+    });
+  })();
+  </script>
+
   <div id="hueveil" aria-hidden="true"></div>
   <script>
   /* ===== VELO DE COLOR POR SECCION (paleta synthwave) ===== */
