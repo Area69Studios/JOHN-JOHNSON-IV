@@ -3083,14 +3083,14 @@
 
     /* ===== EQUIPO · REPARTO (tarjetas con Instagram) ===== */
     .equipo-members {
-      max-width: 960px;
+      max-width: 1160px;
       margin: 56px auto 0;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 32px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 28px;
     }
     .equipo-members-label {
-      max-width: 960px;
+      max-width: 1160px;
       margin: 0 auto;
       text-align: center;
       font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase;
@@ -3112,7 +3112,10 @@
       letter-spacing: 0.03em;
     }
     .team-ig svg { width: 15px; height: 15px; flex: none; }
-    @media (max-width: 860px) {
+    @media (max-width: 1024px) {
+      .equipo-members { grid-template-columns: repeat(3, 1fr); max-width: 700px; }
+    }
+    @media (max-width: 640px) {
       .equipo-members { grid-template-columns: repeat(2, 1fr); max-width: 460px; }
     }
     @media (max-width: 440px) {
