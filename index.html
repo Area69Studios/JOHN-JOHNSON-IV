@@ -5908,6 +5908,182 @@
     .section-divider.sd-visible .sd-line { width: clamp(80px, 22vw, 280px); }
     .section-divider.sd-visible .sd-gem  { opacity: 1; transform: rotate(45deg) scale(1); }
     .section-divider.sd-visible .sd-dot  { opacity: 1; }
+
+    /* ===== DONAR (PayPal) ===== */
+    #donar {
+      position: relative;
+      padding: 130px 24px 120px;
+      text-align: center;
+      overflow: hidden;
+      background: var(--dark);
+    }
+    #donar::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(600px 320px at 50% 0%, rgba(162,75,255,0.16), transparent 70%),
+        radial-gradient(500px 280px at 15% 100%, rgba(255,60,172,0.10), transparent 70%),
+        radial-gradient(500px 280px at 85% 100%, rgba(62,139,255,0.10), transparent 70%);
+      pointer-events: none;
+    }
+    .donar-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .donar-header { max-width: 560px; margin: 0 auto; }
+    .donar-text {
+      color: var(--text-dim, rgba(255,255,255,0.65));
+      font-size: 1.02rem;
+      line-height: 1.7;
+      margin: 22px auto 0;
+    }
+
+    /* Tarjetas de tramos de donación */
+    .donar-tiers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      margin: 64px 0 56px;
+    }
+    .donar-tier {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 40px 26px 34px;
+      border-radius: 22px;
+      border: 1px solid var(--glass-border, rgba(255,255,255,0.12));
+      background: rgba(255,255,255,0.02);
+      text-decoration: none;
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.4s ease, background 0.35s ease;
+    }
+    .donar-tier:hover {
+      transform: translateY(-6px);
+      border-color: rgba(185,90,228,0.5);
+      background: rgba(255,255,255,0.035);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35), 0 0 30px rgba(162,75,255,0.18);
+    }
+    .donar-tier-featured {
+      border-color: rgba(185,90,228,0.45);
+      background: linear-gradient(160deg, rgba(162,75,255,0.08), rgba(255,60,172,0.03));
+    }
+    .donar-tier-featured:hover {
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4), 0 0 42px rgba(162,75,255,0.3);
+    }
+    .donar-tier-badge {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-image: var(--grad-neon);
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 999px;
+      box-shadow: 0 4px 16px rgba(162,75,255,0.45);
+    }
+    .donar-tier-icon {
+      width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      margin-bottom: 18px;
+      color: #C452E8;
+      background: rgba(185,90,228,0.1);
+      border: 1px solid rgba(185,90,228,0.25);
+      transition: color 0.35s, background 0.35s, transform 0.35s;
+    }
+    .donar-tier-icon svg { width: 24px; height: 24px; }
+    .donar-tier:hover .donar-tier-icon {
+      color: #fff;
+      background-image: var(--grad-neon);
+      border-color: transparent;
+      transform: scale(1.08) rotate(-4deg);
+    }
+    .donar-tier-amount {
+      font-family: 'Cinzel', serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .donar-tier-name {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      color: #C452E8;
+      margin-bottom: 14px;
+    }
+    .donar-tier-desc {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--text-dim, rgba(255,255,255,0.55));
+    }
+
+    .donar-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .donar-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 36px;
+      border-radius: 999px;
+      background: var(--grad-neon);
+      background-size: 220% auto;
+      background-position: 0% center;
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(162,75,255,0.35), 0 0 0 1px rgba(255,255,255,0.08) inset;
+      transition: background-position 0.6s ease, transform 0.35s ease, box-shadow 0.4s ease;
+      margin-top: 22px;
+    }
+    .donar-btn:hover {
+      background-position: 100% center;
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(162,75,255,0.5), 0 0 30px rgba(255,60,172,0.35), 0 0 0 1px rgba(255,255,255,0.12) inset;
+    }
+    .donar-btn:active { transform: translateY(-1px); }
+    .paypal-mark {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+      font-size: 1.05rem;
+      color: #fff;
+    }
+    .paypal-mark b { font-weight: 800; }
+    .donar-btn-arrow { transition: transform 0.35s ease; }
+    .donar-btn:hover .donar-btn-arrow { transform: translateX(4px); }
+    .donar-note {
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--text-dim, rgba(255,255,255,0.4));
+    }
+    @media (max-width: 860px) {
+      .donar-tiers { grid-template-columns: 1fr; }
+      .donar-tier-featured { order: -1; }
+    }
+    @media (max-width: 640px) {
+      #donar { padding: 90px 20px; }
+      .donar-btn { width: 100%; justify-content: center; padding: 18px 20px; }
+    }
 </style>
 </head>
 <body>
@@ -5964,6 +6140,7 @@
       <li><a href="#galeria">Galería</a></li>
       <li><a href="#glosario">Glosario</a></li>
       <li><a href="#equipo">Equipo</a></li>
+      <li><a href="#donar">Donar</a></li>
       <li><a href="#ranking" class="nav-vote-btn">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Vota ya
@@ -8053,6 +8230,63 @@
 
 
 
+
+  <!-- DONAR -->
+  <section id="donar">
+    <div class="donar-inner">
+      <div class="donar-header">
+        <p class="section-label reveal" style="justify-content:center;">Apoya el proyecto</p>
+        <h2 class="section-title reveal reveal-delay-1">Haz una donación</h2>
+        <p class="donar-text reveal reveal-delay-2">
+          John Johnson IV es un proyecto independiente hecho con muchas horas
+          y cariño. Si te está gustando la historia, tu aporte —del tamaño que
+          sea— ayuda a que sigamos escribiendo, ilustrando y mejorando el sitio.
+        </p>
+      </div>
+
+      <div class="donar-tiers">
+        <a href="https://www.paypal.me/medinaleon17/5" target="_blank" rel="noopener noreferrer" class="donar-tier reveal reveal-delay-1">
+          <div class="donar-tier-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          </div>
+          <div class="donar-tier-amount">5€</div>
+          <div class="donar-tier-name">Un cafecito</div>
+          <p class="donar-tier-desc">Nos invitas a un café para seguir escribiendo capítulos.</p>
+        </a>
+
+        <a href="https://www.paypal.me/medinaleon17/15" target="_blank" rel="noopener noreferrer" class="donar-tier donar-tier-featured reveal reveal-delay-2">
+          <span class="donar-tier-badge">Más elegido</span>
+          <div class="donar-tier-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div class="donar-tier-amount">15€</div>
+          <div class="donar-tier-name">Fan de verdad</div>
+          <p class="donar-tier-desc">Ayudas directamente a cubrir hosting, dominio y herramientas.</p>
+        </a>
+
+        <a href="https://www.paypal.me/medinaleon17/30" target="_blank" rel="noopener noreferrer" class="donar-tier reveal reveal-delay-3">
+          <div class="donar-tier-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="donar-tier-amount">30€</div>
+          <div class="donar-tier-name">Mecenas</div>
+          <p class="donar-tier-desc">Un empujón grande para nuevo arte, extras y sorpresas.</p>
+        </a>
+      </div>
+
+      <div class="donar-cta reveal reveal-delay-3">
+        <a href="https://www.paypal.me/medinaleon17" target="_blank" rel="noopener noreferrer" class="donar-btn">
+          <span class="paypal-mark">Pay<b>Pal</b></span>
+          <span>Donar la cantidad que quieras</span>
+          <svg class="donar-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+        <p class="donar-note">Pago 100% seguro a través de PayPal · No se requiere cuenta de PayPal para donar</p>
+      </div>
+    </div>
+  </section>
 
   <!-- FOOTER -->
   <footer>
