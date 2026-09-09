@@ -5970,11 +5970,16 @@
       text-decoration: none;
       transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.4s ease, background 0.35s ease;
     }
-    .donar-tier:hover {
+    .donar-tier:hover,
+    .donar-tier:focus-visible {
       transform: translateY(-6px);
       border-color: rgba(185,90,228,0.5);
       background: rgba(30,14,30,0.55);
       box-shadow: 0 20px 40px rgba(0,0,0,0.45), 0 0 30px rgba(162,75,255,0.22);
+    }
+    .donar-tier:focus-visible {
+      outline: 2px solid #C452E8;
+      outline-offset: 3px;
     }
     .donar-tier-featured {
       border-color: rgba(185,90,228,0.45);
@@ -6097,7 +6102,7 @@
       gap: 7px;
       font-size: 0.78rem;
       letter-spacing: 0.03em;
-      color: var(--text-dim, rgba(255,255,255,0.45));
+      color: var(--text-dim, rgba(255,255,255,0.62));
     }
     .donar-trust-item svg { width: 15px; height: 15px; color: rgba(185,90,228,0.7); }
 
@@ -6108,6 +6113,13 @@
       gap: 18px;
       padding-top: 8px;
       border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .donar-alt-label {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.88rem;
+      color: var(--text-dim, rgba(255,255,255,0.55));
     }
     .donar-btn {
       position: relative;
@@ -6127,12 +6139,16 @@
       text-decoration: none;
       box-shadow: 0 8px 30px rgba(162,75,255,0.35), 0 0 0 1px rgba(255,255,255,0.08) inset;
       transition: background-position 0.6s ease, transform 0.35s ease, box-shadow 0.4s ease;
-      margin-top: 22px;
     }
-    .donar-btn:hover {
+    .donar-btn:hover,
+    .donar-btn:focus-visible {
       background-position: 100% center;
       transform: translateY(-3px);
       box-shadow: 0 14px 40px rgba(162,75,255,0.5), 0 0 30px rgba(255,60,172,0.35), 0 0 0 1px rgba(255,255,255,0.12) inset;
+    }
+    .donar-btn:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
     }
     .donar-btn:active { transform: translateY(-1px); }
     .paypal-mark {
@@ -6149,7 +6165,7 @@
     .donar-note {
       font-size: 0.78rem;
       letter-spacing: 0.04em;
-      color: var(--text-dim, rgba(255,255,255,0.4));
+      color: var(--text-dim, rgba(255,255,255,0.55));
     }
     @media (max-width: 860px) {
       .donar-tiers { grid-template-columns: 1fr; }
@@ -8320,51 +8336,52 @@
       </div>
 
       <div class="donar-tiers">
-        <a href="https://www.paypal.me/medinaleon17/5" target="_blank" rel="noopener noreferrer" class="donar-tier reveal reveal-delay-1">
+        <a href="https://www.paypal.me/medinaleon17/5" target="_blank" rel="noopener noreferrer" class="donar-tier reveal reveal-delay-1" aria-label="Donar 5 euros vía PayPal (se abre en una pestaña nueva)">
           <div class="donar-tier-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
           </div>
           <div class="donar-tier-amount">5€</div>
           <div class="donar-tier-name">Un cafecito</div>
           <p class="donar-tier-desc">Nos invitas a un café para seguir escribiendo capítulos.</p>
           <ul class="donar-tier-perks">
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nuestro agradecimiento eterno</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ayuda a mantener la serie viva</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Nuestro agradecimiento eterno</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Ayuda a mantener la serie viva</li>
           </ul>
         </a>
 
-        <a href="https://www.paypal.me/medinaleon17/15" target="_blank" rel="noopener noreferrer" class="donar-tier donar-tier-featured reveal reveal-delay-2">
+        <a href="https://www.paypal.me/medinaleon17/15" target="_blank" rel="noopener noreferrer" class="donar-tier donar-tier-featured reveal reveal-delay-2" aria-label="Donar 15 euros vía PayPal, opción más elegida (se abre en una pestaña nueva)">
           <span class="donar-tier-badge">Más elegido</span>
           <div class="donar-tier-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           </div>
           <div class="donar-tier-amount">15€</div>
           <div class="donar-tier-name">Fan de verdad</div>
           <p class="donar-tier-desc">Ayudas directamente a cubrir hosting, dominio y herramientas.</p>
           <ul class="donar-tier-perks">
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Cubre hosting y dominio del sitio</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Mención de agradecimiento en el equipo</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Cubre hosting y dominio del sitio</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Mención de agradecimiento en el equipo</li>
           </ul>
         </a>
 
-        <a href="https://www.paypal.me/medinaleon17/30" target="_blank" rel="noopener noreferrer" class="donar-tier reveal reveal-delay-3">
+        <a href="https://www.paypal.me/medinaleon17/30" target="_blank" rel="noopener noreferrer" class="donar-tier reveal reveal-delay-3" aria-label="Donar 30 euros vía PayPal (se abre en una pestaña nueva)">
           <div class="donar-tier-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
           <div class="donar-tier-amount">30€</div>
           <div class="donar-tier-name">Mecenas</div>
           <p class="donar-tier-desc">Un empujón grande para nuevo arte, extras y sorpresas.</p>
           <ul class="donar-tier-perks">
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Impulsa nuevas ilustraciones y arte</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Acceso prioritario a adelantos</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Impulsa nuevas ilustraciones y arte</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Acceso prioritario a adelantos</li>
           </ul>
         </a>
       </div>
 
       <div class="donar-cta reveal reveal-delay-3">
-        <a href="https://www.paypal.me/medinaleon17" target="_blank" rel="noopener noreferrer" class="donar-btn">
+        <p class="donar-alt-label">¿Ninguna opción encaja? Elige tú la cantidad</p>
+        <a href="https://www.paypal.me/medinaleon17" target="_blank" rel="noopener noreferrer" class="donar-btn" aria-label="Donar la cantidad que prefieras vía PayPal (se abre en una pestaña nueva)">
           <span class="paypal-mark">Pay<b>Pal</b></span>
-          <span>Donar la cantidad que quieras</span>
+          <span>Donar otra cantidad</span>
           <svg class="donar-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"/>
             <polyline points="12 5 19 12 12 19"/>
@@ -8373,15 +8390,15 @@
         <p class="donar-note">Pago 100% seguro a través de PayPal · No se requiere cuenta de PayPal para donar</p>
         <div class="donar-trust">
           <span class="donar-trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Conexión cifrada
           </span>
           <span class="donar-trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
             Sin registro ni suscripción
           </span>
           <span class="donar-trust-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             Donación puntual, no recurrente
           </span>
         </div>
