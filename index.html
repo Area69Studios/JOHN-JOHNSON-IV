@@ -5915,7 +5915,12 @@
       padding: 130px 24px 120px;
       text-align: center;
       overflow: hidden;
-      background: var(--dark);
+      background:
+        linear-gradient(to bottom, rgba(10,6,12,0.88) 0%, rgba(10,6,12,0.75) 35%, rgba(10,6,12,0.92) 100%),
+        url('images/donar-palmeras.jpg');
+      background-size: cover;
+      background-position: center 30%;
+      background-repeat: no-repeat;
     }
     #donar::before {
       content: '';
@@ -5956,22 +5961,24 @@
       padding: 40px 26px 34px;
       border-radius: 22px;
       border: 1px solid var(--glass-border, rgba(255,255,255,0.12));
-      background: rgba(255,255,255,0.02);
+      background: rgba(20,10,20,0.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       text-decoration: none;
       transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.4s ease, background 0.35s ease;
     }
     .donar-tier:hover {
       transform: translateY(-6px);
       border-color: rgba(185,90,228,0.5);
-      background: rgba(255,255,255,0.035);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.35), 0 0 30px rgba(162,75,255,0.18);
+      background: rgba(30,14,30,0.55);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.45), 0 0 30px rgba(162,75,255,0.22);
     }
     .donar-tier-featured {
       border-color: rgba(185,90,228,0.45);
-      background: linear-gradient(160deg, rgba(162,75,255,0.08), rgba(255,60,172,0.03));
+      background: linear-gradient(160deg, rgba(162,75,255,0.16), rgba(255,60,172,0.06)), rgba(20,10,20,0.45);
     }
     .donar-tier-featured:hover {
-      box-shadow: 0 24px 48px rgba(0,0,0,0.4), 0 0 42px rgba(162,75,255,0.3);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 42px rgba(162,75,255,0.35);
     }
     .donar-tier-badge {
       position: absolute;
