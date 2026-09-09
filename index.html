@@ -6036,6 +6036,71 @@
       color: var(--text-dim, rgba(255,255,255,0.55));
     }
 
+    /* Brillo recurrente en la tarjeta destacada */
+    .donar-tier-featured { isolation: isolate; }
+    .donar-tier-featured::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.16) 34%, transparent 48%);
+      background-size: 260% 260%;
+      background-position: 120% 0%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+      animation: donar-shine 5.5s ease-in-out infinite;
+    }
+    @keyframes donar-shine {
+      0%, 60% { background-position: 120% 0%; opacity: 0; }
+      70% { opacity: 0.9; }
+      100% { background-position: -20% 0%; opacity: 0; }
+    }
+
+    /* Lista de "para qué sirve" dentro de cada tarjeta */
+    .donar-tier-perks {
+      list-style: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .donar-tier-perks li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: var(--text-dim, rgba(255,255,255,0.6));
+      text-align: left;
+    }
+    .donar-tier-perks svg {
+      flex-shrink: 0;
+      width: 14px; height: 14px;
+      margin-top: 2px;
+      color: #C452E8;
+    }
+
+    /* Fila de confianza */
+    .donar-trust {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 22px;
+      margin-top: 6px;
+    }
+    .donar-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      color: var(--text-dim, rgba(255,255,255,0.45));
+    }
+    .donar-trust-item svg { width: 15px; height: 15px; color: rgba(185,90,228,0.7); }
+
     .donar-cta {
       display: flex;
       flex-direction: column;
@@ -8262,6 +8327,10 @@
           <div class="donar-tier-amount">5€</div>
           <div class="donar-tier-name">Un cafecito</div>
           <p class="donar-tier-desc">Nos invitas a un café para seguir escribiendo capítulos.</p>
+          <ul class="donar-tier-perks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nuestro agradecimiento eterno</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ayuda a mantener la serie viva</li>
+          </ul>
         </a>
 
         <a href="https://www.paypal.me/medinaleon17/15" target="_blank" rel="noopener noreferrer" class="donar-tier donar-tier-featured reveal reveal-delay-2">
@@ -8272,6 +8341,10 @@
           <div class="donar-tier-amount">15€</div>
           <div class="donar-tier-name">Fan de verdad</div>
           <p class="donar-tier-desc">Ayudas directamente a cubrir hosting, dominio y herramientas.</p>
+          <ul class="donar-tier-perks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Cubre hosting y dominio del sitio</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Mención de agradecimiento en el equipo</li>
+          </ul>
         </a>
 
         <a href="https://www.paypal.me/medinaleon17/30" target="_blank" rel="noopener noreferrer" class="donar-tier reveal reveal-delay-3">
@@ -8281,6 +8354,10 @@
           <div class="donar-tier-amount">30€</div>
           <div class="donar-tier-name">Mecenas</div>
           <p class="donar-tier-desc">Un empujón grande para nuevo arte, extras y sorpresas.</p>
+          <ul class="donar-tier-perks">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Impulsa nuevas ilustraciones y arte</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Acceso prioritario a adelantos</li>
+          </ul>
         </a>
       </div>
 
@@ -8294,6 +8371,20 @@
           </svg>
         </a>
         <p class="donar-note">Pago 100% seguro a través de PayPal · No se requiere cuenta de PayPal para donar</p>
+        <div class="donar-trust">
+          <span class="donar-trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Conexión cifrada
+          </span>
+          <span class="donar-trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Sin registro ni suscripción
+          </span>
+          <span class="donar-trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Donación puntual, no recurrente
+          </span>
+        </div>
       </div>
     </div>
   </section>
