@@ -6038,23 +6038,30 @@
       object-fit: cover;
       object-position: center top;
       display: block;
-      opacity: 0.22;
+      opacity: 0.18;
       filter: grayscale(0.1) saturate(1.05);
-      transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
+    /* Velo oscuro constante sobre la foto para que el texto siga siendo legible en cualquier estado */
+    .donar-tier-icon.has-photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10,4,12,0.55), rgba(10,4,12,0.78));
+      z-index: 1;
     }
     .donar-tier:hover .donar-tier-icon.has-photo img {
-      opacity: 0.32;
       transform: scale(1.06);
       filter: grayscale(0) saturate(1.15);
     }
-    /* El contenido de la tarjeta debe quedar por encima de la foto de fondo */
+    /* El contenido de la tarjeta debe quedar por encima de la foto de fondo y del velo */
     .donar-tier-badge,
     .donar-tier-amount,
     .donar-tier-name,
     .donar-tier-desc,
     .donar-tier-perks {
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
     .donar-tier-amount {
       font-family: 'Cinzel', serif;
