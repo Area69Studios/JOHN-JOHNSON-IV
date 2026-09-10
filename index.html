@@ -3742,6 +3742,23 @@
     }
     .ldr-pct.show { opacity: 1; }
 
+    /* Frase aleatoria de carga */
+    .ldr-phrase {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      color: rgba(228,222,240,0.4);
+      margin-top: 6px;
+      max-width: 260px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      min-height: 1.4em;
+    }
+    .ldr-phrase.show { opacity: 1; transform: translateY(0); }
+
     @keyframes pulse {
       0%, 100% { opacity: 0.6; }
       50% { opacity: 1; }
@@ -6242,6 +6259,7 @@
         <div class="ldr-fill" id="ldrFill"></div>
       </div>
       <span class="ldr-pct" id="ldrPct">0%</span>
+      <span class="ldr-phrase" id="ldrPhrase"></span>
     </div>
   </div>
 
@@ -8787,7 +8805,37 @@
       var track   = document.getElementById('ldrTrack');
       var fill    = document.getElementById('ldrFill');
       var pct     = document.getElementById('ldrPct');
+      var phrase  = document.getElementById('ldrPhrase');
       var letters = brand.querySelectorAll('.ldr-brand-letter');
+
+      // Frases aleatorias durante la carga
+      var ldrPhrases = [
+        'Desaparecí. No me perdí.',
+        'Cruzando la línea entre la ley y el caos…',
+        'La Escondia no aparece en ningún mapa.',
+        'Todo documental esconde algo más peligroso.',
+        'Los Muslacos ya van detrás.',
+        'Esto no es un rescate.',
+        'Ex piloto de rally. Sheriff independiente. Fugitivo.',
+        'Nadie supo frenar la espiral a tiempo.',
+        'Una isla sin nombre, en la costa de Huelva.',
+        'El hombre que todos conocían empieza a desaparecer.'
+      ];
+      var phraseTimer = null;
+      if (phrase && ldrPhrases.length) {
+        var shuffled = ldrPhrases.slice().sort(function() { return Math.random() - 0.5; });
+        var pIdx = 0;
+        function showPhrase() {
+          phrase.classList.remove('show');
+          setTimeout(function() {
+            phrase.textContent = shuffled[pIdx % shuffled.length];
+            pIdx++;
+            phrase.classList.add('show');
+          }, 220);
+        }
+        setTimeout(showPhrase, 650);
+        phraseTimer = setInterval(showPhrase, 950);
+      }
 
       // IV dorado aparece
       setTimeout(function() { num.classList.add('show'); }, 120);
@@ -8822,6 +8870,7 @@
       function onDone() {
         pct.textContent  = '100%';
         fill.style.width = '100%';
+        if (phraseTimer) { clearInterval(phraseTimer); phraseTimer = null; }
         var _lf = document.querySelector('.ldr-flash'); if (_lf) _lf.classList.add('go');
         // Telón se abre
         setTimeout(function() {
