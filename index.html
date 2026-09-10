@@ -5405,9 +5405,12 @@
       font-size: 1rem;
       line-height: 1.5;
       text-align: left;
-      padding: 18px 24px;
+      padding: 16px 22px;
       cursor: pointer;
       border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
       transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease,
                   transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease, letter-spacing 0.35s ease;
       position: relative;
@@ -5415,6 +5418,45 @@
       letter-spacing: 0.02em;
       will-change: transform;
     }
+    /* Indicador circular tipo radio, se rellena al seleccionar */
+    .quiz-radio {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(185,90,228,0.35);
+      position: relative;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .quiz-radio::before {
+      content: '';
+      position: absolute; inset: 3px;
+      border-radius: 50%;
+      background: var(--grad-neon);
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .quiz-radio::after {
+      content: '✓';
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 700; color: #1a0b14;
+      opacity: 0;
+      transform: scale(0.3);
+      transition: opacity 0.2s ease 0.08s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1) 0.08s;
+    }
+    .quiz-option:hover .quiz-radio {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(185,90,228,0.12);
+    }
+    .quiz-option.selected .quiz-radio {
+      border-color: transparent;
+      box-shadow: 0 0 16px rgba(255,60,172,0.55);
+      transform: scale(1.08);
+    }
+    .quiz-option.selected .quiz-radio::before { opacity: 1; transform: scale(1); }
+    .quiz-option.selected .quiz-radio::after { opacity: 1; transform: scale(1); }
+
     .quiz-option::before {
       content: '';
       position: absolute;
@@ -5452,10 +5494,24 @@
     .quiz-option:hover::before { transform: scaleY(1); }
     .quiz-option:hover::after { transform: translateX(220%); }
     .quiz-option:active { transform: translateX(5px) scale(0.996); transition-duration: 0.12s; }
+    /* Ondas al hacer clic (ripple) */
+    .quiz-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(185,90,228,0.22) 55%, transparent 75%);
+      transform: scale(0);
+      opacity: 1;
+      pointer-events: none;
+      animation: quizRippleAnim 0.65s ease-out forwards;
+    }
+    @keyframes quizRippleAnim {
+      to { transform: scale(2.6); opacity: 0; }
+    }
     @media (prefers-reduced-motion: reduce) {
       .quiz-option, .quiz-option::after { transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
       .quiz-option:hover { transform: none; }
       .quiz-option::after { display: none; }
+      .quiz-ripple { display: none; }
     }
     .quiz-option.selected {
       background: rgba(185,90,228,0.14);
@@ -5652,21 +5708,7 @@
       margin-left: 2px;
     }
 
-    /* Tick de confirmación en opciones */
-    .quiz-option.selected::after {
-      content: '✓';
-      position: absolute;
-      right: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--gold);
-      font-size: 0.9rem;
-      animation: tickPop 0.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    }
-    @keyframes tickPop {
-      from { opacity: 0; transform: translateY(-50%) scale(0.4); }
-      to   { opacity: 1; transform: translateY(-50%) scale(1); }
-    }
+    /* (el tick de confirmación ahora vive dentro de .quiz-radio, ver arriba) */
 
     /* Barras de afinidad */
     .quiz-affinity {
@@ -10711,9 +10753,37 @@
       updateProgress();
     }
 
+    // Inserta el indicador circular (radio) al inicio de cada opción
+    document.querySelectorAll('.quiz-option').forEach(function(b) {
+      if (!b.querySelector('.quiz-radio')) {
+        var radio = document.createElement('span');
+        radio.className = 'quiz-radio';
+        radio.setAttribute('aria-hidden', 'true');
+        b.insertBefore(radio, b.firstChild);
+      }
+    });
+
+    // Efecto ripple (onda) al hacer clic, centrado en el punto pulsado
+    function spawnRipple(btn, evt) {
+      var rect = btn.getBoundingClientRect();
+      var size = Math.max(rect.width, rect.height) * 1.1;
+      var ripple = document.createElement('span');
+      ripple.className = 'quiz-ripple';
+      var x = (evt && evt.clientX ? evt.clientX - rect.left : rect.width / 2) - size / 2;
+      var y = (evt && evt.clientY ? evt.clientY - rect.top : rect.height / 2) - size / 2;
+      ripple.style.width = size + 'px';
+      ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      btn.appendChild(ripple);
+      ripple.addEventListener('animationend', function() { ripple.remove(); });
+    }
+
     document.querySelectorAll('.quiz-option').forEach(function(btn) {
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function(evt) {
         if (btn.classList.contains('selected')) return;
+
+        spawnRipple(btn, evt);
 
         var raw = btn.getAttribute('data-chars') || btn.getAttribute('data-char');
         raw.split(',').forEach(function(pair) {
