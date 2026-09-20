@@ -1174,16 +1174,46 @@
       mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
       will-change: transform;
     }
-    .personajes-video {
+    /* Brisa sutil sobre toda la foto (mismo truco que "Próximamente") */
+    .personajes-photo {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      display: block;
+      background: url('images/personajes-photo.jpg') center top / cover no-repeat;
+      transform-origin: bottom center;
+      animation: personajesPhotoSway 8s ease-in-out infinite;
+      will-change: transform;
+    }
+    @keyframes personajesPhotoSway {
+      0%, 100% { transform: scale(1.04) skewX(-0.4deg) translateX(-0.3%); }
+      50%      { transform: scale(1.04) skewX(0.4deg)  translateX(0.3%); }
+    }
+    /* Destello de luz recorriendo el mar, confinado a la franja de agua
+       (parte superior de la imagen) para simular reflejos en movimiento */
+    .personajes-water {
+      position: absolute; inset: 0;
+      z-index: 0; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 32%, transparent 50%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 32%, transparent 50%);
+      background-image: repeating-linear-gradient(
+        98deg,
+        transparent 0px,
+        transparent 16px,
+        rgba(255,255,255,0.12) 17px,
+        rgba(255,255,255,0.20) 19px,
+        transparent 21px,
+        transparent 42px
+      );
+      background-size: 260% 100%;
+      mix-blend-mode: screen;
+      opacity: 0.6;
+      animation: personajesWaterShimmer 10s linear infinite;
+    }
+    @keyframes personajesWaterShimmer {
+      from { background-position: 0% 50%; }
+      to   { background-position: -260px 50%; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .personajes-video { display: none; }
-      .personajes-bg { background: url('images/personajes-poster.jpg') center top / cover no-repeat; }
+      .personajes-photo, .personajes-water { animation: none; }
     }
     #personajes::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -6539,10 +6569,8 @@
   <!-- PERSONAJES -->
   <section id="personajes">
     <div class="personajes-bg">
-      <video class="personajes-video" autoplay muted loop playsinline preload="auto" poster="images/personajes-poster.jpg">
-        <source src="images/personajes-loop.webm" type="video/webm">
-        <source src="images/personajes-loop.mp4" type="video/mp4">
-      </video>
+      <div class="personajes-photo"></div>
+      <div class="personajes-water"></div>
     </div>
     <div class="personajes-header">
       <p class="section-label reveal">El reparto</p>
