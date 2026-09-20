@@ -940,6 +940,59 @@
       transform: translateY(8px);
     }
 
+    /* ── Cuenta regresiva del estreno ── */
+    .estreno-countdown {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 26px;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .estreno-countdown.ec-done {
+      gap: 0;
+    }
+    .ec-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 2.4em;
+    }
+    .ec-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      line-height: 1;
+      letter-spacing: 0.05em;
+      color: #e8caff;
+      text-shadow: 0 0 18px rgba(185,90,228,0.45);
+      font-variant-numeric: tabular-nums;
+    }
+    .ec-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      color: rgba(185,90,228,0.55);
+      margin-top: 4px;
+    }
+    .ec-colon {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: rgba(185,90,228,0.4);
+      transform: translateY(-3px);
+    }
+    .estreno-countdown.ec-done .ec-num,
+    .estreno-countdown.ec-done .ec-label,
+    .estreno-countdown.ec-done .ec-colon { display: none; }
+    .estreno-countdown.ec-done::after {
+      content: '¡Ya está aquí!';
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      letter-spacing: 0.12em;
+      color: #e8caff;
+      text-shadow: 0 0 18px rgba(185,90,228,0.45);
+    }
+
     .estreno-divider {
       width: 0; height: 1px;
       background: linear-gradient(to right, transparent, rgba(185,90,228,0.4), transparent);
@@ -6470,7 +6523,16 @@
         <div class="estreno-glow-wrap">
           <span class="estreno-title">Próximamente</span>
         </div>
-        <p class="estreno-subtitle">Algo se acerca.</p>
+        <p class="estreno-subtitle">El Capítulo 4 se estrena en YouTube en:</p>
+        <div class="estreno-countdown" id="estrenoCountdown" aria-live="polite">
+          <div class="ec-unit"><span class="ec-num" id="ecDays">00</span><span class="ec-label">Días</span></div>
+          <span class="ec-colon">:</span>
+          <div class="ec-unit"><span class="ec-num" id="ecHours">00</span><span class="ec-label">Hrs</span></div>
+          <span class="ec-colon">:</span>
+          <div class="ec-unit"><span class="ec-num" id="ecMinutes">00</span><span class="ec-label">Min</span></div>
+          <span class="ec-colon">:</span>
+          <div class="ec-unit"><span class="ec-num" id="ecSeconds">00</span><span class="ec-label">Seg</span></div>
+        </div>
         <div class="estreno-divider"></div>
       </div>
     </div>
@@ -9692,6 +9754,43 @@
   })();
   </script>
 
+  <!-- CUENTA REGRESIVA DEL ESTRENO -->
+  <script>
+  (function() {
+    var el = document.getElementById('estrenoCountdown');
+    if (!el) return;
+
+    var TARGET = new Date('2026-09-21T16:00:00+02:00').getTime();
+    var dEl = document.getElementById('ecDays');
+    var hEl = document.getElementById('ecHours');
+    var mEl = document.getElementById('ecMinutes');
+    var sEl = document.getElementById('ecSeconds');
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function tick() {
+      var diff = TARGET - Date.now();
+      if (diff <= 0) {
+        el.classList.add('ec-done');
+        clearInterval(timer);
+        return;
+      }
+      var totalSeconds = Math.floor(diff / 1000);
+      var days    = Math.floor(totalSeconds / 86400);
+      var hours   = Math.floor((totalSeconds % 86400) / 3600);
+      var minutes = Math.floor((totalSeconds % 3600) / 60);
+      var seconds = totalSeconds % 60;
+      dEl.textContent = pad(days);
+      hEl.textContent = pad(hours);
+      mEl.textContent = pad(minutes);
+      sEl.textContent = pad(seconds);
+    }
+
+    tick();
+    var timer = setInterval(tick, 1000);
+  })();
+  </script>
+
   <!-- HAMBURGER JS -->
   <script>
   (function() {
@@ -11696,6 +11795,7 @@
     var wrap     = sticky.querySelector('.estreno-glow-wrap');
     var title    = sticky.querySelector('.estreno-title');
     var subtitle = sticky.querySelector('.estreno-subtitle');
+    var countdown = sticky.querySelector('.estreno-countdown');
     var divider  = sticky.querySelector('.estreno-divider');
 
     /* ——— Partículas ——— */
@@ -11819,6 +11919,11 @@
       if (subtitle) {
         subtitle.style.opacity   = (pSub * 0.42).toFixed(3);
         subtitle.style.transform = 'translateY(' + ((1 - pSub) * 8).toFixed(1) + 'px)';
+      }
+
+      if (countdown) {
+        countdown.style.opacity   = pSub.toFixed(3);
+        countdown.style.transform = 'translateY(' + ((1 - pSub) * 8).toFixed(1) + 'px)';
       }
 
       if (divider) divider.style.width = (pDiv * 120).toFixed(0) + 'px';
