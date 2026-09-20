@@ -2842,16 +2842,22 @@
       mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
       will-change: transform;
     }
-    .equipo-video {
+    /* Brisa sutil sobre la foto estática: mismo truco que el hero de
+       "Próximamente" (estrenoSway) para dar sensación de vida. */
+    .equipo-photo {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: center 44%;
-      display: block;
+      background: url('images/equipo-photo.jpg') center 44% / cover no-repeat;
+      transform-origin: bottom center;
+      animation: equipoPhotoSway 8s ease-in-out infinite;
+      will-change: transform;
+    }
+    @keyframes equipoPhotoSway {
+      0%, 100% { transform: scale(1.04) skewX(-0.4deg) translateX(-0.3%); }
+      50%      { transform: scale(1.04) skewX(0.4deg)  translateX(0.3%); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .equipo-video { display: none; }
-      .equipo-bg { background: url('images/equipo-poster.jpg') center 44% / cover no-repeat; }
+      .equipo-photo { animation: none; }
     }
     #equipo::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -8131,10 +8137,7 @@
 
   <section id="equipo">
     <div class="equipo-bg">
-      <video class="equipo-video" autoplay muted loop playsinline preload="auto" poster="images/equipo-poster.jpg">
-        <source src="images/equipo-loop.webm" type="video/webm">
-        <source src="images/equipo-loop.mp4" type="video/mp4">
-      </video>
+      <div class="equipo-photo"></div>
     </div>
     <div class="equipo-header">
       <p class="section-label reveal">Detrás de cámara</p>
