@@ -2107,6 +2107,12 @@
       max-width: 1200px;
       margin: 0 auto;
     }
+    .gallery-carousel:focus { outline: none; }
+    .gallery-carousel:focus-visible {
+      outline: 2px solid rgba(185,90,228,0.45);
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
     .gallery-carousel::before,
     .gallery-carousel::after {
       content: '';
@@ -2190,9 +2196,26 @@
     .gallery-item:hover .gallery-placeholder { background: linear-gradient(135deg, #2a1424, var(--mid)); }
     .gallery-placeholder-icon { font-size: 2rem; opacity: 0.2; }
 
-    /* Rótulos ocultos: no se muestran sobre las fotos de la galería
-       (se conservan en el DOM para el texto del lightbox) */
-    .gallery-caption { display: none; }
+    /* Rótulo visible al pasar el mouse (también sirve de texto del lightbox) */
+    .gallery-caption {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 34px 16px 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.82), transparent);
+      color: #fff;
+      font-family: 'Crimson Pro', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      pointer-events: none;
+    }
+    .gallery-item:hover .gallery-caption,
+    .gallery-item:focus-visible .gallery-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* Lightbox */
     .lightbox {
@@ -7841,7 +7864,7 @@
       <h2 class="section-title reveal reveal-delay-1">Galería Oficial</h2>
     </div>
 
-    <div class="gallery-carousel">
+    <div class="gallery-carousel" tabindex="0" aria-label="Carrusel de galería, usa las flechas del teclado para navegar">
       <button class="gallery-nav gallery-nav-prev" id="galleryPrev" aria-label="Anterior">‹</button>
       <button class="gallery-nav gallery-nav-next" id="galleryNext" aria-label="Siguiente">›</button>
       <div class="gallery-grid reveal" id="galleryTrack">
@@ -8489,19 +8512,32 @@
       function scrollByAmount(dir) {
         var card = track.querySelector('.gallery-item');
         var step = card ? card.getBoundingClientRect().width + 12 : track.clientWidth * 0.8;
+        var max  = track.scrollWidth - track.clientWidth;
+        // Loop infinito: al llegar a un extremo, salta suavemente al otro
+        if (dir > 0 && track.scrollLeft >= max - 4) {
+          track.scrollTo({ left: 0, behavior: 'smooth' });
+          return;
+        }
+        if (dir < 0 && track.scrollLeft <= 4) {
+          track.scrollTo({ left: max, behavior: 'smooth' });
+          return;
+        }
         track.scrollBy({ left: dir * step * 2, behavior: 'smooth' });
       }
       prev.addEventListener('click', function() { scrollByAmount(-1); });
       next.addEventListener('click', function() { scrollByAmount(1); });
 
-      function updateNavState() {
-        var max = track.scrollWidth - track.clientWidth - 2;
-        prev.style.opacity = track.scrollLeft <= 0 ? '0.35' : '1';
-        next.style.opacity = track.scrollLeft >= max ? '0.35' : '1';
+      // Navegación con flechas del teclado cuando el carrusel tiene foco
+      // (se ignora si el lightbox está abierto, que ya usa esas mismas teclas)
+      var carousel = track.closest('.gallery-carousel');
+      if (carousel) {
+        carousel.addEventListener('keydown', function(e) {
+          var lb = document.getElementById('lightbox');
+          if (lb && lb.classList.contains('open')) return;
+          if (e.key === 'ArrowRight') { scrollByAmount(1);  e.preventDefault(); }
+          if (e.key === 'ArrowLeft')  { scrollByAmount(-1); e.preventDefault(); }
+        });
       }
-      track.addEventListener('scroll', updateNavState, { passive: true });
-      window.addEventListener('resize', updateNavState);
-      updateNavState();
 
       // Arrastrar con el mouse (touch ya funciona nativo con overflow-x)
       var isDown = false, startX = 0, startScroll = 0, moved = false;
