@@ -530,24 +530,6 @@
     .estreno-sticky.ep-radiant .estreno-stars2 { opacity: 0.75; }
     @keyframes estrenoTwinkle2 { from { filter: brightness(0.6); } to { filter: brightness(1.2); } }
 
-    /* Estrella fugaz ocasional */
-    .estreno-meteor {
-      position: absolute; top: 12%; left: 6%;
-      width: 150px; height: 2px; z-index: 1; pointer-events: none;
-      background: linear-gradient(90deg, transparent, #fff);
-      filter: drop-shadow(0 0 6px rgba(255,255,255,0.85));
-      border-radius: 2px; opacity: 0; transform: rotate(20deg);
-    }
-    .estreno-sticky.ep-radiant .estreno-meteor {
-      animation: estrenoMeteor 9s ease-in 2.5s infinite;
-    }
-    @keyframes estrenoMeteor {
-      0%, 72%  { opacity: 0; transform: translate(0, 0) rotate(20deg); }
-      74%      { opacity: 1; }
-      86%      { opacity: 1; }
-      100%     { opacity: 0; transform: translate(58vw, 22vh) rotate(20deg); }
-    }
-
     /* Rachas de viento cruzando el cielo */
     .estreno-wind {
       position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
@@ -569,7 +551,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .estreno-photo, .estreno-fog, .estreno-stars2, .estreno-meteor,
+      .estreno-photo, .estreno-fog, .estreno-stars2,
       .estreno-wind::before, .estreno-wind::after { animation: none !important; }
     }
 
@@ -6331,7 +6313,6 @@
       <div class="estreno-shade"></div>
       <div class="estreno-fog"></div>
       <div class="estreno-stars2"></div>
-      <div class="estreno-meteor"></div>
       <div class="estreno-wind"></div>
       <canvas id="estreno-particles"></canvas>
       <div class="estreno-ambient"></div>
