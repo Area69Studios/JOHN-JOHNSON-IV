@@ -2101,50 +2101,69 @@
       margin: 0 auto 50px;
     }
 
-    .gallery-grid {
+    /* ── Carrusel horizontal ── */
+    .gallery-carousel {
+      position: relative;
       max-width: 1200px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      grid-auto-rows: 280px;
-      gap: 3px;
     }
+    .gallery-carousel::before,
+    .gallery-carousel::after {
+      content: '';
+      position: absolute; top: 0; bottom: 14px;
+      width: 64px; z-index: 1; pointer-events: none;
+    }
+    .gallery-carousel::before { left: 0;  background: linear-gradient(to right, var(--dark), transparent); }
+    .gallery-carousel::after  { right: 0; background: linear-gradient(to left,  var(--dark), transparent); }
+
+    .gallery-grid {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x proximity;
+      scroll-behavior: smooth;
+      padding: 4px 4px 14px;
+      cursor: grab;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(185,90,228,0.4) transparent;
+    }
+    .gallery-grid.dragging { cursor: grabbing; scroll-snap-type: none; }
+    .gallery-grid::-webkit-scrollbar { height: 7px; }
+    .gallery-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 4px; }
+    .gallery-grid::-webkit-scrollbar-thumb { background: rgba(185,90,228,0.4); border-radius: 4px; }
+    .gallery-grid::-webkit-scrollbar-thumb:hover { background: rgba(185,90,228,0.65); }
 
     .gallery-item {
       overflow: hidden;
       position: relative;
       cursor: pointer;
       background: var(--surface);
+      flex: 0 0 auto;
+      width: min(72vw, 380px);
+      height: 300px;
+      border-radius: 14px;
+      scroll-snap-align: start;
     }
 
-    .gallery-item:nth-child(1) { grid-column: span 5; grid-row: span 2; }
-    .gallery-item:nth-child(2) { grid-column: span 4; }
-    .gallery-item:nth-child(3) { grid-column: span 3; }
-    .gallery-item:nth-child(4) { grid-column: span 3; }
-    .gallery-item:nth-child(5) { grid-column: span 4; }
-    .gallery-item:nth-child(6) { grid-column: span 5; grid-row: span 2; }
-    .gallery-item:nth-child(7) { grid-column: span 4; }
-    .gallery-item:nth-child(8) { grid-column: span 3; }
-    .gallery-item:nth-child(9) { grid-column: span 3; }
-    .gallery-item:nth-child(10) { grid-column: span 4; }
-    .gallery-item:nth-child(11) { grid-column: span 5; }
-    .gallery-item:nth-child(12) { grid-column: span 4; }
-    .gallery-item:nth-child(13) { grid-column: span 3; }
-    .gallery-item:nth-child(14) { grid-column: span 6; }
-    .gallery-item:nth-child(15) { grid-column: span 6; }
-    .gallery-item:nth-child(16) { grid-column: span 12; }
-    .gallery-item:nth-child(17) { grid-column: span 5; grid-row: span 2; }
-    .gallery-item:nth-child(18) { grid-column: span 4; }
-    .gallery-item:nth-child(19) { grid-column: span 3; }
-    .gallery-item:nth-child(20) { grid-column: span 3; }
-    .gallery-item:nth-child(21) { grid-column: span 4; }
-    .gallery-item:nth-child(22) { grid-column: span 5; }
-    .gallery-item:nth-child(23) { grid-column: span 4; }
-    .gallery-item:nth-child(24) { grid-column: span 3; }
-    .gallery-item:nth-child(25) { grid-column: span 3; }
-    .gallery-item:nth-child(26) { grid-column: span 4; }
-    .gallery-item:nth-child(27) { grid-column: span 5; }
-    .gallery-item:nth-child(28) { grid-column: span 4; }
+    .gallery-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      z-index: 2;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      border: 1px solid rgba(185,90,228,0.25);
+      border-radius: 50%;
+      color: rgba(185,90,228,0.7);
+      font-size: 1.4rem; width: 44px; height: 44px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .gallery-nav:hover { background: rgba(185,90,228,0.12); border-color: var(--gold); color: var(--gold); }
+    .gallery-nav-prev { left: -6px; }
+    .gallery-nav-next { right: -6px; }
+    @media (max-width: 760px) { .gallery-nav { display: none; } }
 
     .gallery-item img {
       width: 100%; height: 100%;
@@ -3673,8 +3692,7 @@
       .personajes-grid { grid-template-columns: repeat(2, 1fr); }
       .character-card:first-child { grid-column: span 2; grid-row: span 1; aspect-ratio: 16/7; }
       .equipo-grid { grid-template-columns: repeat(2, 1fr); }
-      .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
-      .gallery-item { grid-column: span 1 !important; grid-row: span 1 !important; height: 260px; }
+      .gallery-item { height: 240px; }
       footer { flex-direction: column; gap: 20px; text-align: center; }
       .footer-copy { position: static; transform: none; white-space: normal; }
     }
@@ -3953,8 +3971,7 @@
 
     @media (max-width: 480px) {
       .equipo-grid { grid-template-columns: 1fr !important; }
-      .gallery-grid { grid-template-columns: 1fr !important; }
-      .gallery-item { height: 220px !important; }
+      .gallery-item { height: 220px !important; width: 82vw !important; }
       .trailer-btn { max-width: 100%; }
       .capitulos-list { gap: 14px; }
       .cap-btn { font-size: 0.9rem; }
@@ -7824,7 +7841,10 @@
       <h2 class="section-title reveal reveal-delay-1">Galería Oficial</h2>
     </div>
 
-    <div class="gallery-grid reveal">
+    <div class="gallery-carousel">
+      <button class="gallery-nav gallery-nav-prev" id="galleryPrev" aria-label="Anterior">‹</button>
+      <button class="gallery-nav gallery-nav-next" id="galleryNext" aria-label="Siguiente">›</button>
+      <div class="gallery-grid reveal" id="galleryTrack">
 
       <div class="gallery-item" data-lightbox>
         <img src="images/img-042.png" alt="La Escondia — Supervivencia" loading="lazy">
@@ -7958,6 +7978,7 @@
         <div class="gallery-caption">Victoria en la colina</div>
       </div>
 
+      </div>
     </div>
 
   </section>
@@ -8458,6 +8479,53 @@
   </div>
 
   <script>
+    /* ===== CARRUSEL DE GALERÍA ===== */
+    (function() {
+      var track = document.getElementById('galleryTrack');
+      var prev  = document.getElementById('galleryPrev');
+      var next  = document.getElementById('galleryNext');
+      if (!track || !prev || !next) return;
+
+      function scrollByAmount(dir) {
+        var card = track.querySelector('.gallery-item');
+        var step = card ? card.getBoundingClientRect().width + 12 : track.clientWidth * 0.8;
+        track.scrollBy({ left: dir * step * 2, behavior: 'smooth' });
+      }
+      prev.addEventListener('click', function() { scrollByAmount(-1); });
+      next.addEventListener('click', function() { scrollByAmount(1); });
+
+      function updateNavState() {
+        var max = track.scrollWidth - track.clientWidth - 2;
+        prev.style.opacity = track.scrollLeft <= 0 ? '0.35' : '1';
+        next.style.opacity = track.scrollLeft >= max ? '0.35' : '1';
+      }
+      track.addEventListener('scroll', updateNavState, { passive: true });
+      window.addEventListener('resize', updateNavState);
+      updateNavState();
+
+      // Arrastrar con el mouse (touch ya funciona nativo con overflow-x)
+      var isDown = false, startX = 0, startScroll = 0, moved = false;
+      track.addEventListener('mousedown', function(e) {
+        isDown = true; moved = false;
+        startX = e.pageX; startScroll = track.scrollLeft;
+        track.classList.add('dragging');
+      });
+      window.addEventListener('mouseup', function() {
+        isDown = false;
+        track.classList.remove('dragging');
+      });
+      window.addEventListener('mousemove', function(e) {
+        if (!isDown) return;
+        e.preventDefault();
+        var dx = e.pageX - startX;
+        if (Math.abs(dx) > 4) moved = true;
+        track.scrollLeft = startScroll - dx;
+      });
+      // Evita que un arrastre abra el lightbox por accidente
+      track.addEventListener('click', function(e) {
+        if (moved) { e.stopPropagation(); e.preventDefault(); }
+      }, true);
+    })();
 
     /* ===== PARTÍCULAS EN LUGAR-GALLERIES ===== */
     (function() {
