@@ -698,9 +698,6 @@
       opacity: 0;
       transform: translateY(8px);
     }
-    .estreno-countdown.ec-done {
-      gap: 0;
-    }
     .ec-unit {
       display: flex;
       flex-direction: column;
@@ -729,16 +726,29 @@
       color: rgba(185,90,228,0.4);
       transform: translateY(-3px);
     }
-    .estreno-countdown.ec-done .ec-num,
-    .estreno-countdown.ec-done .ec-label,
-    .estreno-countdown.ec-done .ec-colon { display: none; }
-    .estreno-countdown.ec-done::after {
-      content: '¡Ya está aquí!';
+    .estreno-watch-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      margin: 30px auto 0;
+      padding: 15px 38px;
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.6rem, 4vw, 2.2rem);
-      letter-spacing: 0.12em;
-      color: #e8caff;
-      text-shadow: 0 0 18px rgba(185,90,228,0.45);
+      font-size: 0.92rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #04171d;
+      width: fit-content;
+      background-image: var(--grad-neon);
+      border-radius: 999px;
+      box-shadow: 0 0 0 1px rgba(185,90,228,0.55), 0 8px 30px rgba(185,90,228,0.45);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .estreno-watch-btn.visible { display: inline-flex; }
+    .estreno-watch-btn:hover {
+      box-shadow: 0 0 0 1px rgba(185,90,228,0.85), 0 10px 40px rgba(185,90,228,0.6);
     }
 
     .estreno-divider {
@@ -6269,9 +6279,9 @@
         <div class="estreno-line"></div>
         <p class="estreno-label">John Johnson IV &nbsp;·&nbsp; Serie Oficial</p>
         <div class="estreno-glow-wrap">
-          <span class="estreno-title">Próximamente</span>
+          <span class="estreno-title" id="estrenoTitle">Próximamente</span>
         </div>
-        <p class="estreno-subtitle">El Capítulo 4 se estrena en YouTube en:</p>
+        <p class="estreno-subtitle" id="estrenoSubtitle">El Capítulo 4 se estrena en YouTube en:</p>
         <div class="estreno-countdown" id="estrenoCountdown" aria-live="polite">
           <div class="ec-unit"><span class="ec-num" id="ecDays">00</span><span class="ec-label">Días</span></div>
           <span class="ec-colon">:</span>
@@ -6281,6 +6291,7 @@
           <span class="ec-colon">:</span>
           <div class="ec-unit"><span class="ec-num" id="ecSeconds">00</span><span class="ec-label">Seg</span></div>
         </div>
+        <a href="https://youtu.be/YCS4TayAA4I" target="_blank" rel="noopener" class="estreno-watch-btn" id="estrenoWatchBtn">Ver Capítulo 4</a>
         <div class="estreno-divider"></div>
       </div>
     </div>
@@ -9447,13 +9458,19 @@
     var hEl = document.getElementById('ecHours');
     var mEl = document.getElementById('ecMinutes');
     var sEl = document.getElementById('ecSeconds');
+    var titleEl    = document.getElementById('estrenoTitle');
+    var subtitleEl = document.getElementById('estrenoSubtitle');
+    var watchBtn   = document.getElementById('estrenoWatchBtn');
 
     function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
     function tick() {
       var diff = TARGET - Date.now();
       if (diff <= 0) {
-        el.classList.add('ec-done');
+        el.style.display = 'none';
+        if (titleEl)    titleEl.textContent    = 'Ya disponible';
+        if (subtitleEl) subtitleEl.textContent = 'El Capítulo 4 ya está disponible en YouTube.';
+        if (watchBtn)   watchBtn.classList.add('visible');
         clearInterval(timer);
         return;
       }
@@ -11392,6 +11409,7 @@
     var title    = sticky.querySelector('.estreno-title');
     var subtitle = sticky.querySelector('.estreno-subtitle');
     var countdown = sticky.querySelector('.estreno-countdown');
+    var watchBtn = sticky.querySelector('.estreno-watch-btn');
     var divider  = sticky.querySelector('.estreno-divider');
 
     /* ——— Partículas ——— */
@@ -11520,6 +11538,11 @@
       if (countdown) {
         countdown.style.opacity   = pSub.toFixed(3);
         countdown.style.transform = 'translateY(' + ((1 - pSub) * 8).toFixed(1) + 'px)';
+      }
+
+      if (watchBtn) {
+        watchBtn.style.opacity   = pSub.toFixed(3);
+        watchBtn.style.transform = 'translateY(' + ((1 - pSub) * 8).toFixed(1) + 'px)';
       }
 
       if (divider) divider.style.width = (pDiv * 120).toFixed(0) + 'px';
