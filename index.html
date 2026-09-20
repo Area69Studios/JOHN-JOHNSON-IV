@@ -530,27 +530,6 @@
     .estreno-sticky.ep-radiant .estreno-stars2 { opacity: 0.75; }
     @keyframes estrenoTwinkle2 { from { filter: brightness(0.6); } to { filter: brightness(1.2); } }
 
-    /* Pulso de luz neon recorriendo la rejilla hacia el espectador */
-    .estreno-floorpulse {
-      position: absolute; left: 0; right: 0; bottom: 0; height: 37%;
-      z-index: 2; pointer-events: none; overflow: hidden;
-      opacity: 0; transition: opacity 1.6s ease;
-    }
-    .estreno-sticky.ep-radiant .estreno-floorpulse { opacity: 1; }
-    .estreno-floorpulse::before {
-      content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px;
-      transform-origin: center;
-      background: linear-gradient(90deg, transparent, rgba(255,60,172,0.9) 30%, rgba(120,200,255,0.9) 70%, transparent);
-      box-shadow: 0 0 16px 3px rgba(255,60,172,0.55);
-      animation: estrenoFloor 4.5s linear infinite;
-    }
-    @keyframes estrenoFloor {
-      0%   { top: 0%;   transform: scaleX(0.35); opacity: 0; }
-      12%  { opacity: 0.85; }
-      88%  { opacity: 0.85; }
-      100% { top: 100%; transform: scaleX(1.25); opacity: 0; }
-    }
-
     /* Estrella fugaz ocasional */
     .estreno-meteor {
       position: absolute; top: 12%; left: 6%;
@@ -590,8 +569,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .estreno-photo, .estreno-fog, .estreno-stars2,
-      .estreno-floorpulse::before, .estreno-meteor,
+      .estreno-photo, .estreno-fog, .estreno-stars2, .estreno-meteor,
       .estreno-wind::before, .estreno-wind::after { animation: none !important; }
     }
 
@@ -6354,7 +6332,6 @@
       <div class="estreno-fog"></div>
       <div class="estreno-stars2"></div>
       <div class="estreno-meteor"></div>
-      <div class="estreno-floorpulse"></div>
       <div class="estreno-wind"></div>
       <canvas id="estreno-particles"></canvas>
       <div class="estreno-ambient"></div>
