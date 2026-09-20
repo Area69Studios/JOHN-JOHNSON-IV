@@ -6554,7 +6554,7 @@
       <div class="saga-progress" id="sagaProgress">
         <div class="sp-header">
           <span class="sp-title">Progreso de la saga</span>
-          <span class="sp-runtime">47:01 completados</span>
+          <span class="sp-runtime">92:01 completados</span>
         </div>
         <div class="sp-cols">
           <div class="sp-col sp-col--done" style="flex:14" data-cap="1">
@@ -6578,21 +6578,21 @@
               <span class="sp-time">26:25</span>
             </div>
           </div>
-          <div class="sp-col sp-col--soon" style="flex:25">
-            <div class="sp-bar"></div>
+          <div class="sp-col sp-col--done" style="flex:72" data-cap="4">
+            <div class="sp-bar"><div class="sp-fill"></div></div>
             <div class="sp-info">
               <span class="sp-num">CAP. IV</span>
-              <span class="sp-time">EN PRODUCCIÓN</span>
+              <span class="sp-time">45:00</span>
             </div>
           </div>
         </div>
         <div class="sp-footer">
           <div class="sp-footer-item">
-            <span class="sp-footer-value">47:01</span>
+            <span class="sp-footer-value">92:01</span>
             <span class="sp-footer-label">Duración completada</span>
           </div>
           <div class="sp-footer-item">
-            <span class="sp-footer-value">3 / 4</span>
+            <span class="sp-footer-value">4 / 4</span>
             <span class="sp-footer-label">Capítulos</span>
           </div>
         </div>
@@ -6642,18 +6642,19 @@
           <span class="cap-arrow">›</span>
         </a>
 
-        <div class="cap-btn cap-btn-soon reveal" data-cap="4" style="background-image: url('images/img-021.png'); background-size: cover; background-position: center;">
-          <span class="cap-soon-badge">Próximamente</span>
+        <a href="https://youtu.be/YCS4TayAA4I" target="_blank" rel="noopener" class="cap-btn reveal" data-cap="4" style="background-image: url('images/img-021.png'); background-size: cover; background-position: center;">
           <span class="cap-num-col">
             <span class="cap-number">04</span>
           </span>
           <span class="cap-divider"></span>
           <span class="cap-text">
-            <span class="cap-label">En producción</span>
+            <span class="cap-label">Ver capítulo</span>
             <span class="cap-title">Capítulo 4</span>
             <span class="cap-sub">John Johnson 4 La Película</span>
+            <span class="cap-duration">45:00</span>
           </span>
-        </div>
+          <span class="cap-arrow">›</span>
+        </a>
 
       </div>
     </div>
@@ -9674,8 +9675,8 @@
     var el = document.getElementById('sagaProgress');
     if (!el) return;
     var fills = el.querySelectorAll('.sp-fill');
-    var delays   = [0,   180, 380];
-    var durations = [900, 1050, 1300];
+    var delays   = [0,   180, 380, 580];
+    var durations = [900, 1050, 1300, 1450];
     var triggered = false;
     var observer = new IntersectionObserver(function(entries) {
       if (entries[0].isIntersecting && !triggered) {
@@ -9759,7 +9760,7 @@
       },
       '4': {
         slides: Array.from(document.querySelectorAll('.sinopsis-bg-slide')).map(function(el) { return el.style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, ''); }).concat(['images/img-085.jpg','images/img-086.jpg','images/img-087.jpg','images/img-088.jpg','images/img-089.jpg','images/img-090.jpg','images/img-091.jpg','images/img-092.jpg']),
-        label: 'Capítulo 4 · Próximamente',
+        label: 'Capítulo 4',
         desc: 'Johnson fue abandonado en el mar. Llegó a una isla sin nombre. Algo en él desapareció. Cuando Tomás y Emilio parten a buscarlo, los Muslacos van detrás. Lo que encuentran no es un rescate.'
       }
     };
