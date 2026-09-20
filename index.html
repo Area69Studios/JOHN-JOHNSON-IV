@@ -1676,14 +1676,21 @@
       position: relative;
       overflow: hidden;
     }
-    #capitulos::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0;
+    .capitulos-bg {
+      position: absolute; top: 0; left: 0; right: 0;
       height: clamp(380px, 52vw, 660px);
       z-index: 0; pointer-events: none;
-      background: url('images/bg-capitulos.jpg?v=4') center 40% / cover no-repeat;
+      overflow: hidden;
       -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
       will-change: transform;
+    }
+    .capitulos-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      display: block;
     }
     #capitulos::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -1691,8 +1698,10 @@
       z-index: 0; pointer-events: none;
       background: linear-gradient(to bottom, rgba(10,5,18,0.62) 0%, rgba(10,5,18,0.28) 22%, rgba(10,5,18,0.05) 42%, transparent 62%);
     }
-    @keyframes capBgBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.055); } }
-    @media (prefers-reduced-motion: reduce) { #capitulos::before { animation: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .capitulos-video { display: none; }
+      .capitulos-bg { background: url('images/capitulos-poster.jpg') center 40% / cover no-repeat; }
+    }
 
     /* ===== PARTICLES CANVAS ===== */
     #capitulos-particles {
@@ -2920,12 +2929,12 @@
     @media (prefers-reduced-motion: reduce) { #equipo::before { animation: none; transform: scale(1.02); } }
     #equipo > * { position: relative; z-index: 1; }
 
-    #personajes::before, #capitulos::before, #galeria::before, #equipo::before {
+    #personajes::before, .capitulos-bg, #galeria::before, #equipo::before {
       transform: translate3d(0, var(--par, 0px), 0) scale(var(--kb, 1.16));
     }
     #equipo::before { filter: saturate(1.08); }
     @media (prefers-reduced-motion: reduce) {
-      #personajes::before, #capitulos::before, #equipo::before, #galeria::before { animation: none; }
+      #personajes::before, .capitulos-bg, #equipo::before, #galeria::before { animation: none; }
     }
     #equipo > *:not(canvas):not(.topo-pulse) { position: relative; z-index: 1; }
 
@@ -6457,6 +6466,12 @@
 
   <!-- CAPÍTULOS -->
   <section id="capitulos">
+    <div class="capitulos-bg">
+      <video class="capitulos-video" autoplay muted loop playsinline preload="auto" poster="images/capitulos-poster.jpg">
+        <source src="images/capitulos-loop.webm" type="video/webm">
+        <source src="images/capitulos-loop.mp4" type="video/mp4">
+      </video>
+    </div>
     <canvas id="capitulos-particles"></canvas>
     <div class="section-inner">
       <div class="capitulos-header">
