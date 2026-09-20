@@ -490,20 +490,6 @@
       opacity: 0;
     }
 
-    /* Scanlines cinematográficas */
-    .estreno-scanlines {
-      position: absolute; inset: 0;
-      pointer-events: none; z-index: 4;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 3px,
-        rgba(0,0,0,0.055) 3px,
-        rgba(0,0,0,0.055) 4px
-      );
-      opacity: 0.38;
-    }
-
     /* Vignette */
     .estreno-vignette {
       display: none;
@@ -6316,7 +6302,6 @@
       <div class="estreno-wind"></div>
       <canvas id="estreno-particles"></canvas>
       <div class="estreno-ambient"></div>
-      <div class="estreno-scanlines"></div>
       <div class="estreno-vignette"></div>
       <div class="estreno-content">
         <div class="estreno-line"></div>
