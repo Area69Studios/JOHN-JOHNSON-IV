@@ -6260,7 +6260,7 @@
       <li><a href="#donar">Donar</a></li>
       <li><a href="#ranking" class="nav-vote-btn">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Vota ya
+        Ranking
       </a></li>
     </ul>
   </nav>
@@ -7393,7 +7393,7 @@
     <div class="ranking-header reveal">
       <p class="section-label">Comunidad</p>
       <h2 class="section-title">Ranking de personajes</h2>
-      <p class="ranking-subtitle">Vota por tu favorito. Los resultados se actualizan en tiempo real.</p>
+      <p class="ranking-subtitle">Votación cerrada. Estos son los resultados finales de la comunidad.</p>
     </div>
 
     <div class="ranking-wrap reveal reveal-delay-1" id="rankingWrap">
@@ -7409,7 +7409,6 @@
               <span class="ranking-char-name">John Johnson</span>
               <span class="ranking-char-fullname">John Johnson Suzuki II</span>
             </div>
-            <button class="ranking-vote-btn" id="rk-btn-johnson"><span>Votar</span></button>
           </div>
           <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-johnson"></div></div>
           <div class="ranking-bottom-row">
@@ -7434,7 +7433,6 @@
               <span class="ranking-char-name">Tomás Carreta</span>
               <span class="ranking-char-fullname">Tomás Carreta Silzür</span>
             </div>
-            <button class="ranking-vote-btn" id="rk-btn-tomas"><span>Votar</span></button>
           </div>
           <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-tomas"></div></div>
           <div class="ranking-bottom-row">
@@ -7459,7 +7457,6 @@
               <span class="ranking-char-name">Emilio Shuang Ye</span>
               <span class="ranking-char-fullname">Emilio Shuang Ye Rotonda</span>
             </div>
-            <button class="ranking-vote-btn" id="rk-btn-emilio"><span>Votar</span></button>
           </div>
           <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-emilio"></div></div>
           <div class="ranking-bottom-row">
@@ -7484,7 +7481,6 @@
               <span class="ranking-char-name">Shima Asuka</span>
               <span class="ranking-char-fullname">Shima Asuka</span>
             </div>
-            <button class="ranking-vote-btn" id="rk-btn-shima"><span>Votar</span></button>
           </div>
           <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-shima"></div></div>
           <div class="ranking-bottom-row">
@@ -7509,7 +7505,6 @@
               <span class="ranking-char-name">Meregildo Smith</span>
               <span class="ranking-char-fullname">Meregildo Smith</span>
             </div>
-            <button class="ranking-vote-btn" id="rk-btn-meregildo"><span>Votar</span></button>
           </div>
           <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-meregildo"></div></div>
           <div class="ranking-bottom-row">
@@ -7534,7 +7529,6 @@
               <span class="ranking-char-name">Kaia Vuković</span>
               <span class="ranking-char-fullname">Kaia Vuković</span>
             </div>
-            <button class="ranking-vote-btn" id="rk-btn-kaia"><span>Votar</span></button>
           </div>
           <div class="ranking-bar-track"><div class="ranking-bar-fill" id="rk-bar-kaia"></div></div>
           <div class="ranking-bottom-row">
@@ -7553,8 +7547,7 @@
         <span style="display:inline-flex;align-items:center;margin-top:8px;">
           <span class="rk-status-dot rk-offline" id="rkStatusDot"></span>
           <span class="rk-status-label" id="rkStatusLabel">Offline</span>
-        </span><br>
-        <button class="ranking-reset" id="rkReset">Retirar mi voto</button>
+        </span>
       </div>
 
     </div>
@@ -7653,27 +7646,6 @@
         }
       }
 
-      /* ──────────────── Firebase REST: escritura ──────────────── */
-      function fbWrite(char, delta) {
-        // Lee el campo actual (siempre como número), suma delta, escribe
-        fetch(DB + '/' + char + '.json')
-          .then(function(r) { return r.json(); })
-          .then(function(current) {
-            var next = Math.max(0, toInt(current) + delta);
-            return fetch(DB + '/' + char + '.json', {
-              method:  'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body:    JSON.stringify(next)
-            });
-          })
-          .catch(function() {
-            var votes = getVotes();
-            votes[char] = Math.max(0, toInt(votes[char]) + delta);
-            cacheVotes(votes);
-            render(votes);
-          });
-      }
-
       // Limpia datos corruptos: lee Firebase, normaliza y reescribe si hay objetos
       function sanitizeFirebase() {
         fetch(DB + '.json')
@@ -7694,61 +7666,6 @@
           })
           .catch(function() {});
       }
-
-      /* ──────────────── Votar ──────────────── */
-      function castVote(char) {
-        localStorage.setItem(KEY_MYVOTE, char);
-
-        // Render optimista inmediato
-        var optimistic = getVotes();
-        optimistic[char] = (optimistic[char] || 0) + 1;
-        cacheVotes(optimistic);
-        render(optimistic);
-
-        // Escribe en Firebase (el EventSource propagará la confirmación a todos)
-        fbWrite(char, 1);
-
-        // Flash sobre la card
-        var card  = document.getElementById('rk-card-' + char);
-        var flash = document.createElement('div');
-        flash.className = 'rk-flash';
-        card.appendChild(flash);
-        setTimeout(function() { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 700);
-
-        // Shimmer sweep sobre el botón votado
-        var btn   = document.getElementById('rk-btn-' + char);
-        var shine = document.createElement('div');
-        shine.className = 'rk-shine';
-        btn.appendChild(shine);
-        setTimeout(function() { if (shine.parentNode) shine.parentNode.removeChild(shine); }, 850);
-      }
-
-      CHARS.forEach(function(char) {
-        document.getElementById('rk-btn-' + char).addEventListener('click', function(e) {
-          // Ripple desde el punto de clic
-          var rect   = this.getBoundingClientRect();
-          var ripple = document.createElement('div');
-          ripple.className  = 'rk-ripple';
-          ripple.style.left = (e.clientX - rect.left)  + 'px';
-          ripple.style.top  = (e.clientY - rect.top)   + 'px';
-          this.appendChild(ripple);
-          setTimeout(function() { if (ripple.parentNode) ripple.parentNode.removeChild(ripple); }, 650);
-
-          if (!getMyVote()) castVote(char);
-        });
-      });
-
-      /* ──────────────── Retirar voto ──────────────── */
-      document.getElementById('rkReset').addEventListener('click', function() {
-        var myVote = getMyVote();
-        if (!myVote) return;
-        localStorage.removeItem(KEY_MYVOTE);
-        var optimistic = getVotes();
-        if (optimistic[myVote] > 0) optimistic[myVote]--;
-        cacheVotes(optimistic);
-        render(optimistic);
-        fbWrite(myVote, -1);
-      });
 
       /* ──────────────── Fallback mismo navegador (offline) ──────────────── */
       try {
@@ -7800,19 +7717,6 @@
           document.getElementById('rk-votes-' + char).textContent = v === 1 ? '1 voto' : v + ' votos';
           document.getElementById('rk-medal-' + char).textContent = pos;
           document.getElementById('rk-card-'  + char).classList.toggle('rk-top', pos === 1);
-
-          var btn = document.getElementById('rk-btn-' + char);
-          if (myVote) {
-            btn.disabled  = true;
-            btn.className = 'ranking-vote-btn' + (myVote === char ? ' rk-voted' : ' rk-other');
-            btn.innerHTML = myVote === char
-              ? '<span>&#10003;&nbsp;Tu voto</span>'
-              : '<span>Votar</span>';
-          } else {
-            btn.disabled  = false;
-            btn.className = 'ranking-vote-btn';
-            btn.innerHTML = '<span>Votar</span>';
-          }
         });
 
         document.getElementById('rk-total').textContent =
@@ -7840,9 +7744,9 @@
         btn.addEventListener('click', function() {
           var name = charNames[char];
           var url  = window.location.href.split('#')[0] + '#ranking';
-          var text = 'Vota por ' + name + ' en el ranking de John Johnson IV → ' + url;
+          var text = 'Así va ' + name + ' en el ranking de John Johnson IV → ' + url;
           if (navigator.share) {
-            navigator.share({ title: 'John Johnson IV — Ranking', text: 'Vota por ' + name, url: url }).catch(function() {});
+            navigator.share({ title: 'John Johnson IV — Ranking', text: 'Así va ' + name + ' en el ranking', url: url }).catch(function() {});
           } else {
             navigator.clipboard.writeText(text)
               .then(function() { showToast('Enlace copiado al portapapeles'); })
