@@ -1111,19 +1111,25 @@
       overflow: hidden;
     }
 
-    /* BG slideshow */
+    /* BG video */
     .sinopsis-bg {
       position: absolute; inset: 0;
       z-index: 0;
     }
-    .sinopsis-bg-slide {
+    .sinopsis-video {
       position: absolute; inset: 0;
-      opacity: 0;
-      transition: opacity 1.4s cubic-bezier(0.4,0,0.2,1);
-      background-size: cover;
-      background-position: center;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
     }
-    .sinopsis-bg-slide.active { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .sinopsis-video { display: none; }
+      .sinopsis-bg {
+        background-image: url('images/sinopsis-poster.jpg');
+        background-size: cover;
+        background-position: center;
+      }
+    }
     /* Dark overlay so text stays legible */
     .sinopsis-bg::after {
       content: '';
@@ -6387,10 +6393,10 @@
   <section id="sinopsis">
 
     <div class="sinopsis-bg" id="sinopsisBg">
-      <div class="sinopsis-bg-slide active" style="background-image:url('images/img-002.png')"></div>
-      <div class="sinopsis-bg-slide" style="background-image:url('images/img-003.png')"></div>
-      <div class="sinopsis-bg-slide" style="background-image:url('images/img-004.png')"></div>
-      <div class="sinopsis-bg-slide" style="background-image:url('images/img-005.png')"></div>
+      <video class="sinopsis-video" autoplay muted loop playsinline preload="auto" poster="images/sinopsis-poster.jpg">
+        <source src="images/sinopsis-loop.webm" type="video/webm">
+        <source src="images/sinopsis-loop.mp4" type="video/mp4">
+      </video>
     </div>
     <div class="sinopsis-mid-layer" id="sinopsisMid" aria-hidden="true">IV</div>
     <div class="sinopsis-grid">
@@ -8534,19 +8540,6 @@
   </div>
 
   <script>
-
-    /* ===== SINOPSIS BG SLIDESHOW ===== */
-    (function() {
-      var slides = document.querySelectorAll('.sinopsis-bg-slide');
-      if (!slides.length) return;
-      var cur = 0;
-      setInterval(function() {
-        slides[cur].classList.remove('active');
-        cur = (cur + 1) % slides.length;
-        slides[cur].classList.add('active');
-      }, 4000);
-    })();
-
 
     /* ===== PARTÍCULAS EN LUGAR-GALLERIES ===== */
     (function() {
