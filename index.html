@@ -490,33 +490,6 @@
       opacity: 0;
     }
 
-    /* Rayo diagonal — activo solo al llegar al estado radiant */
-    .estreno-sweep {
-      position: absolute;
-      top: 0; left: -120%; width: 70%; height: 100%;
-      pointer-events: none; z-index: 2;
-      background: linear-gradient(
-        110deg,
-        transparent 0%,
-        rgba(255,138,216,0.03) 42%,
-        rgba(255,200,236,0.11) 50%,
-        rgba(255,138,216,0.03) 58%,
-        transparent 100%
-      );
-      animation: sweepAcross 9s cubic-bezier(0.4,0,0.6,1) infinite;
-      animation-play-state: paused;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
-    .estreno-sticky.ep-radiant .estreno-sweep {
-      animation-play-state: running;
-      opacity: 1;
-    }
-    @keyframes sweepAcross {
-      0%,28% { left: -120%; }
-      100%   { left: 170%; }
-    }
-
     /* Scanlines cinematográficas */
     .estreno-scanlines {
       position: absolute; inset: 0;
@@ -6385,7 +6358,6 @@
       <div class="estreno-wind"></div>
       <canvas id="estreno-particles"></canvas>
       <div class="estreno-ambient"></div>
-      <div class="estreno-sweep"></div>
       <div class="estreno-scanlines"></div>
       <div class="estreno-vignette"></div>
       <div class="estreno-content">
