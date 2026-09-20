@@ -1165,38 +1165,6 @@
       position: relative;
       overflow: hidden;
     }
-    .personajes-bg {
-      position: absolute; top: 0; left: 0; right: 0;
-      height: clamp(480px, 42vw, 720px);
-      z-index: 0; pointer-events: none;
-      overflow: hidden;
-      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 65%, transparent 100%);
-      mask-image: linear-gradient(to bottom, #000 0%, #000 65%, transparent 100%);
-      will-change: transform;
-    }
-    /* Brisa sutil sobre toda la foto (mismo truco que "Próximamente") */
-    .personajes-photo {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      background: url('images/personajes-photo.jpg') center top / cover no-repeat;
-      transform-origin: bottom center;
-      animation: personajesPhotoSway 8s ease-in-out infinite;
-      will-change: transform;
-    }
-    @keyframes personajesPhotoSway {
-      0%, 100% { transform: scale(1.04) skewX(-0.4deg) translateX(-0.3%); }
-      50%      { transform: scale(1.04) skewX(0.4deg)  translateX(0.3%); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .personajes-photo { animation: none; }
-    }
-    #personajes::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0;
-      height: clamp(480px, 42vw, 720px);
-      z-index: 0; pointer-events: none;
-      background: linear-gradient(to bottom, rgba(8,4,12,0.6) 0%, rgba(8,4,12,0.25) 25%, rgba(8,4,12,0.4) 55%, rgba(26,11,20,1) 100%);
-    }
-    #personajes > *:not(.personajes-bg) { position: relative; z-index: 1; }
 
     .personajes-header {
       max-width: 1200px;
@@ -2842,11 +2810,11 @@
       background: linear-gradient(to bottom, rgba(15,8,20,0.62) 0%, rgba(15,8,20,0.42) 25%, rgba(15,8,20,0.5) 70%, rgba(15,8,20,0.68) 100%);
     }
 
-    .personajes-bg, .capitulos-bg, .galeria-bg, .equipo-bg {
+    .capitulos-bg, .galeria-bg, .equipo-bg {
       transform: translate3d(0, var(--par, 0px), 0) scale(var(--kb, 1.16));
     }
     @media (prefers-reduced-motion: reduce) {
-      .personajes-bg, .capitulos-bg, .equipo-bg, .galeria-bg { animation: none; }
+      .capitulos-bg, .equipo-bg, .galeria-bg { animation: none; }
     }
     #equipo > *:not(canvas):not(.topo-pulse):not(.equipo-bg) { position: relative; z-index: 1; }
 
@@ -6510,9 +6478,6 @@
 
   <!-- PERSONAJES -->
   <section id="personajes">
-    <div class="personajes-bg">
-      <div class="personajes-photo"></div>
-    </div>
     <div class="personajes-header">
       <p class="section-label reveal">El reparto</p>
       <h2 class="section-title reveal reveal-delay-1">Personajes</h2>
