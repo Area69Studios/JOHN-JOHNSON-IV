@@ -2149,26 +2149,9 @@
     .gallery-item:hover .gallery-placeholder { background: linear-gradient(135deg, #2a1424, var(--mid)); }
     .gallery-placeholder-icon { font-size: 2rem; opacity: 0.2; }
 
-    /* Rótulo visible al pasar el mouse (también sirve de texto del lightbox) */
-    .gallery-caption {
-      position: absolute; left: 0; right: 0; bottom: 0;
-      padding: 34px 16px 14px;
-      background: linear-gradient(to top, rgba(0,0,0,0.82), transparent);
-      color: #fff;
-      font-family: 'Crimson Pro', serif;
-      font-style: italic;
-      font-size: 0.9rem;
-      letter-spacing: 0.01em;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.35s ease, transform 0.35s ease;
-      pointer-events: none;
-    }
-    .gallery-item:hover .gallery-caption,
-    .gallery-item:focus-visible .gallery-caption {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    /* Rótulos ocultos: no se muestran sobre las fotos de la galería
+       (se conservan en el DOM solo para el texto del lightbox) */
+    .gallery-caption { display: none; }
 
     /* Lightbox */
     .lightbox {
