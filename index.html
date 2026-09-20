@@ -516,29 +516,8 @@
     .estreno-sticky.ep-radiant .estreno-stars2 { opacity: 0.75; }
     @keyframes estrenoTwinkle2 { from { filter: brightness(0.6); } to { filter: brightness(1.2); } }
 
-    /* Rachas de viento cruzando el cielo */
-    .estreno-wind {
-      position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
-      opacity: 0; transition: opacity 1.6s ease;
-    }
-    .estreno-sticky.ep-radiant .estreno-wind { opacity: 1; }
-    .estreno-wind::before, .estreno-wind::after {
-      content: ''; position: absolute; left: -40%; width: 180%; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14) 45%, rgba(255,210,245,0.20) 55%, transparent);
-      filter: blur(1px);
-    }
-    .estreno-wind::before { top: 33%; animation: estrenoWind 4.5s linear infinite; }
-    .estreno-wind::after  { top: 45%; animation: estrenoWind 6.5s linear infinite 1.8s; opacity: 0.7; }
-    @keyframes estrenoWind {
-      0%   { transform: translateX(-55%) skewX(-28deg); opacity: 0; }
-      18%  { opacity: 0.9; }
-      82%  { opacity: 0.9; }
-      100% { transform: translateX(55%) skewX(-28deg); opacity: 0; }
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      .estreno-photo, .estreno-fog, .estreno-stars2,
-      .estreno-wind::before, .estreno-wind::after { animation: none !important; }
+      .estreno-photo, .estreno-fog, .estreno-stars2 { animation: none !important; }
     }
 
     /* ── Video synthwave de fondo (loop ida-vuelta, ~2.8MB) ── */
@@ -2078,14 +2057,25 @@
       position: relative;
       overflow: hidden;
     }
-    #galeria::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0;
+    .galeria-bg {
+      position: absolute; top: 0; left: 0; right: 0;
       height: clamp(320px, 44vw, 540px);
       z-index: 0; pointer-events: none;
-      background: url('images/bg-galeria.jpg?v=4') center 40% / cover no-repeat;
+      overflow: hidden;
       -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
       will-change: transform;
+    }
+    .galeria-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      display: block;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .galeria-video { display: none; }
+      .galeria-bg { background: url('images/galeria-poster.jpg') center 40% / cover no-repeat; }
     }
     #galeria::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0;
@@ -2093,7 +2083,7 @@
       z-index: 0; pointer-events: none;
       background: linear-gradient(to bottom, rgba(10,5,18,0.6) 0%, rgba(10,5,18,0.28) 24%, rgba(10,5,18,0.05) 44%, transparent 62%);
     }
-    #galeria > * { position: relative; z-index: 1; }
+    #galeria > *:not(.galeria-bg) { position: relative; z-index: 1; }
 
     .galeria-header {
       max-width: 1200px;
@@ -2859,12 +2849,12 @@
     @media (prefers-reduced-motion: reduce) { #equipo::before { animation: none; transform: scale(1.02); } }
     #equipo > * { position: relative; z-index: 1; }
 
-    .personajes-bg, .capitulos-bg, #galeria::before, #equipo::before {
+    .personajes-bg, .capitulos-bg, .galeria-bg, #equipo::before {
       transform: translate3d(0, var(--par, 0px), 0) scale(var(--kb, 1.16));
     }
     #equipo::before { filter: saturate(1.08); }
     @media (prefers-reduced-motion: reduce) {
-      .personajes-bg, .capitulos-bg, #equipo::before, #galeria::before { animation: none; }
+      .personajes-bg, .capitulos-bg, #equipo::before, .galeria-bg { animation: none; }
     }
     #equipo > *:not(canvas):not(.topo-pulse) { position: relative; z-index: 1; }
 
@@ -6299,7 +6289,6 @@
       <div class="estreno-shade"></div>
       <div class="estreno-fog"></div>
       <div class="estreno-stars2"></div>
-      <div class="estreno-wind"></div>
       <canvas id="estreno-particles"></canvas>
       <div class="estreno-ambient"></div>
       <div class="estreno-vignette"></div>
@@ -7883,6 +7872,12 @@
 
   <!-- GALERÍA -->
   <section id="galeria">
+    <div class="galeria-bg">
+      <video class="galeria-video" autoplay muted loop playsinline preload="auto" poster="images/galeria-poster.jpg">
+        <source src="images/galeria-loop.webm" type="video/webm">
+        <source src="images/galeria-loop.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="galeria-header">
       <p class="section-label reveal">Imágenes</p>
       <h2 class="section-title reveal reveal-delay-1">Galería Oficial</h2>
