@@ -784,23 +784,34 @@
       .gull, .gull::before { animation: none !important; }
     }
 
-    /* ── Foto synthwave de fondo (AVIF ~9KB, externa, no base64) ── */
+    /* ── Video synthwave de fondo (loop ida-vuelta, ~2.8MB) ── */
     .estreno-photo {
       position: absolute; inset: 0; z-index: 0; pointer-events: none;
       background-color: #1b1038;
-      background-image:
-        radial-gradient(ellipse 62% 42% at 50% 56%, rgba(26,11,20,0.50) 0%, transparent 70%),
-        linear-gradient(to bottom, rgba(26,11,20,0.50) 0%, rgba(26,11,20,0.05) 22%, rgba(26,11,20,0.12) 60%, rgba(26,11,20,0.90) 100%),
-        url('images/este-verano.avif');
-      background-size: cover, cover, cover;
-      background-position: center, center, center;
-      background-repeat: no-repeat;
+      overflow: hidden;
       opacity: 0;
       transform-origin: bottom center;
       transition: opacity 1.6s ease;
       animation: estrenoSway 9s ease-in-out infinite;
     }
+    .estreno-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     .estreno-sticky.ep-radiant .estreno-photo { opacity: 1; }
+
+    /* Sombreado sobre el vídeo (mismo degradado que antes iba en el fondo) */
+    .estreno-shade {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        radial-gradient(ellipse 62% 42% at 50% 56%, rgba(26,11,20,0.50) 0%, transparent 70%),
+        linear-gradient(to bottom, rgba(26,11,20,0.50) 0%, rgba(26,11,20,0.05) 22%, rgba(26,11,20,0.12) 60%, rgba(26,11,20,0.90) 100%);
+      opacity: 0;
+      transition: opacity 1.6s ease;
+    }
+    .estreno-sticky.ep-radiant .estreno-shade { opacity: 1; }
 
     /* Brisa: la parte alta (palmeras/sol) se mece; la base queda anclada */
     @keyframes estrenoSway {
@@ -826,7 +837,13 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .estreno-photo { animation: none; }
+      .estreno-video { display: none; }
+      .estreno-photo {
+        animation: none;
+        background-image: url('images/img-095.jpg');
+        background-size: cover;
+        background-position: center;
+      }
       .estreno-fog   { animation: none; }
     }
 
@@ -6495,7 +6512,13 @@
   <!-- ESTE VERANO -->
   <section id="estreno">
     <div class="estreno-sticky">
-      <div class="estreno-photo"></div>
+      <div class="estreno-photo">
+        <video class="estreno-video" autoplay muted loop playsinline preload="auto" poster="images/img-095.jpg">
+          <source src="images/estreno-loop.webm" type="video/webm">
+          <source src="images/estreno-loop.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="estreno-shade"></div>
       <div class="estreno-fog"></div>
       <div class="estreno-stars2"></div>
       <div class="estreno-sunglow"></div>
