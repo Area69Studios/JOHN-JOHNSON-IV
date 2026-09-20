@@ -469,13 +469,6 @@
       overflow: hidden;
     }
 
-    /* Canvas topográfico */
-    #estreno-topo {
-      position: absolute; inset: 0;
-      pointer-events: none; z-index: 0;
-      width: 100%; height: 100%;
-    }
-
     /* Canvas de partículas */
     #estreno-particles {
       position: absolute; inset: 0;
@@ -543,80 +536,6 @@
       display: none;
     }
 
-    /* ── Retrowave sun ── */
-    .estreno-sun {
-      position: absolute;
-      left: 50%; top: 43%;
-      transform: translate(-50%, -50%);
-      width: 440px; height: 440px;
-      border-radius: 50%;
-      background: linear-gradient(180deg,
-        #FF6FC6 0%, #FF3CAC 24%, #B14FFF 54%, #6C7BFF 76%, #3E8BFF 100%);
-      z-index: 0;
-      opacity: 0;
-      transition: opacity 1.4s ease;
-      box-shadow:
-        0 0 80px 12px rgba(255,60,172,0.4),
-        0 0 200px 50px rgba(162,75,255,0.28),
-        0 0 320px 90px rgba(62,139,255,0.16);
-    }
-    .estreno-sticky.ep-radiant .estreno-sun { opacity: 0.92; }
-    .estreno-sun::after {
-      content: '';
-      position: absolute; left: 0; bottom: 0;
-      width: 100%; height: 54%;
-      border-radius: 0 0 999px 999px;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0, transparent 42px,
-        #1a0b14 42px, #1a0b14 45px,
-        transparent 45px, transparent 74px,
-        #1a0b14 74px, #1a0b14 78px,
-        transparent 78px, transparent 104px,
-        #1a0b14 104px, #1a0b14 110px,
-        transparent 110px, transparent 132px,
-        #1a0b14 132px, #1a0b14 140px,
-        transparent 140px, transparent 158px,
-        #1a0b14 158px, #1a0b14 168px);
-    }
-
-    /* ── Neon perspective grid (synthwave floor) ── */
-    .estreno-grid {
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      height: 38%;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 1.4s ease;
-      -webkit-mask-image: linear-gradient(to top, #000 55%, transparent 100%);
-      mask-image: linear-gradient(to top, #000 55%, transparent 100%);
-    }
-    .estreno-sticky.ep-radiant .estreno-grid { opacity: 0.85; }
-    .estreno-grid::before {
-      content: '';
-      position: absolute;
-      left: -40%; right: -40%; bottom: 0;
-      height: 360px;
-      background-image:
-        repeating-linear-gradient(to right, rgba(255,60,172,0.6) 0 1px, transparent 1px 60px),
-        repeating-linear-gradient(to top,   rgba(62,139,255,0.55) 0 1px, transparent 1px 44px);
-      transform: perspective(300px) rotateX(64deg);
-      transform-origin: bottom center;
-      animation: estrenoGridMove 3s linear infinite;
-    }
-    .estreno-grid::after {
-      content: '';
-      position: absolute; left: 0; right: 0; top: 45%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #FF3CAC 30%, #3E8BFF 70%, transparent);
-      box-shadow: 0 0 22px 5px rgba(162,75,255,0.55);
-    }
-    @keyframes estrenoGridMove {
-      from { background-position: 0 0, 0 0; }
-      to   { background-position: 0 0, 0 44px; }
-    }
     /* Estrellas titilando en el cielo */
     .estreno-stars2 {
       position: absolute; left: 0; right: 0; top: 0; height: 46%;
@@ -637,22 +556,6 @@
     }
     .estreno-sticky.ep-radiant .estreno-stars2 { opacity: 0.75; }
     @keyframes estrenoTwinkle2 { from { filter: brightness(0.6); } to { filter: brightness(1.2); } }
-
-    /* Halo del sol que respira */
-    .estreno-sunglow {
-      position: absolute; left: 50%; top: 32%;
-      width: min(70vh, 560px); height: min(70vh, 560px);
-      border-radius: 50%; z-index: 1; pointer-events: none;
-      mix-blend-mode: screen; opacity: 0; transition: opacity 1.6s ease;
-      background: radial-gradient(circle, rgba(255,180,90,0.30) 0%, rgba(255,90,150,0.16) 38%, transparent 66%);
-      transform: translate(-50%, -50%);
-      animation: estrenoSunGlow 5s ease-in-out infinite alternate;
-    }
-    .estreno-sticky.ep-radiant .estreno-sunglow { opacity: 1; }
-    @keyframes estrenoSunGlow {
-      from { transform: translate(-50%, -50%) scale(0.96); filter: brightness(0.9); }
-      to   { transform: translate(-50%, -50%) scale(1.07); filter: brightness(1.18); }
-    }
 
     /* Pulso de luz neon recorriendo la rejilla hacia el espectador */
     .estreno-floorpulse {
@@ -693,37 +596,6 @@
       100%     { opacity: 0; transform: translate(58vw, 22vh) rotate(20deg); }
     }
 
-    /* Copia enmascarada de la imagen sobre las palmeras: se balancea con
-       viento (rafagas) anclada a la base del tronco. Misma imagen -> encaja. */
-    .estreno-palmwind {
-      position: absolute; inset: 0; z-index: 2; pointer-events: none;
-      background-color: #1b1038;
-      background-image:
-        radial-gradient(ellipse 62% 42% at 50% 56%, rgba(26,11,20,0.50) 0%, transparent 70%),
-        linear-gradient(to bottom, rgba(26,11,20,0.50) 0%, rgba(26,11,20,0.05) 22%, rgba(26,11,20,0.12) 60%, rgba(26,11,20,0.90) 100%),
-        url('images/este-verano.avif');
-      background-size: cover, cover, cover;
-      background-position: center, center, center;
-      background-repeat: no-repeat;
-      -webkit-mask-image: radial-gradient(ellipse 22% 25% at 63% 46%, #000 55%, transparent 82%);
-      mask-image: radial-gradient(ellipse 22% 25% at 63% 46%, #000 55%, transparent 82%);
-      opacity: 0; transition: opacity 1.6s ease;
-      transform-origin: 60% 62%;
-      animation: estrenoPalmWind 7s ease-in-out infinite;
-      will-change: transform;
-    }
-    .estreno-sticky.ep-radiant .estreno-palmwind { opacity: 1; }
-    @keyframes estrenoPalmWind {
-      0%   { transform: skewX(0deg)   rotate(0deg); }
-      14%  { transform: skewX(1.4deg) rotate(0.30deg); }
-      28%  { transform: skewX(0.5deg) rotate(0.10deg); }
-      42%  { transform: skewX(1.5deg) rotate(0.40deg); }
-      56%  { transform: skewX(0.7deg) rotate(0.15deg); }
-      72%  { transform: skewX(1.6deg) rotate(0.32deg); }
-      86%  { transform: skewX(0.9deg) rotate(0.18deg); }
-      100% { transform: skewX(0deg)   rotate(0deg); }
-    }
-
     /* Rachas de viento cruzando el cielo */
     .estreno-wind {
       position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
@@ -744,44 +616,10 @@
       100% { transform: translateX(55%) skewX(-28deg); opacity: 0; }
     }
 
-    /* Gaviotas volando por el cielo (siluetas que aletean y derivan) */
-    .estreno-gulls {
-      position: absolute; inset: 0; z-index: 1; pointer-events: none;
-      overflow: hidden; opacity: 0; transition: opacity 1.6s ease;
-    }
-    .estreno-sticky.ep-radiant .estreno-gulls { opacity: 0.82; }
-    .gull { position: absolute; left: 0; will-change: transform; }
-    .gull::before {
-      content: ''; display: block; width: 32px; height: 13px;
-      background: center / contain no-repeat
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 16'%3E%3Cpath d='M2 12 C8 3 12 3 20 9 C28 3 32 3 38 12' fill='none' stroke='%23140418' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
-      transform-origin: 50% 40%;
-      animation: gullFlap 0.5s ease-in-out infinite alternate;
-    }
-    .gull.g1 { top: 13%; animation: gullDrift 34s linear infinite; }
-    .gull.g2 { top: 19%; animation: gullDrift 28s linear infinite -8s; }
-    .gull.g3 { top: 10%; animation: gullDrift 42s linear infinite -18s; }
-    .gull.g4 { top: 23%; animation: gullDrift 30s linear infinite -24s; }
-    .gull.g2::before { width: 26px; height: 11px; animation-duration: 0.42s; }
-    .gull.g3::before { width: 38px; height: 16px; animation-duration: 0.58s; }
-    .gull.g4::before { width: 24px; height: 10px; animation-duration: 0.46s; opacity: 0.85; }
-    @keyframes gullDrift {
-      0%   { transform: translate(-8vw, 0); }
-      25%  { transform: translate(22vw, -12px); }
-      50%  { transform: translate(52vw, 5px); }
-      75%  { transform: translate(82vw, -8px); }
-      100% { transform: translate(112vw, 0); }
-    }
-    @keyframes gullFlap {
-      from { transform: scaleY(1); }
-      to   { transform: scaleY(0.5); }
-    }
-
     @media (prefers-reduced-motion: reduce) {
       .estreno-photo, .estreno-fog, .estreno-stars2,
-      .estreno-sunglow, .estreno-floorpulse::before, .estreno-meteor,
-      .estreno-palmwind, .estreno-wind::before, .estreno-wind::after,
-      .gull, .gull::before { animation: none !important; }
+      .estreno-floorpulse::before, .estreno-meteor,
+      .estreno-wind::before, .estreno-wind::after { animation: none !important; }
     }
 
     /* ── Video synthwave de fondo (loop ida-vuelta, ~2.8MB) ── */
@@ -847,11 +685,6 @@
       .estreno-fog   { animation: none; }
     }
 
-    /* La imagen ya trae sol, palmeras y rejilla: ocultamos el render CSS
-       para no duplicar elementos ni gastar recursos de GPU/CPU. */
-    .estreno-sun,
-    .estreno-grid,
-    #estreno-topo { display: none !important; }
     .estreno-content {
       position: relative;
       z-index: 5;
@@ -6521,20 +6354,9 @@
       <div class="estreno-shade"></div>
       <div class="estreno-fog"></div>
       <div class="estreno-stars2"></div>
-      <div class="estreno-sunglow"></div>
       <div class="estreno-meteor"></div>
       <div class="estreno-floorpulse"></div>
       <div class="estreno-wind"></div>
-      <div class="estreno-palmwind"></div>
-      <div class="estreno-gulls">
-        <span class="gull g1"></span>
-        <span class="gull g2"></span>
-        <span class="gull g3"></span>
-        <span class="gull g4"></span>
-      </div>
-      <div class="estreno-grid"></div>
-      <div class="estreno-sun"></div>
-      <canvas id="estreno-topo"></canvas>
       <canvas id="estreno-particles"></canvas>
       <div class="estreno-ambient"></div>
       <div class="estreno-sweep"></div>
@@ -11726,92 +11548,6 @@
     var canvas   = document.getElementById('estreno-particles');
     if (!section || !sticky || !canvas) return;
 
-    /* ——— Canvas topográfico (dibujado una sola vez) ——— */
-    var topoCanvas = document.getElementById('estreno-topo');
-    var topoCtx    = topoCanvas.getContext('2d');
-    topoCanvas.style.opacity = '0';
-    topoCanvas.style.transition = 'opacity 0.4s ease';
-
-    function resizeTopo() {
-      topoCanvas.width  = sticky.offsetWidth;
-      topoCanvas.height = sticky.offsetHeight;
-      drawTopoStatic();
-    }
-
-    function drawTopoStatic() {
-      var W = topoCanvas.width, H = topoCanvas.height;
-      topoCtx.clearRect(0, 0, W, H);
-      if (!W || !H) return;
-
-      /* — Ruido de valor 2D con fBm — */
-      function rng(n) {
-        var x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
-        return x - Math.floor(x);
-      }
-      function vn(ix, iy) { return rng(ix + iy * 57); }
-      function sn(x, y) {
-        var ix = Math.floor(x)|0, iy = Math.floor(y)|0;
-        var fx = x-ix, fy = y-iy;
-        var ux = fx*fx*(3-2*fx), uy = fy*fy*(3-2*fy);
-        return vn(ix,iy)*(1-ux)*(1-uy) + vn(ix+1,iy)*ux*(1-uy)
-             + vn(ix,iy+1)*(1-ux)*uy   + vn(ix+1,iy+1)*ux*uy;
-      }
-      function fbm(x, y) {
-        return sn(x,y)*0.500 + sn(x*2.1,y*2.1)*0.250
-             + sn(x*4.3,y*4.3)*0.125 + sn(x*8.7,y*8.7)*0.062;
-      }
-
-      /* — Campo de altura — */
-      var GW = 80, GH = 80;
-      var field = new Float32Array((GW+1)*(GH+1));
-      var sc = 2.9, ox = 2.73, oy = 5.11;
-      for (var j = 0; j <= GH; j++)
-        for (var i = 0; i <= GW; i++)
-          field[j*(GW+1)+i] = fbm(i/GW*sc+ox, j/GH*sc+oy);
-
-      /* — Marching squares — */
-      var cw = W/GW, ch = H/GH;
-      var LEVELS = 13;
-
-      topoCtx.strokeStyle = 'rgba(185,90,228,0.22)';
-      topoCtx.lineWidth   = 0.7;
-      topoCtx.beginPath();
-
-      for (var lv = 0; lv < LEVELS; lv++) {
-        var T = 0.08 + (lv / (LEVELS-1)) * 0.80;
-        for (var j = 0; j < GH; j++) {
-          for (var i = 0; i < GW; i++) {
-            var a = field[j*(GW+1)+i],     b = field[j*(GW+1)+i+1];
-            var c = field[(j+1)*(GW+1)+i+1], d = field[(j+1)*(GW+1)+i];
-            var code = ((a>T)?8:0)|((b>T)?4:0)|((c>T)?2:0)|((d>T)?1:0);
-            if (code===0 || code===15) continue;
-            var x0 = i*cw, y0 = j*ch;
-            function lt(va,vb){ return (va===vb)?0.5:(T-va)/(vb-va); }
-            var tAB=lt(a,b), tBC=lt(b,c), tDC=lt(d,c), tAD=lt(a,d);
-            var px=x0+tAB*cw, py=y0;
-            var qx=x0+cw,     qy=y0+tBC*ch;
-            var rx=x0+tDC*cw, ry=y0+ch;
-            var lx=x0,        ly=y0+tAD*ch;
-            switch(code){
-              case 1:case 14: topoCtx.moveTo(rx,ry);topoCtx.lineTo(lx,ly);break;
-              case 2:case 13: topoCtx.moveTo(qx,qy);topoCtx.lineTo(rx,ry);break;
-              case 3:case 12: topoCtx.moveTo(qx,qy);topoCtx.lineTo(lx,ly);break;
-              case 4:case 11: topoCtx.moveTo(px,py);topoCtx.lineTo(qx,qy);break;
-              case 6:case 9:  topoCtx.moveTo(px,py);topoCtx.lineTo(rx,ry);break;
-              case 7:case 8:  topoCtx.moveTo(px,py);topoCtx.lineTo(lx,ly);break;
-              case 5:
-                topoCtx.moveTo(px,py);topoCtx.lineTo(lx,ly);
-                topoCtx.moveTo(qx,qy);topoCtx.lineTo(rx,ry);break;
-              case 10:
-                topoCtx.moveTo(px,py);topoCtx.lineTo(qx,qy);
-                topoCtx.moveTo(rx,ry);topoCtx.lineTo(lx,ly);break;
-            }
-          }
-        }
-      }
-      topoCtx.stroke();
-    }
-
     var ambient  = sticky.querySelector('.estreno-ambient');
     var line     = sticky.querySelector('.estreno-line');
     var label    = sticky.querySelector('.estreno-label');
@@ -11952,7 +11688,6 @@
       if (divider) divider.style.width = (pDiv * 120).toFixed(0) + 'px';
 
       pAlpha = pGlow;
-      topoCanvas.style.opacity = (pGlow * 0.5).toFixed(3);
       if (ambient) ambient.style.opacity = pGlow.toFixed(3);
 
       var newRadiant = pFull > 0.15;
@@ -11969,7 +11704,6 @@
       applyProgress(clamp01(clamp01(-rect.top / total) / 0.70));
     }
 
-    resizeTopo();
     resize(); init(); drawParticles();
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -11977,7 +11711,7 @@
     var rt;
     window.addEventListener('resize', function() {
       clearTimeout(rt);
-      rt = setTimeout(function() { resizeTopo(); resize(); init(); }, 200);
+      rt = setTimeout(function() { resize(); init(); }, 200);
     });
   })();
   </script>
