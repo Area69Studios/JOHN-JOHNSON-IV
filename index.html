@@ -2101,75 +2101,28 @@
       margin: 0 auto 50px;
     }
 
-    /* ── Carrusel horizontal ── */
-    .gallery-carousel {
-      position: relative;
+    /* ── Cuadrícula compacta y uniforme ── */
+    .gallery-grid {
       max-width: 1200px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
     }
-    .gallery-carousel:focus { outline: none; }
-    .gallery-carousel:focus-visible {
-      outline: 2px solid rgba(185,90,228,0.45);
-      outline-offset: 4px;
-      border-radius: 8px;
-    }
-    .gallery-carousel::before,
-    .gallery-carousel::after {
-      content: '';
-      position: absolute; top: 0; bottom: 14px;
-      width: 64px; z-index: 1; pointer-events: none;
-    }
-    .gallery-carousel::before { left: 0;  background: linear-gradient(to right, var(--dark), transparent); }
-    .gallery-carousel::after  { right: 0; background: linear-gradient(to left,  var(--dark), transparent); }
-
-    .gallery-grid {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x proximity;
-      scroll-behavior: smooth;
-      padding: 4px 4px 14px;
-      cursor: grab;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(185,90,228,0.4) transparent;
-    }
-    .gallery-grid.dragging { cursor: grabbing; scroll-snap-type: none; }
-    .gallery-grid::-webkit-scrollbar { height: 7px; }
-    .gallery-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 4px; }
-    .gallery-grid::-webkit-scrollbar-thumb { background: rgba(185,90,228,0.4); border-radius: 4px; }
-    .gallery-grid::-webkit-scrollbar-thumb:hover { background: rgba(185,90,228,0.65); }
-
     .gallery-item {
       overflow: hidden;
       position: relative;
       cursor: pointer;
       background: var(--surface);
-      flex: 0 0 auto;
-      width: min(72vw, 380px);
-      height: 300px;
-      border-radius: 14px;
-      scroll-snap-align: start;
+      aspect-ratio: 4 / 3;
+      border-radius: 12px;
     }
-
-    .gallery-nav {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      z-index: 2;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px) saturate(180%);
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
-      border: 1px solid rgba(185,90,228,0.25);
-      border-radius: 50%;
-      color: rgba(185,90,228,0.7);
-      font-size: 1.4rem; width: 44px; height: 44px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    @media (max-width: 900px) {
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
     }
-    .gallery-nav:hover { background: rgba(185,90,228,0.12); border-color: var(--gold); color: var(--gold); }
-    .gallery-nav-prev { left: -6px; }
-    .gallery-nav-next { right: -6px; }
-    @media (max-width: 760px) { .gallery-nav { display: none; } }
+    @media (max-width: 600px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    }
 
     .gallery-item img {
       width: 100%; height: 100%;
@@ -3715,7 +3668,6 @@
       .personajes-grid { grid-template-columns: repeat(2, 1fr); }
       .character-card:first-child { grid-column: span 2; grid-row: span 1; aspect-ratio: 16/7; }
       .equipo-grid { grid-template-columns: repeat(2, 1fr); }
-      .gallery-item { height: 240px; }
       footer { flex-direction: column; gap: 20px; text-align: center; }
       .footer-copy { position: static; transform: none; white-space: normal; }
     }
@@ -3994,7 +3946,6 @@
 
     @media (max-width: 480px) {
       .equipo-grid { grid-template-columns: 1fr !important; }
-      .gallery-item { height: 220px !important; width: 82vw !important; }
       .trailer-btn { max-width: 100%; }
       .capitulos-list { gap: 14px; }
       .cap-btn { font-size: 0.9rem; }
@@ -7864,10 +7815,7 @@
       <h2 class="section-title reveal reveal-delay-1">Galería Oficial</h2>
     </div>
 
-    <div class="gallery-carousel" tabindex="0" aria-label="Carrusel de galería, usa las flechas del teclado para navegar">
-      <button class="gallery-nav gallery-nav-prev" id="galleryPrev" aria-label="Anterior">‹</button>
-      <button class="gallery-nav gallery-nav-next" id="galleryNext" aria-label="Siguiente">›</button>
-      <div class="gallery-grid reveal" id="galleryTrack">
+    <div class="gallery-grid reveal">
 
       <div class="gallery-item" data-lightbox>
         <img src="images/img-042.png" alt="La Escondia — Supervivencia" loading="lazy">
@@ -8001,7 +7949,6 @@
         <div class="gallery-caption">Victoria en la colina</div>
       </div>
 
-      </div>
     </div>
 
   </section>
@@ -8502,67 +8449,6 @@
   </div>
 
   <script>
-    /* ===== CARRUSEL DE GALERÍA ===== */
-    (function() {
-      var track = document.getElementById('galleryTrack');
-      var prev  = document.getElementById('galleryPrev');
-      var next  = document.getElementById('galleryNext');
-      if (!track || !prev || !next) return;
-
-      function scrollByAmount(dir) {
-        var card = track.querySelector('.gallery-item');
-        var step = card ? card.getBoundingClientRect().width + 12 : track.clientWidth * 0.8;
-        var max  = track.scrollWidth - track.clientWidth;
-        // Loop infinito: al llegar a un extremo, salta suavemente al otro
-        if (dir > 0 && track.scrollLeft >= max - 4) {
-          track.scrollTo({ left: 0, behavior: 'smooth' });
-          return;
-        }
-        if (dir < 0 && track.scrollLeft <= 4) {
-          track.scrollTo({ left: max, behavior: 'smooth' });
-          return;
-        }
-        track.scrollBy({ left: dir * step * 2, behavior: 'smooth' });
-      }
-      prev.addEventListener('click', function() { scrollByAmount(-1); });
-      next.addEventListener('click', function() { scrollByAmount(1); });
-
-      // Navegación con flechas del teclado cuando el carrusel tiene foco
-      // (se ignora si el lightbox está abierto, que ya usa esas mismas teclas)
-      var carousel = track.closest('.gallery-carousel');
-      if (carousel) {
-        carousel.addEventListener('keydown', function(e) {
-          var lb = document.getElementById('lightbox');
-          if (lb && lb.classList.contains('open')) return;
-          if (e.key === 'ArrowRight') { scrollByAmount(1);  e.preventDefault(); }
-          if (e.key === 'ArrowLeft')  { scrollByAmount(-1); e.preventDefault(); }
-        });
-      }
-
-      // Arrastrar con el mouse (touch ya funciona nativo con overflow-x)
-      var isDown = false, startX = 0, startScroll = 0, moved = false;
-      track.addEventListener('mousedown', function(e) {
-        isDown = true; moved = false;
-        startX = e.pageX; startScroll = track.scrollLeft;
-        track.classList.add('dragging');
-      });
-      window.addEventListener('mouseup', function() {
-        isDown = false;
-        track.classList.remove('dragging');
-      });
-      window.addEventListener('mousemove', function(e) {
-        if (!isDown) return;
-        e.preventDefault();
-        var dx = e.pageX - startX;
-        if (Math.abs(dx) > 4) moved = true;
-        track.scrollLeft = startScroll - dx;
-      });
-      // Evita que un arrastre abra el lightbox por accidente
-      track.addEventListener('click', function(e) {
-        if (moved) { e.stopPropagation(); e.preventDefault(); }
-      }, true);
-    })();
-
     /* ===== PARTÍCULAS EN LUGAR-GALLERIES ===== */
     (function() {
       function spawnParticles(container) {
