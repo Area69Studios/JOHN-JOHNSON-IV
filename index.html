@@ -6721,6 +6721,7 @@
             <span class="cap-soon-dot"></span>
             <span id="cap4SoonText">Estreno en YouTube</span>
           </span>
+          <span class="new-badge" id="cap4NewBadge" style="display:none;">Nuevo</span>
           <span class="cap-num-col">
             <span class="cap-number">04</span>
           </span>
@@ -9775,8 +9776,9 @@
   <!-- AVISO DE ESTRENO EN EL BOTÓN DEL CAPÍTULO 4 -->
   <script>
   (function() {
-    var badge = document.getElementById('cap4SoonBadge');
-    var text  = document.getElementById('cap4SoonText');
+    var badge    = document.getElementById('cap4SoonBadge');
+    var text     = document.getElementById('cap4SoonText');
+    var newBadge = document.getElementById('cap4NewBadge');
     if (!badge || !text) return;
 
     var TARGET = new Date('2026-09-21T16:00:00+02:00').getTime();
@@ -9787,6 +9789,7 @@
       var diff = TARGET - Date.now();
       if (diff <= 0) {
         badge.style.display = 'none';
+        if (newBadge) newBadge.style.display = '';
         clearInterval(timer);
         return;
       }
