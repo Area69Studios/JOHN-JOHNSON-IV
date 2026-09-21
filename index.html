@@ -454,6 +454,16 @@
       align-items: center;
       gap: 14px;
     }
+    .nav-a69-mark {
+      height: 34px; width: auto; display: block;
+      flex-shrink: 0;
+      opacity: 0.9;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .nav-a69-mark:hover { opacity: 1; transform: scale(1.06); }
+    @media (max-width: 720px) {
+      .nav-a69-mark { height: 26px; }
+    }
     .nav-trailer-btn {
       display: inline-flex;
       align-items: center;
@@ -6422,6 +6432,9 @@
       <a href="#hero" class="nav-logo" aria-label="John Johnson IV - inicio">
         <img src="images/logo-256.png" class="nav-logo-mark" alt="John Johnson IV" width="256" height="256" />
         <span class="nav-logo-word"><span class="logo-name">JOHN JOHNSON</span> <span class="logo-num">IV</span></span>
+      </a>
+      <a href="#equipo" aria-label="Área 69 Studios">
+        <img src="images/logo-a69-mark.png" class="nav-a69-mark" alt="Área 69 Studios" width="300" height="409" loading="lazy" />
       </a>
       <a href="#trailer" class="nav-trailer-btn">
         <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
