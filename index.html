@@ -268,6 +268,8 @@
     .thanks-modal {
       position: relative;
       width: min(92vw, 440px);
+      max-height: 88vh;
+      overflow-y: auto;
       padding: 44px 34px 34px;
       text-align: center;
       border-radius: 28px;
@@ -315,8 +317,10 @@
       font-size: 1rem;
       line-height: 1.7;
       color: rgba(255,255,255,0.78);
-      margin-bottom: 18px;
+      text-align: left;
+      margin-bottom: 20px;
     }
+    .thanks-modal-text:last-of-type { margin-bottom: 22px; }
     .thanks-modal-sign {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 0.78rem;
@@ -10011,9 +10015,18 @@
       <div class="thanks-modal-icon">★</div>
       <h3 class="thanks-modal-title">Gracias</h3>
       <p class="thanks-modal-text">
-        John Johnson IV ha llegado a su fin. Gracias a cada persona que ha visto los
-        capítulos, votado, valorado y compartido esta historia con nosotros — no habría
-        sido lo mismo sin vosotros.
+        John Johnson IV ha llegado a su fin. Lo que empezó como una idea se ha
+        convertido en cuatro capítulos gracias a cada persona que ha seguido la
+        historia, ha votado por su personaje favorito, ha dejado su valoración
+        y la ha compartido con más gente.
+      </p>
+      <p class="thanks-modal-text">
+        Nada de esto habría sido lo mismo sin vosotros.
+      </p>
+      <p class="thanks-modal-text">
+        Esto no es un adiós: ahora empieza un largo periodo para reunir nuevas
+        ideas y preparar futuros proyectos que estén a la altura. Así que estad
+        atentos, porque vienen más cosas de Área 69 Studios.
       </p>
       <p class="thanks-modal-sign">— Área 69 Studios</p>
       <button class="thanks-modal-btn" id="thanksModalOk">Gracias a vosotros</button>
