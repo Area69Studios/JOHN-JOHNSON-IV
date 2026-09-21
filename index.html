@@ -1821,6 +1821,62 @@
       .cap-soon-badge { top: 10px; right: 10px; padding: 5px 11px; font-size: 0.58rem; }
     }
 
+    /* Valoración por estrellas del Capítulo 4 */
+    .cap4-rating {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: -6px;
+      padding: 14px 22px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(0,229,255,0.25);
+      background: rgba(10,10,10,0.55);
+      backdrop-filter: blur(4px);
+    }
+    .cap4-rating-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(230,240,255,0.55);
+    }
+    .cap4-stars {
+      display: inline-flex;
+      gap: 4px;
+    }
+    .cap4-star {
+      background: none;
+      border: none;
+      padding: 2px;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: rgba(255,255,255,0.22);
+      cursor: pointer;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .cap4-star:hover,
+    .cap4-star.cap4-star-hover {
+      transform: scale(1.12);
+    }
+    .cap4-star.cap4-star-on {
+      color: #FFC93C;
+      text-shadow: 0 0 12px rgba(255,201,60,0.55);
+    }
+    .cap4-rating.cap4-rated .cap4-star {
+      cursor: pointer;
+    }
+    .cap4-rating-avg {
+      font-family: 'Crimson Pro', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+    }
+    @media (max-width: 600px) {
+      .cap4-rating { padding: 12px 16px; gap: 10px; }
+      .cap4-star { font-size: 1.3rem; }
+    }
+
     @media (max-width: 600px) {
       .cap-num-col { min-width: 60px; padding: 18px 16px 18px 20px; }
       .cap-number { font-size: 2rem; }
@@ -6528,6 +6584,18 @@
           <span class="cap-arrow">›</span>
         </a>
 
+        <div class="cap4-rating" id="cap4Rating">
+          <span class="cap4-rating-label">Valora el Capítulo 4</span>
+          <div class="cap4-stars" id="cap4Stars" role="radiogroup" aria-label="Valorar el Capítulo 4 de 1 a 5 estrellas">
+            <button type="button" class="cap4-star" data-star="1" aria-label="1 estrella">★</button>
+            <button type="button" class="cap4-star" data-star="2" aria-label="2 estrellas">★</button>
+            <button type="button" class="cap4-star" data-star="3" aria-label="3 estrellas">★</button>
+            <button type="button" class="cap4-star" data-star="4" aria-label="4 estrellas">★</button>
+            <button type="button" class="cap4-star" data-star="5" aria-label="5 estrellas">★</button>
+          </div>
+          <span class="cap4-rating-avg" id="cap4RatingAvg">Sin valoraciones todavía</span>
+        </div>
+
       </div>
     </div>
   </section>
@@ -9567,6 +9635,102 @@
 
     tick();
     var timer = setInterval(tick, 1000);
+  })();
+  </script>
+
+  <!-- VALORACIÓN POR ESTRELLAS DEL CAPÍTULO 4 -->
+  <script>
+  (function() {
+    var wrap  = document.getElementById('cap4Rating');
+    var stars = document.getElementById('cap4Stars');
+    var avgEl = document.getElementById('cap4RatingAvg');
+    if (!wrap || !stars || !avgEl) return;
+
+    var STAR_KEY = 'jj4_cap4_myrating_v1';
+    var DB = 'https://jjiv-35527-default-rtdb.firebaseio.com/jj4_cap4_rating_v1';
+    var starBtns = Array.prototype.slice.call(stars.querySelectorAll('.cap4-star'));
+    var evtSource = null;
+    var lastData = { sum: 0, count: 0 };
+
+    function toNum(x) { var n = Number(x); return isNaN(n) || n < 0 ? 0 : n; }
+
+    function getMyRating() {
+      var v = parseInt(localStorage.getItem(STAR_KEY), 10);
+      return v >= 1 && v <= 5 ? v : null;
+    }
+    function setMyRating(v) {
+      try { localStorage.setItem(STAR_KEY, String(v)); } catch(e) {}
+    }
+
+    function paintStars(value) {
+      starBtns.forEach(function(btn) {
+        var n = parseInt(btn.dataset.star, 10);
+        btn.classList.toggle('cap4-star-on', n <= value);
+      });
+    }
+
+    function renderAvg(data) {
+      lastData = { sum: toNum(data && data.sum), count: toNum(data && data.count) };
+      if (lastData.count <= 0) {
+        avgEl.textContent = 'Sin valoraciones todavía';
+        return;
+      }
+      var avg = lastData.sum / lastData.count;
+      avgEl.textContent = avg.toFixed(1) + ' / 5 · ' + (lastData.count === 1 ? '1 valoración' : lastData.count + ' valoraciones');
+    }
+
+    function startStream() {
+      if (evtSource) { evtSource.close(); }
+      try {
+        evtSource = new EventSource(DB + '.json');
+        evtSource.addEventListener('put', function(e) {
+          try { renderAvg(JSON.parse(e.data).data); } catch(err) {}
+        });
+        evtSource.onerror = function() {
+          setTimeout(startStream, 8000);
+        };
+      } catch(e) {}
+    }
+
+    function submitRating(value) {
+      var prev = getMyRating();
+      setMyRating(value);
+      paintStars(value);
+      wrap.classList.add('cap4-rated');
+
+      // Lee el valor más reciente justo antes de escribir, para minimizar
+      // choques con otra persona valorando casi al mismo tiempo.
+      fetch(DB + '.json')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var sum = toNum(data && data.sum), count = toNum(data && data.count);
+          if (prev) {
+            sum = sum - prev + value;
+          } else {
+            sum = sum + value;
+            count = count + 1;
+          }
+          var next = { sum: sum, count: count };
+          renderAvg(next);
+          return fetch(DB + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(next)
+          });
+        })
+        .catch(function() {});
+    }
+
+    starBtns.forEach(function(btn) {
+      var n = parseInt(btn.dataset.star, 10);
+      btn.addEventListener('mouseenter', function() { paintStars(n); });
+      btn.addEventListener('mouseleave', function() { paintStars(getMyRating() || 0); });
+      btn.addEventListener('click', function() { submitRating(n); });
+    });
+
+    paintStars(getMyRating() || 0);
+    if (getMyRating()) wrap.classList.add('cap4-rated');
+    startStream();
   })();
   </script>
 
