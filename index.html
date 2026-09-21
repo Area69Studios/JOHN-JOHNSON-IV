@@ -9762,9 +9762,12 @@
           } catch(err) {}
         });
         evtSource.onerror = function() {
+          console.warn('[Cap4Rating] Stream desconectado, reintentando en 8s…');
           setTimeout(startStream, 8000);
         };
-      } catch(e) {}
+      } catch(e) {
+        console.error('[Cap4Rating] No se pudo abrir el stream:', e);
+      }
     }
 
     function submitRating(value) {
@@ -9778,8 +9781,19 @@
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(value)
-      }).catch(function() {});
-      showToast(isChange ? 'Valoración actualizada' : '¡Gracias por tu valoración!');
+      })
+        .then(function(r) {
+          if (!r.ok) {
+            return r.text().then(function(body) {
+              throw new Error('Firebase respondió ' + r.status + ': ' + body);
+            });
+          }
+          showToast(isChange ? 'Valoración actualizada' : '¡Gracias por tu valoración!');
+        })
+        .catch(function(err) {
+          console.error('[Cap4Rating] No se pudo guardar la valoración en el servidor:', err);
+          showToast('Guardada solo en este dispositivo (sin conexión con el servidor)');
+        });
     }
 
     starBtns.forEach(function(btn) {
