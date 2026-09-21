@@ -9768,6 +9768,7 @@
     }
 
     function submitRating(value) {
+      var isChange = !!getMyRating();
       setMyRating(value);
       paintStars(value);
       wrap.classList.add('cap4-rated');
@@ -9778,6 +9779,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(value)
       }).catch(function() {});
+      showToast(isChange ? 'Valoración actualizada' : '¡Gracias por tu valoración!');
     }
 
     starBtns.forEach(function(btn) {
