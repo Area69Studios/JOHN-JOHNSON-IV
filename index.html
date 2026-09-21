@@ -9805,7 +9805,22 @@
 
     paintStars(getMyRating() || 0);
     if (getMyRating()) wrap.classList.add('cap4-rated');
-    renderAvg();   // pinta de inmediato con la caché local mientras conecta el stream
+    renderAvg();   // pinta de inmediato con la caché local mientras se confirma el dato real
+
+    // Lectura directa además del stream: algunas redes/navegadores bloquean
+    // las conexiones persistentes (EventSource) pero sí dejan pasar un
+    // fetch normal, así que esto asegura que la media se vea aunque el
+    // "en directo" no llegue a conectar.
+    fetch(DB + '.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        ratings = data || {};
+        renderAvg();
+      })
+      .catch(function(err) {
+        console.error('[Cap4Rating] No se pudo leer la valoración inicial:', err);
+      });
+
     startStream();
 
     /* ── Compartir ── */
