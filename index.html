@@ -1785,6 +1785,42 @@
       box-shadow: 0 0 16px rgba(255,138,60,0.5);
     }
 
+    /* Aviso de estreno próximo (Capítulo 4) */
+    .cap-soon-badge {
+      position: absolute; top: 14px; right: 14px; z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #04171d;
+      background-image: var(--grad-neon);
+      border-radius: 999px;
+      box-shadow: 0 0 0 1px rgba(255,138,60,0.55), 0 4px 18px rgba(255,46,159,0.4);
+      pointer-events: none;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .cap-soon-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #04171d;
+      flex-shrink: 0;
+      animation: cap-soon-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes cap-soon-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.3; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cap-soon-dot { animation: none; }
+    }
+    @media (max-width: 600px) {
+      .cap-soon-badge { top: 10px; right: 10px; padding: 5px 11px; font-size: 0.58rem; }
+    }
+
     @media (max-width: 600px) {
       .cap-num-col { min-width: 60px; padding: 18px 16px 18px 20px; }
       .cap-number { font-size: 2rem; }
@@ -6475,6 +6511,10 @@
         </a>
 
         <a href="https://youtu.be/YCS4TayAA4I" target="_blank" rel="noopener" class="cap-btn reveal" data-cap="4" style="background-image: url('images/img-096.jpg'); background-size: cover; background-position: center;">
+          <span class="cap-soon-badge" id="cap4SoonBadge">
+            <span class="cap-soon-dot"></span>
+            <span id="cap4SoonText">Estreno en YouTube</span>
+          </span>
           <span class="cap-num-col">
             <span class="cap-number">04</span>
           </span>
@@ -9488,6 +9528,41 @@
       hEl.textContent = pad(hours);
       mEl.textContent = pad(minutes);
       sEl.textContent = pad(seconds);
+    }
+
+    tick();
+    var timer = setInterval(tick, 1000);
+  })();
+  </script>
+
+  <!-- AVISO DE ESTRENO EN EL BOTÓN DEL CAPÍTULO 4 -->
+  <script>
+  (function() {
+    var badge = document.getElementById('cap4SoonBadge');
+    var text  = document.getElementById('cap4SoonText');
+    if (!badge || !text) return;
+
+    var TARGET = new Date('2026-09-21T16:00:00+02:00').getTime();
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function tick() {
+      var diff = TARGET - Date.now();
+      if (diff <= 0) {
+        badge.style.display = 'none';
+        clearInterval(timer);
+        return;
+      }
+      var totalSeconds = Math.floor(diff / 1000);
+      var days    = Math.floor(totalSeconds / 86400);
+      var hours   = Math.floor((totalSeconds % 86400) / 3600);
+      var minutes = Math.floor((totalSeconds % 3600) / 60);
+      var seconds = totalSeconds % 60;
+      var label;
+      if (days > 0)         label = days + 'd ' + pad(hours) + 'h';
+      else if (hours > 0)   label = hours + 'h ' + pad(minutes) + 'm';
+      else                  label = pad(minutes) + 'm ' + pad(seconds) + 's';
+      text.textContent = 'Estreno en ' + label;
     }
 
     tick();
