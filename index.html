@@ -1332,7 +1332,37 @@
       50%      { box-shadow: 0 0 0 1px rgba(185,90,228,0.9),  0 6px 28px rgba(185,90,228,0.75); }
     }
     @media (prefers-reduced-motion: reduce) { .new-badge { animation: none; } }
-    #cap4NewBadge { left: auto; right: 16px; }
+    .cap4-new-badge {
+      position: absolute; top: 0; right: 0; z-index: 4;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px 7px 14px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.66rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #FFD9B0;
+      background: rgba(10,10,10,0.6);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-left: 1px solid rgba(255,138,60,0.5);
+      border-bottom: 1px solid rgba(255,138,60,0.5);
+      border-radius: 0 0 0 14px;
+      pointer-events: none;
+    }
+    .cap4-new-badge::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background-image: var(--grad-neon);
+      flex-shrink: 0;
+      animation: cap4-new-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes cap4-new-pulse {
+      0%, 100%   { opacity: 1;   box-shadow: 0 0 0 0 rgba(255,138,60,0.45); }
+      50%        { opacity: 0.6; box-shadow: 0 0 0 4px rgba(255,138,60,0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cap4-new-badge::before { animation: none; }
+    }
 
     /* Main large image */
     .char-main-img {
@@ -6737,7 +6767,7 @@
               <span class="cap-soon-dot"></span>
               <span id="cap4SoonText">Estreno en YouTube</span>
             </span>
-            <span class="new-badge" id="cap4NewBadge" style="display:none;">Nuevo</span>
+            <span class="cap4-new-badge" id="cap4NewBadge" style="display:none;">Nuevo</span>
             <span class="cap-num-col">
               <span class="cap-number">04</span>
             </span>
