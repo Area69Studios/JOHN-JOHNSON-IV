@@ -1872,9 +1872,33 @@
       font-size: 0.85rem;
       color: rgba(255,255,255,0.5);
     }
+    .cap4-share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px solid rgba(0,229,255,0.3);
+      border-radius: 999px;
+      color: rgba(210,245,255,0.75);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.25s, color 0.25s, background 0.25s;
+    }
+    .cap4-share-btn svg { width: 12px; height: 12px; stroke: currentColor; }
+    .cap4-share-btn:hover {
+      border-color: rgba(255,138,60,0.6);
+      color: #FFC896;
+      background: rgba(255,138,60,0.08);
+    }
     @media (max-width: 600px) {
       .cap4-rating { padding: 12px 16px; gap: 10px; }
       .cap4-star { font-size: 1.3rem; }
+      .cap4-share-btn { margin-left: 0; }
     }
 
     @media (max-width: 600px) {
@@ -6594,6 +6618,10 @@
             <button type="button" class="cap4-star" data-star="5" aria-label="5 estrellas">★</button>
           </div>
           <span class="cap4-rating-avg" id="cap4RatingAvg">Sin valoraciones todavía</span>
+          <button type="button" class="cap4-share-btn" id="cap4ShareBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+            <span>Compartir</span>
+          </button>
         </div>
 
       </div>
@@ -9731,6 +9759,33 @@
     paintStars(getMyRating() || 0);
     if (getMyRating()) wrap.classList.add('cap4-rated');
     startStream();
+
+    /* ── Compartir ── */
+    var toastEl = document.createElement('div');
+    toastEl.className = 'rk-toast';
+    document.body.appendChild(toastEl);
+    var toastTimer;
+    function showToast(msg) {
+      clearTimeout(toastTimer);
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 2400);
+    }
+
+    var shareBtn = document.getElementById('cap4ShareBtn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function() {
+        var url  = window.location.href.split('#')[0] + '#capitulos';
+        var text = 'Valora el Capítulo 4 de John Johnson IV → ' + url;
+        if (navigator.share) {
+          navigator.share({ title: 'John Johnson IV — Capítulo 4', text: 'Valora el Capítulo 4 de John Johnson IV', url: url }).catch(function() {});
+        } else {
+          navigator.clipboard.writeText(text)
+            .then(function() { showToast('Enlace copiado al portapapeles'); })
+            .catch(function() { showToast('Copia: ' + url); });
+        }
+      });
+    }
   })();
   </script>
 
