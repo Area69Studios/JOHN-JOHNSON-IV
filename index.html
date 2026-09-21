@@ -7431,28 +7431,38 @@
       }
       .ranking-reset:hover { opacity: 0.85; }
 
-      /* Toast */
+      /* Toast — estilo "liquid glass" */
       .rk-toast {
         position: fixed;
         bottom: 32px;
         left: 50%;
-        transform: translateX(-50%) translateY(12px);
-        background: #1e1b15;
-        border: 1px solid rgba(185,90,228,0.35);
-        color: var(--gold-light);
+        transform: translateX(-50%) translateY(12px) scale(0.96);
+        background:
+          linear-gradient(160deg, rgba(255,255,255,0.16), rgba(255,255,255,0.03) 45%, rgba(18,10,22,0.6)),
+          rgba(20,12,24,0.55);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.22);
+        border-radius: 999px;
+        box-shadow:
+          0 10px 34px rgba(0,0,0,0.45),
+          inset 0 1px 0 rgba(255,255,255,0.3),
+          inset 0 -1px 0 rgba(0,0,0,0.25),
+          0 0 22px rgba(0,229,255,0.1);
+        color: var(--white);
         font-family: 'Crimson Pro', Georgia, serif;
         font-size: 0.85rem;
-        letter-spacing: 0.08em;
-        padding: 10px 22px;
+        letter-spacing: 0.05em;
+        padding: 12px 26px;
         pointer-events: none;
         opacity: 0;
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22,1,0.36,1);
+        transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1);
         z-index: 9999;
         white-space: nowrap;
       }
       .rk-toast.show {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateX(-50%) translateY(0) scale(1);
       }
 
       /* ── Flecha de escalada ── */
