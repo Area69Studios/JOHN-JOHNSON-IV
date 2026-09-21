@@ -3569,6 +3569,9 @@
     }
     footer > * { position: relative; z-index: 1; }
 
+    .footer-logos {
+      display: flex; align-items: center; gap: 18px;
+    }
     .footer-logo {
       display: inline-flex; align-items: center; line-height: 0;
     }
@@ -3580,6 +3583,18 @@
     .footer-logo:hover .footer-logo-img {
       transform: scale(1.05);
       filter: drop-shadow(0 0 18px rgba(255,60,172,0.5));
+    }
+    .footer-a69-logo {
+      display: inline-flex; align-items: center; line-height: 0;
+    }
+    .footer-a69-img {
+      height: 48px; width: auto; display: block;
+      opacity: 0.9;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .footer-a69-logo:hover .footer-a69-img {
+      opacity: 1;
+      transform: scale(1.05);
     }
 
     .footer-copy {
@@ -8607,9 +8622,14 @@
 
   <!-- FOOTER -->
   <footer>
-    <a href="#hero" class="footer-logo" aria-label="John Johnson IV">
-      <img src="images/logo-256.png" class="footer-logo-img" alt="John Johnson IV" width="256" height="256" loading="lazy" />
-    </a>
+    <div class="footer-logos">
+      <a href="#hero" class="footer-logo" aria-label="John Johnson IV">
+        <img src="images/logo-256.png" class="footer-logo-img" alt="John Johnson IV" width="256" height="256" loading="lazy" />
+      </a>
+      <a href="#equipo" class="footer-a69-logo" aria-label="Área 69 Studios">
+        <img src="images/logo-a69-mark.png" class="footer-a69-img" alt="Área 69 Studios" width="300" height="409" loading="lazy" />
+      </a>
+    </div>
     <div class="footer-copy">© 2024 John Johnson. Todos los derechos reservados.</div>
     <div class="footer-links">
       <a href="#">Aviso legal</a>
