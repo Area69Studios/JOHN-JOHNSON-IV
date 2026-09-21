@@ -9674,13 +9674,37 @@
     var avgEl = document.getElementById('cap4RatingAvg');
     if (!wrap || !stars || !avgEl) return;
 
-    var STAR_KEY = 'jj4_cap4_myrating_v1';
-    var DB = 'https://jjiv-35527-default-rtdb.firebaseio.com/jj4_cap4_rating_v1';
+    var STAR_KEY   = 'jj4_cap4_myrating_v1';
+    var CLIENT_KEY = 'jj4_cap4_clientid_v1';
+    // Cada visitante escribe únicamente en su propio nodo (clave = su id de
+    // cliente), así que nunca hay que leer-antes-de-escribir ni riesgo de que
+    // dos valoraciones a la vez se pisen o corrompan la suma. La media se
+    // calcula siempre a partir del conjunto completo recibido por streaming.
+    var DB = 'https://jjiv-35527-default-rtdb.firebaseio.com/jj4_cap4_ratings_v1';
+    var CACHE_KEY = 'jj4_cap4_ratings_cache_v1';
     var starBtns = Array.prototype.slice.call(stars.querySelectorAll('.cap4-star'));
     var evtSource = null;
-    var lastData = { sum: 0, count: 0 };
+
+    function getCachedRatings() {
+      try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; } catch(e) { return {}; }
+    }
+    function cacheRatings(r) {
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(r)); } catch(e) {}
+    }
+    var ratings = getCachedRatings();
 
     function toNum(x) { var n = Number(x); return isNaN(n) || n < 0 ? 0 : n; }
+
+    function getClientId() {
+      var id = null;
+      try { id = localStorage.getItem(CLIENT_KEY); } catch(e) {}
+      if (!id) {
+        id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+        try { localStorage.setItem(CLIENT_KEY, id); } catch(e) {}
+      }
+      return id;
+    }
+    var clientId = getClientId();
 
     function getMyRating() {
       var v = parseInt(localStorage.getItem(STAR_KEY), 10);
@@ -9697,14 +9721,17 @@
       });
     }
 
-    function renderAvg(data) {
-      lastData = { sum: toNum(data && data.sum), count: toNum(data && data.count) };
-      if (lastData.count <= 0) {
+    function renderAvg() {
+      cacheRatings(ratings);
+      var ids = Object.keys(ratings);
+      if (!ids.length) {
         avgEl.textContent = 'Sin valoraciones todavía';
         return;
       }
-      var avg = lastData.sum / lastData.count;
-      avgEl.textContent = avg.toFixed(1) + ' / 5 · ' + (lastData.count === 1 ? '1 valoración' : lastData.count + ' valoraciones');
+      var sum = 0;
+      ids.forEach(function(id) { sum += toNum(ratings[id]); });
+      var avg = sum / ids.length;
+      avgEl.textContent = avg.toFixed(1) + ' / 5 · ' + (ids.length === 1 ? '1 valoración' : ids.length + ' valoraciones');
     }
 
     function startStream() {
@@ -9712,7 +9739,27 @@
       try {
         evtSource = new EventSource(DB + '.json');
         evtSource.addEventListener('put', function(e) {
-          try { renderAvg(JSON.parse(e.data).data); } catch(err) {}
+          try {
+            var payload = JSON.parse(e.data);
+            if (!payload.path || payload.path === '/') {
+              ratings = payload.data || {};
+            } else {
+              var key = payload.path.replace(/^\//, '');
+              if (payload.data === null) delete ratings[key];
+              else ratings[key] = payload.data;
+            }
+            renderAvg();
+          } catch(err) {}
+        });
+        evtSource.addEventListener('patch', function(e) {
+          try {
+            var data = JSON.parse(e.data).data || {};
+            Object.keys(data).forEach(function(k) {
+              if (data[k] === null) delete ratings[k];
+              else ratings[k] = data[k];
+            });
+            renderAvg();
+          } catch(err) {}
         });
         evtSource.onerror = function() {
           setTimeout(startStream, 8000);
@@ -9721,32 +9768,16 @@
     }
 
     function submitRating(value) {
-      var prev = getMyRating();
       setMyRating(value);
       paintStars(value);
       wrap.classList.add('cap4-rated');
-
-      // Lee el valor más reciente justo antes de escribir, para minimizar
-      // choques con otra persona valorando casi al mismo tiempo.
-      fetch(DB + '.json')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          var sum = toNum(data && data.sum), count = toNum(data && data.count);
-          if (prev) {
-            sum = sum - prev + value;
-          } else {
-            sum = sum + value;
-            count = count + 1;
-          }
-          var next = { sum: sum, count: count };
-          renderAvg(next);
-          return fetch(DB + '.json', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(next)
-          });
-        })
-        .catch(function() {});
+      ratings[clientId] = value;
+      renderAvg();
+      fetch(DB + '/' + clientId + '.json', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(value)
+      }).catch(function() {});
     }
 
     starBtns.forEach(function(btn) {
@@ -9758,6 +9789,7 @@
 
     paintStars(getMyRating() || 0);
     if (getMyRating()) wrap.classList.add('cap4-rated');
+    renderAvg();   // pinta de inmediato con la caché local mientras conecta el stream
     startStream();
 
     /* ── Compartir ── */
