@@ -255,6 +255,100 @@
     }
     #video-modal .vm-yt:hover { color: var(--gold); }
 
+    /* ===== MENSAJE DE AGRADECIMIENTO FINAL ("liquid glass") ===== */
+    .thanks-modal-overlay {
+      position: fixed; inset: 0; z-index: 9500;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(5,3,6,0.7);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .thanks-modal-overlay.visible { opacity: 1; pointer-events: auto; }
+    .thanks-modal {
+      position: relative;
+      width: min(92vw, 440px);
+      padding: 44px 34px 34px;
+      text-align: center;
+      border-radius: 28px;
+      background:
+        linear-gradient(160deg, rgba(255,255,255,0.14), rgba(255,255,255,0.03) 45%, rgba(18,10,22,0.72)),
+        rgba(20,12,24,0.6);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.28),
+        inset 0 -1px 0 rgba(0,0,0,0.25),
+        0 0 40px rgba(0,229,255,0.12);
+      transform: translateY(16px) scale(0.96);
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    .thanks-modal-overlay.visible .thanks-modal {
+      transform: translateY(0) scale(1);
+    }
+    .thanks-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer; font-size: 16px; line-height: 1; padding: 6px;
+      transition: color 0.2s;
+    }
+    .thanks-modal-close:hover { color: var(--white); }
+    .thanks-modal-icon {
+      font-size: 1.8rem;
+      background-image: var(--grad-neon);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      margin-bottom: 6px;
+    }
+    .thanks-modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background-image: var(--grad-neon);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .thanks-modal-text {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 18px;
+    }
+    .thanks-modal-sign {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 26px;
+    }
+    .thanks-modal-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 13px 30px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #04171d;
+      background-image: var(--grad-neon);
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(255,138,60,0.4), 0 8px 26px rgba(255,46,159,0.35);
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .thanks-modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 1px rgba(0,229,255,0.6), 0 10px 34px rgba(0,229,255,0.45);
+    }
+    @media (max-width: 480px) {
+      .thanks-modal { padding: 36px 24px 28px; }
+      .thanks-modal-title { font-size: 1.8rem; }
+    }
+
     /* Etiqueta "vas por el minuto" en los botones de capítulo */
     .cap-resume {
       display: inline-flex; align-items: center; gap: 6px;
@@ -9909,6 +10003,57 @@
       </div>
     </div>
   </div>
+
+  <!-- MENSAJE DE AGRADECIMIENTO FINAL -->
+  <div class="thanks-modal-overlay" id="thanksModalOverlay" role="dialog" aria-modal="true" aria-label="Mensaje de agradecimiento">
+    <div class="thanks-modal">
+      <button class="thanks-modal-close" id="thanksModalClose" aria-label="Cerrar">&#x2715;</button>
+      <div class="thanks-modal-icon">★</div>
+      <h3 class="thanks-modal-title">Gracias</h3>
+      <p class="thanks-modal-text">
+        John Johnson IV ha llegado a su fin. Gracias a cada persona que ha visto los
+        capítulos, votado, valorado y compartido esta historia con nosotros — no habría
+        sido lo mismo sin vosotros.
+      </p>
+      <p class="thanks-modal-sign">— Área 69 Studios</p>
+      <button class="thanks-modal-btn" id="thanksModalOk">Gracias a vosotros</button>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    var overlay  = document.getElementById('thanksModalOverlay');
+    var closeBtn = document.getElementById('thanksModalClose');
+    var okBtn    = document.getElementById('thanksModalOk');
+    if (!overlay || !closeBtn || !okBtn) return;
+
+    var KEY = 'jj4_thanks_seen_v1';
+
+    function alreadySeen() {
+      try { return localStorage.getItem(KEY) === '1'; } catch(e) { return false; }
+    }
+    function markSeen() {
+      try { localStorage.setItem(KEY, '1'); } catch(e) {}
+    }
+    function close() {
+      overlay.classList.remove('visible');
+      markSeen();
+    }
+
+    if (!alreadySeen()) {
+      setTimeout(function() { overlay.classList.add('visible'); }, 900);
+    }
+
+    closeBtn.addEventListener('click', close);
+    okBtn.addEventListener('click', close);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) close();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('visible')) close();
+    });
+  })();
+  </script>
 
   <script>
   (function() {
