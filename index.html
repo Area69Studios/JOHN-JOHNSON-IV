@@ -1360,7 +1360,9 @@
       0%, 100%   { opacity: 1;   box-shadow: 0 0 0 0 rgba(255,138,60,0.45); }
       50%        { opacity: 0.6; box-shadow: 0 0 0 4px rgba(255,138,60,0); }
     }
-    .cap-btn.watched .cap4-new-badge { display: none; }
+    /* En el Capítulo 4 caben ambas insignias a la vez, así que "Visto"
+       se desplaza a la izquierda para no chocar con "Nuevo" */
+    .cap-btn[data-cap="4"] .cap-watched-badge { right: auto; left: 12px; }
     @media (prefers-reduced-motion: reduce) {
       .cap4-new-badge::before { animation: none; }
     }
